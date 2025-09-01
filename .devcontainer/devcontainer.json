@@ -1,9 +1,9 @@
 {
-  "name": "RStudio Codespace",
+  "name": "RStudio Codespace (Rocker)",
   "build": {
     "dockerfile": "Dockerfile"
   },
   "forwardPorts": [8787],
-  "postCreateCommand": "sudo rstudio-server start",
-  "remoteUser": "vscode"
+  "remoteUser": "rstudio"
 }
+
