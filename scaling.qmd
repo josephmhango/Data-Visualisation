@@ -1,0 +1,412 @@
+---
+title: "Encoding Visual Representations"
+author: "K.J. Mhango"
+date: "2025-09-06"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: show
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Module Overview
+
+**Topic:** Encoding visual representations — scale theory, scale transformations, and their practical use in data visualisation.
+
+**Learning outcomes (LOs):**
+
+1\. Explain measurement **scale types** (nominal, ordinal, interval, ratio, absolute) and **unit-based** scale systems.
+
+2\. Distinguish **variable**, **scale**, and **coordinate** transformations and justify when to use each.
+
+3\. Apply and critique **scale transformations** (categorical, linear, time, logarithmic, power, arcsine, logit/probit, probability scales).
+
+4\. Implement scale choices in **ggplot2**, evaluating their effect on perception and statistical interpretation.
+
+5.  Design visual encodings that respect **semantic meaning** and **invariance** properties.
+
+------------------------------------------------------------------------
+
+# Part I — Foundations
+
+## Why scales matter
+
+-   Scales map data **dimensions** to visual **aesthetics** (position, length, colour, size).
+-   Choice of scale affects **interpretation** (comparability, ratios, rates, zero reference), legibility, and perceived relationships.
+
+> Key idea: Graphics don’t *know* the measurement scale; humans do. Your job is to pick and label scales so the visual encodes the intended comparisons.
+
+## Scale theory
+
+### Axiomatic measurement (Stevens)
+
+-   **Nominal**: identity only; categories are labels.
+-   **Ordinal**: order but not equal intervals.
+-   **Interval**: equal differences meaningful; arbitrary origin (e.g., °C).
+-   **Ratio**: equal differences and meaningful ratios; absolute zero (e.g., length, mass).
+-   **Absolute**: counts with identity transform only.
+
+### Units as strong typing
+
+-   SI base units and derived units; conversions; rates composed of unit classes (e.g., L·km⁻¹ vs km·L⁻¹).
+-   **Dimensionless** classes: categories, ranks, probabilities, correlations.
+
+### Scales as roles
+
+-   The same variable can serve different **roles**: e.g., quantile plots use value on x (interval) and rank on y (ordinal-as-interval for shape analysis).
+
+## Transformations: variable vs scale vs coordinate
+
+-   **Variable transformation**: transform the **data** before any stat (e.g., `log(x)`).
+-   **Scale transformation**: transform the **axis mapping** (e.g., `scale_x_log10()`; axis shows original units at log-spaced ticks).
+-   **Coordinate transformation**: transform the **geometry** post-stat (e.g., `coord_polar()`), changes appearance not the statistic.
+
+**Rule of thumb:** - If a statistical method assumes a distribution, consider **variable/scale** transforms *before* the stat. - If you only need a different **view** (e.g., polar), use **coordinate** transforms *after* the stat.
+
+------------------------------------------------------------------------
+
+# Part II — Linear, Categorical, and Time Scales
+
+## Categorical scales
+
+-   Ordered vs unordered categories; explicit ordering for clarity; spacing and label placement.
+-   In ggplot2: `scale_x_discrete(limits=..., labels=...)`.
+
+### Example (R)
+
+```{r}
+library(ggplot2)
+month_levels <- month.abb
+set.seed(1)
+df <- data.frame(month=factor(sample(month_levels, 200, TRUE), levels=month_levels),
+                 value=rnorm(200, 10, 3))
+
+ggplot(df, aes(month, value)) +
+  geom_boxplot() +
+  labs(x="Month (categorical)", y="Value")
+```
+
+## Linear scales and “nice numbers”
+
+-   Choosing min/max, tick count, and intervals; “nice” sequences; avoiding over/under crowding; always consider whether zero must be included.
+
+### Example (R)
+
+```{r}
+# Emphasise non-zero baseline where ratio comparisons are *not* intended
+p <- ggplot(mtcars, aes(wt, mpg)) +
+  geom_point() +
+  scale_x_continuous(expand = c(0.02, 0), breaks = seq(1,6,1)) +
+  scale_y_continuous(limits = c(10, 35), breaks = seq(10, 35, 5)) +
+  coord_cartesian(clip = "off") +
+  labs(x="Weight (1000 lbs)", y="MPG")
+
+p
+```
+
+## Time scales
+
+-   Calendar irregularities (months, leap years) and uneven spacing of ticks; parsing and formatting.
+
+### Example (R)
+
+```{r}
+library(lubridate)
+set.seed(42)
+d <- seq.Date(as.Date("2024-01-01"), as.Date("2024-06-30"), by="day")
+df <- data.frame(date=d, y = cumsum(rnorm(length(d))))
+```
+
+``` r
+ggplot(df, aes(date, y)) +
+  geom_line() +
+  scale_x_datetime(NULL) # intentionally wrong to provoke discussion
+```
+
+> **Teaching moment:** Why does the last line error? Fix with `scale_x_date(date_labels = "%b %d", date_breaks = "1 month")`.
+
+------------------------------------------------------------------------
+
+# Part III — One-bend Scales (Log & Power)
+
+## Logarithmic scales
+
+-   When to use: multiplicative processes, positive skew, ratios/doublings; interpret slopes as **elasticities**.
+-   Avoid log(0) and negative values; offset strategies.
+-   Base choice (2, e, 10) affects labels, not geometry.
+
+### Example (R)
+
+```{r}
+# Population change – compare raw vs log y
+set.seed(3)
+df <- data.frame(x = 1:100, y = rlnorm(100, 0, 1))
+
+p1 <- ggplot(df, aes(x, y)) + geom_point() + labs(y="Value (raw)")
+p2 <- ggplot(df, aes(x, y)) + geom_point() + scale_y_log10() +
+  annotation_logticks(sides = "l") + labs(y="Value (log10 scale)")
+
+p1; p2
+```
+
+## Power (Box–Cox family) and variance stabilisation
+
+-   Sqrt for counts; reciprocal for rates; Tukey/Box–Cox continuum.
+-   Visual cue: tick movement vs value transformation.
+
+### Example (R)
+
+```{r}
+# Overdispersed counts
+set.seed(7)
+counts <- rpois(200, lambda = 10)
+df <- data.frame(x = 1:200, y = counts)
+
+ggplot(df, aes(x, y)) +
+  geom_point(alpha=.6) +
+  scale_y_sqrt() +
+  labs(y="Counts (sqrt scale)")
+```
+
+------------------------------------------------------------------------
+
+# Part IV — Two-bend & Probability Scales
+
+## Proportions: arcsine vs logit/probit
+
+-   Proportions constrained in \[0,1\]; variance depends on mean.
+-   **Arcsine√** stabilisation for binomial p with fixed n; logit/probit for modelling on probability frame.
+
+### Example (R)
+
+```{r}
+set.seed(11)
+n <- 50
+p <- c(.1,.5,.9)
+S <- lapply(p, function(pp) rbinom(1000, n, pp)/n)
+df <- data.frame(p = factor(rep(p, each=1000)), val = unlist(S))
+
+# Raw vs transformed
+library(dplyr)
+trans <- function(x) asin(sqrt(x))
+
+p_raw <- ggplot(df, aes(p, val)) + geom_violin() + labs(y="Proportion (raw)")
+p_asn <- ggplot(df, aes(p, trans(val))) + geom_violin() + labs(y="asin(sqrt(p))")
+
+p_raw; p_asn
+```
+
+## Probability scales & Q–Q style visuals
+
+-   Inverse CDF as scale: normal, gamma, etc.; straight-line diagnostics.
+
+### Example (R)
+
+```{r}
+set.seed(13)
+y <- rgamma(300, shape = 3)
+qplot(sample = y) + stat_qq_line() + labs(title="Normal Q-Q (for comparison)")
+```
+
+> Extension: Implement a custom gamma probability scale by transforming y and plotting empirical fractiles against theoretical gamma quantiles.
+
+------------------------------------------------------------------------
+
+# Part V — Putting It Together
+
+## Choosing scales by semantic intent
+
+-   When must bars start at zero? Only when **ratio comparisons** are intended.
+-   When is non-zero baseline defensible? For **interval** comparisons, trend emphasis, or when zero is irrelevant.
+-   Layered encodings: mixing scales for different aesthetics (e.g., log y for points, linear y for ribbon range — avoid misleading dual axes).
+
+## Case studies
+
+### Inequality & skew
+
+-   Visualise income by log scale vs raw; discuss perception of inequality.
+
+### Ecology: body size vs metabolism
+
+-   Allometry with log–log scaling; slope \~ scaling exponent.
+
+### Time-on-task dashboards
+
+-   Irregular time units; week and month facets; seasonal cycles.
+
+**Mini-rubric for critique:** scale appropriateness; tick/label clarity; transformation justification; reproducibility.
+
+------------------------------------------------------------------------
+
+# Part VI — Design Patterns & Anti-patterns
+
+-   **Patterns:**
+    -   Use scale transforms to match model assumptions.
+    -   Show tick logic (log ticks, probability ticks) to aid decoding.
+    -   Make semantics explicit in axis titles (e.g., “log₁₀(Value)”).
+-   **Anti-patterns:**
+    -   Logging data with zeros/negatives without clear strategy.
+    -   Dual y-axes with unrelated scales.
+    -   Ratio claims on interval scales.
+
+------------------------------------------------------------------------
+
+## \# Part VII — Labs
+
+All labs below are **self-contained** and use only datasets available in base R or the `ggplot2` package (which ships with its own datasets). No internet access or external files are required.
+
+## Lab 1: Log and Power Scales in Practice
+
+**Aim:** Compare the effect of logarithmic and power (variance-stabilising) scales on skewed and count data.
+
+**Datasets:** `ggplot2::diamonds` (skewed prices), `InsectSprays` (counts).
+
+### Task A — Log scale with skewed continuous data
+
+```{r}
+library(ggplot2)
+# Examine price vs carat on raw and log scales
+p_raw <- ggplot(diamonds, aes(carat, price)) +
+  geom_point(alpha = 0.15) +
+  labs(title = "Diamonds: raw scale", x = "Carat", y = "Price (USD)")
+
+p_log <- ggplot(diamonds, aes(carat, price)) +
+  geom_point(alpha = 0.15) +
+  scale_y_log10() +
+  annotation_logticks(sides = "l") +
+  labs(title = "Diamonds: log10 y-scale", x = "Carat", y = "log10 Price")
+
+p_raw; p_log
+```
+
+**Questions:** How does the visible spread change across carat on raw vs log scales?
+
+### Task B — Power/sqrt scale with overdispersed counts
+
+```{r}
+# InsectSprays: count responses across treatments (overdispersed)
+library(dplyr)
+
+p_counts <- ggplot(InsectSprays, aes(spray, count)) +
+  geom_jitter(width = 0.1, alpha = 0.5) +
+  stat_summary(fun = median, geom = "point", size = 3, colour = "black") +
+  labs(title = "Counts (raw)", x = "Spray", y = "Count")
+
+p_sqrt <- ggplot(InsectSprays, aes(spray, count)) +
+  geom_jitter(width = 0.1, alpha = 0.5) +
+  stat_summary(fun = median, geom = "point", size = 3, colour = "black") +
+  scale_y_sqrt() +
+  labs(title = "Counts (sqrt scale)", x = "Spray", y = "sqrt(Count)")
+
+p_counts; p_sqrt
+```
+
+**Deliverable:** Explain **why** sqrt/log scales improved interpretability (or not), and whether medians/intervals are easier to compare.
+
+------------------------------------------------------------------------
+
+## Lab 2: Proportions — arcsine vs logit
+
+**Aim:** Explore transformations for proportions bounded in \[0,1\].
+
+**Dataset:** `Titanic` (built-in contingency table).
+
+### Prepare data
+
+```{r}
+# Convert to data frame and compute group-wise proportions of survival
+TT <- as.data.frame(Titanic)
+TT <- tidyr::pivot_wider(TT, names_from = Survived, values_from = Freq)
+TT <- dplyr::mutate(TT, total = No + Yes, prop = Yes/total)
+head(TT)
+```
+
+### Visualise raw vs transformed
+
+```{r}
+library(ggplot2)
+trans_asin <- function(p) asin(sqrt(p))
+trans_logit <- function(p) qlogis(p)
+
+p1 <- ggplot(TT, aes(Class, prop, fill = Sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "Proportion survived (raw)", y = "Proportion")
+
+p2 <- ggplot(TT, aes(Class, trans_asin(prop), fill = Sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "asin(sqrt(p))", y = "asin(sqrt(p))")
+
+# Clip away 0/1 exactly to avoid +/-Inf on logit
+TT_eps <- dplyr::mutate(TT, prop = pmin(pmax(prop, 1e-6), 1-1e-6))
+
+p3 <- ggplot(TT_eps, aes(Class, trans_logit(prop), fill = Sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "logit(p)", y = "logit(p)")
+
+p1; p2; p3
+```
+
+**Questions to answer:**
+
+1.  Which transform yields more homogeneous variance across classes/sex?
+2.  Which is easier to explain to a non-technical audience? Justify.
+
+------------------------------------------------------------------------
+
+## Lab 3: Time scales & calendar irregularities
+
+**Aim:** Handle dates and monthly time series while choosing legible breaks and labels.
+
+**Dataset:** `AirPassengers` (monthly airline passengers, 1949–1960).
+
+### Convert to a data frame with explicit Date
+
+```{r}
+library(ggplot2)
+library(dplyr)
+AP <- AirPassengers
+# Build a Date vector from time series index
+start_year <- floor(time(AP))[1]
+start_month <- cycle(AP)[1]
+idx <- seq(as.Date(sprintf("%d-%02d-01", start_year, start_month)), by = "1 month", length.out = length(AP))
+AP_df <- data.frame(date = idx, passengers = as.numeric(AP))
+head(AP_df)
+```
+
+### Plot with readable monthly/annual ticks
+
+```{r}
+# Monthly series: show yearly breaks and abbreviated month labels in tooltips
+p_time <- ggplot(AP_df, aes(date, passengers)) +
+  geom_line() +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(title = "AirPassengers (1949–1960)", x = "Year", y = "Passengers (thousands)")
+
+p_time
+```
+
+### Compare linear vs log scale when growth is multiplicative
+
+```{r}
+p_lin <- ggplot(AP_df, aes(date, passengers)) +
+  geom_line() +
+  labs(title = "Linear y-scale", x = "Year", y = "Passengers")
+
+p_log <- ggplot(AP_df, aes(date, passengers)) +
+  geom_line() +
+  scale_y_log10() + annotation_logticks(sides = "l") +
+  labs(title = "Log y-scale (multiplicative growth)", x = "Year", y = "log10 Passengers")
+
+p_lin; p_log
+```
+
+**Questions to answer:**
+
+1.  Does the log scale linearise the trend? What does that imply about growth rate?
+2.  Propose an appropriate **date_breaks**/**date_labels** set for quarterly reports.

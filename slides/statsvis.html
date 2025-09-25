@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="K.J. Mhango">
+<meta name="dcterms.date" content="2025-09-06">
+
+<title>Statistics for Graphics — Deep‑Dive Study Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="statsvis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="statsvis_files/libs/quarto-html/quarto.js"></script>
+<script src="statsvis_files/libs/quarto-html/popper.min.js"></script>
+<script src="statsvis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="statsvis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="statsvis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="statsvis_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="statsvis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="statsvis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="statsvis_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<style>html{ scroll-behavior: smooth; }</style>
+<link href="statsvis_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+
+<script src="statsvis_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#welcome-to-your-study-companion" id="toc-welcome-to-your-study-companion" class="nav-link active" data-scroll-target="#welcome-to-your-study-companion"><span class="header-section-number">1</span> Welcome to your Study Companion</a></li>
+  <li><a href="#what-this-chapter-is-really-about" id="toc-what-this-chapter-is-really-about" class="nav-link" data-scroll-target="#what-this-chapter-is-really-about"><span class="header-section-number">2</span> 1 🧠 What This Chapter Is Really About</a>
+  <ul class="collapse">
+  <li><a href="#why-not-just-use-the-defaults" id="toc-why-not-just-use-the-defaults" class="nav-link" data-scroll-target="#why-not-just-use-the-defaults"><span class="header-section-number">2.1</span> 1.1 ✋ Why Not Just Use the Defaults?</a></li>
+  </ul></li>
+  <li><a href="#the-five-engine-types-methods" id="toc-the-five-engine-types-methods" class="nav-link" data-scroll-target="#the-five-engine-types-methods"><span class="header-section-number">3</span> 2 🗺️ The Five Engine Types (Methods)</a></li>
+  <li><a href="#how-to-read-this-guide" id="toc-how-to-read-this-guide" class="nav-link" data-scroll-target="#how-to-read-this-guide"><span class="header-section-number">4</span> 3 🔍 How to Read This Guide</a></li>
+  <li><a href="#group-summaries-summary-point-or-interval" id="toc-group-summaries-summary-point-or-interval" class="nav-link" data-scroll-target="#group-summaries-summary-point-or-interval"><span class="header-section-number">5</span> 4 📊 Group Summaries (Summary → Point or Interval)</a>
+  <ul class="collapse">
+  <li><a href="#means-medians-and-why-both-matter" id="toc-means-medians-and-why-both-matter" class="nav-link" data-scroll-target="#means-medians-and-why-both-matter"><span class="header-section-number">5.1</span> 4.1 🎯 Means, medians, and why both matter</a></li>
+  <li><a href="#error-bars-mean-se-vs-sd-dont-confuse-them" id="toc-error-bars-mean-se-vs-sd-dont-confuse-them" class="nav-link" data-scroll-target="#error-bars-mean-se-vs-sd-dont-confuse-them"><span class="header-section-number">5.2</span> 4.2 📏 Error bars: mean ± SE vs SD (don’t confuse them)</a></li>
+  <li><a href="#bars-versus-dots-for-summaries" id="toc-bars-versus-dots-for-summaries" class="nav-link" data-scroll-target="#bars-versus-dots-for-summaries"><span class="header-section-number">5.3</span> 4.3 🔵 Bars versus dots for summaries</a></li>
+  <li><a href="#proportions-with-explicit-denominators" id="toc-proportions-with-explicit-denominators" class="nav-link" data-scroll-target="#proportions-with-explicit-denominators"><span class="header-section-number">5.4</span> 4.4 🧮 Proportions with explicit denominators</a></li>
+  </ul></li>
+  <li><a href="#regions-region-ribbonareainterval" id="toc-regions-region-ribbonareainterval" class="nav-link" data-scroll-target="#regions-region-ribbonareainterval"><span class="header-section-number">6</span> 5 🌊 Regions (Region → Ribbon/Area/Interval)</a>
+  <ul class="collapse">
+  <li><a href="#mean-sd-or-se-bands-across-a-cycle" id="toc-mean-sd-or-se-bands-across-a-cycle" class="nav-link" data-scroll-target="#mean-sd-or-se-bands-across-a-cycle"><span class="header-section-number">6.1</span> 5.1 Mean ± SD (or SE) bands across a cycle</a></li>
+  <li><a href="#confidence-region-for-a-smoother" id="toc-confidence-region-for-a-smoother" class="nav-link" data-scroll-target="#confidence-region-for-a-smoother"><span class="header-section-number">6.2</span> 5.2 Confidence region for a smoother</a></li>
+  </ul></li>
+  <li><a href="#onedimensional-distributions-bin-density" id="toc-onedimensional-distributions-bin-density" class="nav-link" data-scroll-target="#onedimensional-distributions-bin-density"><span class="header-section-number">7</span> 6 📦 One‑Dimensional Distributions (Bin &amp; Density)</a>
+  <ul class="collapse">
+  <li><a href="#principled-bin-width-freedmandiaconis-vs-scott" id="toc-principled-bin-width-freedmandiaconis-vs-scott" class="nav-link" data-scroll-target="#principled-bin-width-freedmandiaconis-vs-scott"><span class="header-section-number">7.1</span> 6.1 Principled bin width: Freedman–Diaconis vs Scott</a></li>
+  <li><a href="#kernel-density-over-histogram-whats-a-kernel" id="toc-kernel-density-over-histogram-whats-a-kernel" class="nav-link" data-scroll-target="#kernel-density-over-histogram-whats-a-kernel"><span class="header-section-number">7.2</span> 6.2 Kernel density over histogram — what’s a <em>kernel</em>?</a></li>
+  <li><a href="#dot-plot-and-strip-chart" id="toc-dot-plot-and-strip-chart" class="nav-link" data-scroll-target="#dot-plot-and-strip-chart"><span class="header-section-number">7.3</span> 6.3 Dot plot and strip chart</a></li>
+  </ul></li>
+  <li><a href="#twodimensional-distributions-bin2d-density2d" id="toc-twodimensional-distributions-bin2d-density2d" class="nav-link" data-scroll-target="#twodimensional-distributions-bin2d-density2d"><span class="header-section-number">8</span> 7 🧭 Two‑Dimensional Distributions (bin2d &amp; density2d)</a>
+  <ul class="collapse">
+  <li><a href="#rectangular-2d-binning-heatmap-of-counts" id="toc-rectangular-2d-binning-heatmap-of-counts" class="nav-link" data-scroll-target="#rectangular-2d-binning-heatmap-of-counts"><span class="header-section-number">8.1</span> 7.1 Rectangular 2D binning (heatmap of counts)</a></li>
+  <li><a href="#bivariate-kernel-density-contours" id="toc-bivariate-kernel-density-contours" class="nav-link" data-scroll-target="#bivariate-kernel-density-contours"><span class="header-section-number">8.2</span> 7.2 Bivariate kernel density (contours)</a></li>
+  <li><a href="#rasterised-density-from-masskde2d" id="toc-rasterised-density-from-masskde2d" class="nav-link" data-scroll-target="#rasterised-density-from-masskde2d"><span class="header-section-number">8.3</span> 7.3 Rasterised density from <code>MASS::kde2d</code></a></li>
+  </ul></li>
+  <li><a href="#smoothers-smooth-lineribbon" id="toc-smoothers-smooth-lineribbon" class="nav-link" data-scroll-target="#smoothers-smooth-lineribbon"><span class="header-section-number">9</span> 8 🧩 Smoothers (Smooth → Line/Ribbon)</a>
+  <ul class="collapse">
+  <li><a href="#linear-model-vs-polynomial-and-why-polynomials-can-misbehave" id="toc-linear-model-vs-polynomial-and-why-polynomials-can-misbehave" class="nav-link" data-scroll-target="#linear-model-vs-polynomial-and-why-polynomials-can-misbehave"><span class="header-section-number">9.1</span> 8.1 Linear model vs polynomial — and why polynomials can misbehave</a></li>
+  <li><a href="#loess-what-it-is-and-how-span-works" id="toc-loess-what-it-is-and-how-span-works" class="nav-link" data-scroll-target="#loess-what-it-is-and-how-span-works"><span class="header-section-number">9.2</span> 8.2 LOESS — what it is and how span works</a></li>
+  <li><a href="#manual-ci-ribbon-via-predict" id="toc-manual-ci-ribbon-via-predict" class="nav-link" data-scroll-target="#manual-ci-ribbon-via-predict"><span class="header-section-number">9.3</span> 8.3 Manual CI ribbon via <code>predict()</code></a></li>
+  </ul></li>
+  <li><a href="#polygons-tilings-binsummary-tile" id="toc-polygons-tilings-binsummary-tile" class="nav-link" data-scroll-target="#polygons-tilings-binsummary-tile"><span class="header-section-number">10</span> 9 🧱 Polygons &amp; Tilings (Bin/Summary → Tile)</a>
+  <ul class="collapse">
+  <li><a href="#matrix-heatmap-volcano" id="toc-matrix-heatmap-volcano" class="nav-link" data-scroll-target="#matrix-heatmap-volcano"><span class="header-section-number">10.1</span> 9.1 Matrix heatmap (<code>volcano</code>)</a></li>
+  <li><a href="#correlation-heatmap" id="toc-correlation-heatmap" class="nav-link" data-scroll-target="#correlation-heatmap"><span class="header-section-number">10.2</span> 9.2 Correlation heatmap</a></li>
+  </ul></li>
+  <li><a href="#paths-link.joinsequence-linepath" id="toc-paths-link.joinsequence-linepath" class="nav-link" data-scroll-target="#paths-link.joinsequence-linepath"><span class="header-section-number">11</span> 10 🔗 Paths (Link.Join/Sequence → Line/Path)</a>
+  <ul class="collapse">
+  <li><a href="#paired-measurements-slopegraph" id="toc-paired-measurements-slopegraph" class="nav-link" data-scroll-target="#paired-measurements-slopegraph"><span class="header-section-number">11.1</span> 10.1 Paired measurements (slopegraph)</a></li>
+  <li><a href="#time-series-line" id="toc-time-series-line" class="nav-link" data-scroll-target="#time-series-line"><span class="header-section-number">11.2</span> 10.2 Time series line</a></li>
+  </ul></li>
+  <li><a href="#edges-boundaries-link-hullgraphtriangulation" id="toc-edges-boundaries-link-hullgraphtriangulation" class="nav-link" data-scroll-target="#edges-boundaries-link-hullgraphtriangulation"><span class="header-section-number">12</span> 11 🕸️ Edges &amp; Boundaries (Link → Hull/Graph/Triangulation)</a>
+  <ul class="collapse">
+  <li><a href="#convex-hull-base-chull" id="toc-convex-hull-base-chull" class="nav-link" data-scroll-target="#convex-hull-base-chull"><span class="header-section-number">12.1</span> 11.1 Convex hull (base <code>chull</code>)</a></li>
+  <li><a href="#delaunay-voronoi-optional" id="toc-delaunay-voronoi-optional" class="nav-link" data-scroll-target="#delaunay-voronoi-optional"><span class="header-section-number">12.2</span> 11.2 Delaunay &amp; Voronoi (optional)</a></li>
+  <li><a href="#minimum-spanning-tree-optional" id="toc-minimum-spanning-tree-optional" class="nav-link" data-scroll-target="#minimum-spanning-tree-optional"><span class="header-section-number">12.3</span> 11.3 Minimum Spanning Tree (optional)</a></li>
+  </ul></li>
+  <li><a href="#conditional-vs-joint-choosing-the-right-lens" id="toc-conditional-vs-joint-choosing-the-right-lens" class="nav-link" data-scroll-target="#conditional-vs-joint-choosing-the-right-lens"><span class="header-section-number">13</span> 12 🎯 Conditional vs Joint — choosing the right lens</a></li>
+  <li><a href="#aesthetics-encodings-how-method-choices-change-the-marks" id="toc-aesthetics-encodings-how-method-choices-change-the-marks" class="nav-link" data-scroll-target="#aesthetics-encodings-how-method-choices-change-the-marks"><span class="header-section-number">14</span> 13 🎨 Aesthetics &amp; Encodings — how method choices change the marks</a></li>
+  <li><a href="#common-pitfalls-remedies" id="toc-common-pitfalls-remedies" class="nav-link" data-scroll-target="#common-pitfalls-remedies"><span class="header-section-number">15</span> 14 🧯 Common Pitfalls &amp; Remedies</a>
+  <ul class="collapse">
+  <li><a href="#overundersmoothing" id="toc-overundersmoothing" class="nav-link" data-scroll-target="#overundersmoothing"><span class="header-section-number">15.1</span> 14.1 Over/under‑smoothing</a></li>
+  <li><a href="#misleading-binning" id="toc-misleading-binning" class="nav-link" data-scroll-target="#misleading-binning"><span class="header-section-number">15.2</span> 14.2 Misleading binning</a></li>
+  <li><a href="#ribbon-without-points" id="toc-ribbon-without-points" class="nav-link" data-scroll-target="#ribbon-without-points"><span class="header-section-number">15.3</span> 14.3 Ribbon without points</a></li>
+  </ul></li>
+  <li><a href="#practice-blocks-guided" id="toc-practice-blocks-guided" class="nav-link" data-scroll-target="#practice-blocks-guided"><span class="header-section-number">16</span> 15 🧪 Practice Blocks (guided)</a></li>
+  <li><a href="#cheatsheet-method-geometry" id="toc-cheatsheet-method-geometry" class="nav-link" data-scroll-target="#cheatsheet-method-geometry"><span class="header-section-number">17</span> 16 📎 Cheat‑Sheet (method ↔︎ geometry)</a></li>
+  <li><a href="#appendix-base-r-equivalents-selected" id="toc-appendix-base-r-equivalents-selected" class="nav-link" data-scroll-target="#appendix-base-r-equivalents-selected"><span class="header-section-number">18</span> 17 🧰 Appendix — Base R equivalents (selected)</a></li>
+  <li><a href="#closing-advice" id="toc-closing-advice" class="nav-link" data-scroll-target="#closing-advice"><span class="header-section-number">19</span> Closing advice</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Statistics for Graphics — Deep‑Dive Study Notes</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>K.J. Mhango </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 6, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="welcome-to-your-study-companion" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Welcome to your Study Companion</h1>
+<p>This document is your detailed, plain‑English walkthrough of Chapter 7 — <strong>Statistics</strong> — from a design‑first, student‑friendly perspective. It covers every concept, method, and geometry, explains them step‑by‑step, and shows you how to reproduce each one in R using <strong>ggplot2</strong>. But this is more than a code walkthrough — it’s written to help you <strong>understand the logic behind the graphics</strong>, the assumptions being made, and how to critique or communicate what a visual is actually saying.</p>
+<p>Think of this as a bridge between theory and practice, but also between expert graphics language and your own growing intuition.</p>
+<blockquote class="blockquote">
+<p>📚 <strong>Goal:</strong> You should be able to look at any chart and say:</p>
+<ul>
+<li>What method/statistic underlies this graphic?</li>
+<li>What geometry and aesthetics were chosen to display it?</li>
+<li>Why was this method appropriate — and what are its limitations?</li>
+<li>Can I recreate it from raw data?</li>
+<li>Could I explain it to a smart but non‑technical friend?</li>
+</ul>
+</blockquote>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>({</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(dplyr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(tidyr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(MASS)   <span class="co"># for kde2d</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(scales)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper: Freedman–Diaconis binwidth</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>fd_binwidth <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  iqr <span class="ot">&lt;-</span> <span class="fu">IQR</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  n   <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">is.finite</span>(x))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (iqr <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> n <span class="sc">&lt;=</span> <span class="dv">1</span>) <span class="fu">return</span>(<span class="fu">diff</span>(<span class="fu">range</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2</span> <span class="sc">*</span> iqr <span class="sc">/</span> (n<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper: quick CI around a mean (normal approx)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>mean_se_df <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  m  <span class="ot">&lt;-</span> <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sd</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(<span class="fu">is.finite</span>(x)))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">y =</span> m, <span class="at">ymin =</span> m <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>se, <span class="at">ymax =</span> m <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>se)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="what-this-chapter-is-really-about" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> 1 🧠 What This Chapter Is Really About</h1>
+<p>Chapter 7 is titled <strong>“Statistics”</strong> but it’s not a stats textbook chapter. You won’t find derivations or proofs. Instead, this chapter teaches you to think about <strong>how graphics work underneath</strong>. Just like a car has an engine and a chassis, every chart you see has a statistical <strong>method</strong> (its engine) and a <strong>geometry</strong> (its visible shape).</p>
+<p><strong>For example:</strong></p>
+<ul>
+<li>A <strong>histogram</strong> uses the method <em>binning</em> and displays it with <strong>bars</strong>.</li>
+<li>A <strong>regression line</strong> is the result of a <em>smoothing</em> method (e.g., linear regression or LOESS), drawn with a <strong>line</strong>.</li>
+<li>A <strong>confidence interval</strong> is a <em>region</em> (e.g., mean ± SE), drawn with a <strong>ribbon</strong> or <strong>error bars</strong>.</li>
+</ul>
+<p>This chapter helps you see those hidden engines — and choose or change them when designing your own graphics.</p>
+<section id="why-not-just-use-the-defaults" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="why-not-just-use-the-defaults"><span class="header-section-number">2.1</span> 1.1 ✋ Why Not Just Use the Defaults?</h2>
+<p>The big mistake in data science is assuming that a chart is “just a visual” — a skin on the numbers. It’s not. The <strong>statistical method you choose changes the story</strong>. For example:</p>
+<ul>
+<li>Choosing <strong>5 bins</strong> vs <strong>50 bins</strong> for a histogram can hide or reveal structure.</li>
+<li>Fitting a smooth curve assumes there is something <strong>smooth</strong> to discover. Is there?</li>
+<li>Showing <strong>mean ± standard deviation</strong> assumes your audience understands the difference between <strong>spread</strong> and <strong>uncertainty</strong>. Do they?</li>
+</ul>
+<p>So this isn’t just about learning <code>geom_smooth()</code> or <code>geom_bar()</code>. It’s about learning to think like a <strong>graphic designer</strong> <em>and</em> a <strong>statistician</strong> — so you can build graphics that are fair, clear, and insightful.</p>
+</section>
+</section>
+<section id="the-five-engine-types-methods" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> 2 🗺️ The Five Engine Types (Methods)</h1>
+<p>Let’s begin by understanding the five classes of statistical methods that drive charts:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 45%">
+<col style="width: 21%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Class</th>
+<th>What it does</th>
+<th>Example chart</th>
+<th>Example method</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>bin</code></td>
+<td>Slices space into equal (or adaptive) parts</td>
+<td>Histograms</td>
+<td>Binning</td>
+</tr>
+<tr class="even">
+<td><code>summary</code></td>
+<td>Collapses data into a summary value</td>
+<td>Bar charts, dotplots</td>
+<td>Mean, median, mode</td>
+</tr>
+<tr class="odd">
+<td><code>region</code></td>
+<td>Shows spread or uncertainty areas</td>
+<td>CI bands</td>
+<td>SE, SD, 95% confidence</td>
+</tr>
+<tr class="even">
+<td><code>smooth</code></td>
+<td>Fits a line/surface to reveal a pattern</td>
+<td>Trend lines</td>
+<td>Linear model, LOESS</td>
+</tr>
+<tr class="odd">
+<td><code>link</code></td>
+<td>Connects points to show relationships</td>
+<td>Networks, MST, flows</td>
+<td>Delaunay, MST, Hull</td>
+</tr>
+</tbody>
+</table>
+<p>You’ll see these again and again. If a chart exists, it’s likely powered by one of these (or a combination).</p>
+<blockquote class="blockquote">
+<p><strong>Form vs function.</strong> A method transforms data; a geometry draws it. The same method can be drawn with different geometries (e.g., a CI as a ribbon or as error bars), and the same geometry can show different methods (a line can be a smoother, a boundary, or a path).</p>
+</blockquote>
+</section>
+<section id="how-to-read-this-guide" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> 3 🔍 How to Read This Guide</h1>
+<p>Each section follows the same rhythm:</p>
+<ul>
+<li><strong>Concept</strong> — What does this method do? Why use it?</li>
+<li><strong>Example</strong> — What real‑world data does it apply to?</li>
+<li><strong>Code</strong> — Clean, self‑contained <code>ggplot2</code> examples.</li>
+<li><strong>Explanation</strong> — What just happened? Why did it work?</li>
+<li><strong>Common Misuses</strong> — What goes wrong and how to spot it.</li>
+<li><strong>Design Considerations</strong> — How to make it readable, honest, and beautiful.</li>
+</ul>
+<p>In the final third we explore advanced <strong>link‑based</strong> visuals (convex hulls, MSTs) and the crucial distinction between <strong>conditional</strong> and <strong>joint</strong> modelling — a powerful way to think about <em>what varies with what</em>.</p>
+<p>We end with a <strong>cheat‑sheet</strong>, <strong>practice tasks</strong>, and a <strong>pitfalls</strong> section.</p>
+<hr>
+</section>
+<section id="group-summaries-summary-point-or-interval" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> 4 📊 Group Summaries (Summary → Point or Interval)</h1>
+<p><em>Group summaries collapse many observations into a single representative value per group, then draw those values (and sometimes their uncertainty) so comparisons are easy.</em></p>
+<section id="means-medians-and-why-both-matter" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="means-medians-and-why-both-matter"><span class="header-section-number">5.1</span> 4.1 🎯 Means, medians, and why both matter</h2>
+<p>Means and medians are two of the most widely used summary statistics, and understanding their differences — especially when distributions are skewed — is essential to reading and making graphics responsibly.</p>
+<ul>
+<li>The <strong>mean</strong> is the arithmetic average. It is sensitive to <strong>outliers and skew</strong> because it takes all values into account equally.</li>
+<li>The <strong>median</strong> is the middle value when all observations are sorted. It is <strong>resistant to extreme values</strong>, making it more stable when data is skewed or contains outliers.</li>
+</ul>
+<p><strong>Real‑world analogy — income:</strong> 9 people earn £20–30k; 1 person earns £1m. The <strong>mean</strong> rockets upward and represents almost no one; the <strong>median</strong> stays around £25k — a fairer picture of the typical individual.</p>
+<p><strong>Exams analogy:</strong> If most students score high but a few very low, the mean gets pulled down while the median remains near where most students are.</p>
+<p><strong>Graphic practice:</strong> When distributions are symmetric, mean and median will be close. When skewed, <strong>show both</strong>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sl_summ <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(Sepal.Length), <span class="at">median =</span> <span class="fu">median</span>(Sepal.Length), <span class="at">.groups=</span><span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>Species, <span class="at">names_to =</span> <span class="st">"stat"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sl_summ, <span class="fu">aes</span>(Species, value, <span class="at">colour =</span> stat)) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> .<span class="dv">3</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mean vs Median (Sepal.Length)"</span>, <span class="at">y =</span> <span class="st">"Value"</span>) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Reading the plot.</strong> If mean and median are far apart, suspect skew/outliers. If they align, distribution may be symmetric.</p>
+</section>
+<section id="error-bars-mean-se-vs-sd-dont-confuse-them" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="error-bars-mean-se-vs-sd-dont-confuse-them"><span class="header-section-number">5.2</span> 4.2 📏 Error bars: mean ± SE vs SD (don’t confuse them)</h2>
+<p>When you plot error bars, be clear about the uncertainty you’re communicating.</p>
+<ul>
+<li><strong>Standard deviation (SD)</strong>: <strong>spread of individual values</strong>.</li>
+<li><strong>Standard error (SE)</strong>: <strong>precision of the mean</strong>.</li>
+<li><strong>95% CI</strong>: roughly <code>mean ± 1.96 × SE</code>, a plausible range for the true mean.</li>
+</ul>
+<p><strong>Small synthetic example.</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>small_df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="at">each =</span> <span class="dv">5</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">value =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">2</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">12</span>, <span class="dv">2</span>), <span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="dv">15</span>, <span class="dv">2</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>summary_df <span class="ot">&lt;-</span> small_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(group) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">mean</span>(value), <span class="at">sd =</span> <span class="fu">sd</span>(value), <span class="at">se =</span> sd<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_lower =</span> mean <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>se, <span class="at">ci_upper =</span> mean <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>se,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>summary_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["group"],"name":[1],"type":["chr"],"align":["left"]},{"label":["mean"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["sd"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["se"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["ci_lower"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["ci_upper"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"A","2":"10.38714","3":"1.622044","4":"0.7254000","5":"8.965357","6":"11.80892"},{"1":"B","2":"11.91136","3":"2.326979","4":"1.0406567","5":"9.871675","6":"13.95105"},{"1":"C","2":"15.61580","3":"1.278926","4":"0.5719533","5":"14.494775","6":"16.73683"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(summary_df, <span class="fu">aes</span>(group, mean)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> ci_lower, <span class="at">ymax =</span> ci_upper), <span class="at">width =</span> .<span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mean with 95% Confidence Intervals"</span>, <span class="at">subtitle =</span> <span class="st">"CI = mean ± 1.96 × SE"</span>, <span class="at">y =</span> <span class="st">"Value"</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Iris example.</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sl_ci <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">mean</span>(Sepal.Length), <span class="at">se =</span> <span class="fu">sd</span>(Sepal.Length)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>()), <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">ymin =</span> mean <span class="sc">-</span> <span class="fl">1.96</span><span class="sc">*</span>se, <span class="at">ymax =</span> mean <span class="sc">+</span> <span class="fl">1.96</span><span class="sc">*</span>se)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sl_ci, <span class="fu">aes</span>(Species, mean)) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax), <span class="at">width =</span> .<span class="dv">08</span>) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mean Sepal Length with 95% CI"</span>, <span class="at">y =</span> <span class="st">"Sepal.Length (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Design tip.</strong> Label clearly: <em>points = mean; bars = 95% CI</em>. If showing SD for spread, say so and consider plotting raw data.</p>
+</blockquote>
+</section>
+<section id="bars-versus-dots-for-summaries" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="bars-versus-dots-for-summaries"><span class="header-section-number">5.3</span> 4.3 🔵 Bars versus dots for summaries</h2>
+<p>Bars imply filled area and can suggest (wrongly) that nothing exists below zero or between ticks. <strong>Dots with intervals</strong> are lighter and focus attention on estimates.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bars</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>p_bar <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(Sepal.Length), <span class="at">.groups=</span><span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Species, mean)) <span class="sc">+</span> <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"grey70"</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Bar chart of means (consider dots instead)"</span>, <span class="at">y =</span> <span class="st">"Mean Sepal.Length"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Dots + CI</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>p_dot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(sl_ci, <span class="fu">aes</span>(Species, mean)) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax), <span class="at">width =</span> .<span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Dot + 95% CI (clearer)"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>p_bar; p_dot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="proportions-with-explicit-denominators" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="proportions-with-explicit-denominators"><span class="header-section-number">5.4</span> 4.4 🧮 Proportions with explicit denominators</h2>
+<p>Counts matter. Always annotate denominators so <strong>60% of n=10</strong> isn’t compared naively to <strong>55% of n=1000</strong>.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>prop_df <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Wide =</span> Sepal.Width <span class="sc">&gt;</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">count</span>(Species, Wide) <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> n<span class="sc">/</span><span class="fu">sum</span>(n), <span class="at">n_total =</span> <span class="fu">sum</span>(n))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(prop_df, <span class="fu">aes</span>(Species, prop, <span class="at">fill =</span> Wide)) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="fu">position_stack</span>()) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"n="</span>, n_total)), <span class="at">y =</span> <span class="fl">1.02</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">percent_format</span>()) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Proportions with denominators annotated"</span>, <span class="at">y =</span> <span class="st">"Proportion"</span>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Pitfall.</strong> Stacked bars hide small segments; consider <strong>dodged bars</strong> or <strong>facets</strong> when subgroup comparison matters.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="regions-region-ribbonareainterval" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> 5 🌊 Regions (Region → Ribbon/Area/Interval)</h1>
+<p>Regions depict variability or uncertainty as <strong>areas</strong> (bands, ribbons) so readers see not just a line but the confidence in that line or a typical range.</p>
+<section id="mean-sd-or-se-bands-across-a-cycle" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="mean-sd-or-se-bands-across-a-cycle"><span class="header-section-number">6.1</span> 5.1 Mean ± SD (or SE) bands across a cycle</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">7</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ts <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">month =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="dv">6</span>), <span class="at">year =</span> <span class="fu">rep</span>(<span class="dv">2015</span><span class="sc">:</span><span class="dv">2020</span>, <span class="at">each =</span> <span class="dv">12</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="dv">100</span> <span class="sc">+</span> <span class="dv">10</span><span class="sc">*</span><span class="fu">sin</span>(<span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span>month<span class="sc">/</span><span class="dv">12</span>) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="dv">5</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>by_month <span class="ot">&lt;-</span> ts <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(value), <span class="at">sd =</span> <span class="fu">sd</span>(value), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ymin =</span> mean <span class="sc">-</span> sd, <span class="at">ymax =</span> mean <span class="sc">+</span> sd)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(by_month, <span class="fu">aes</span>(month, mean)) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> ymin, <span class="at">ymax =</span> ymax), <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Spread band: mean ± SD across years"</span>, <span class="at">x =</span> <span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">"Value"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Interpretation.</strong> The ribbon shows the <strong>spread of individual values</strong>. Replace SD with SE to show <strong>uncertainty in the mean</strong>.</p>
+</blockquote>
+</section>
+<section id="confidence-region-for-a-smoother" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="confidence-region-for-a-smoother"><span class="header-section-number">6.2</span> 5.2 Confidence region for a smoother</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(wt, mpg)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">7</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pp <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Loess with 95% confidence band"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Design.</strong> Bands should not obscure points; reduce alpha and/or draw points last.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="onedimensional-distributions-bin-density" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> 6 📦 One‑Dimensional Distributions (Bin &amp; Density)</h1>
+<p>Binning partitions the axis; counts per bin become bar heights. Kernel density smooths a continuous estimate of the distribution.</p>
+<section id="principled-bin-width-freedmandiaconis-vs-scott" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="principled-bin-width-freedmandiaconis-vs-scott"><span class="header-section-number">7.1</span> 6.1 Principled bin width: Freedman–Diaconis vs Scott</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> faithful<span class="sc">$</span>eruptions</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>bw_fd <span class="ot">&lt;-</span> <span class="fu">fd_binwidth</span>(x)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>bw_scott <span class="ot">&lt;-</span> <span class="fl">3.49</span> <span class="sc">*</span> <span class="fu">sd</span>(x) <span class="sc">/</span> <span class="fu">length</span>(x)<span class="sc">^</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(eruptions)) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> bw_fd, <span class="at">boundary =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Histogram (FD binwidth = "</span>, <span class="fu">round</span>(bw_fd, <span class="dv">2</span>), <span class="st">")"</span>), <span class="at">x =</span> <span class="st">"Eruption length (min)"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(eruptions)) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> bw_scott, <span class="at">boundary =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Histogram (Scott binwidth = "</span>, <span class="fu">round</span>(bw_scott, <span class="dv">2</span>), <span class="st">")"</span>)) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>p1; p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Reading.</strong> FD is robust to outliers (IQR); Scott leans on variance. Try both; report the choice.</p>
+</blockquote>
+</section>
+<section id="kernel-density-over-histogram-whats-a-kernel" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="kernel-density-over-histogram-whats-a-kernel"><span class="header-section-number">7.2</span> 6.2 Kernel density over histogram — what’s a <em>kernel</em>?</h2>
+<p>A <strong>kernel density estimate (KDE)</strong> is a smooth, continuous approximation of a distribution’s shape. A <em>kernel</em> is a small bump (often bell‑shaped) centred on each data point; summing the bumps yields a smooth curve. Bandwidth controls bump width: too small → jagged; too large → over‑smoothed.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>base_hist <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(eruptions)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), <span class="at">binwidth =</span> <span class="fu">fd_binwidth</span>(faithful<span class="sc">$</span>eruptions), <span class="at">fill =</span> <span class="st">"grey85"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">adjust =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram with kernel density overlay"</span>, <span class="at">subtitle =</span> <span class="st">"adjust = 1 (default bandwidth)"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>base_hist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bandwidth comparison</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(eruptions)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">adjust =</span> <span class="fl">0.5</span>, <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">fill =</span> <span class="st">"red"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">adjust =</span> <span class="dv">2</span>,   <span class="at">colour =</span> <span class="st">"blue"</span>, <span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Bandwidth effect on KDE"</span>, <span class="at">subtitle =</span> <span class="st">"Red = under‑smoothed (0.5); Blue = over‑smoothed (2)"</span>, <span class="at">x =</span> <span class="st">"Eruption length (min)"</span>, <span class="at">y =</span> <span class="st">"Density"</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Design advice.</strong> Label bandwidth; use KDE to <em>supplement</em> histograms; with small n, prefer dot/strip plots.</p>
+</blockquote>
+</section>
+<section id="dot-plot-and-strip-chart" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="dot-plot-and-strip-chart"><span class="header-section-number">7.3</span> 6.3 Dot plot and strip chart</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Length)) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pp <span class="sc">+</span> <span class="fu">geom_dotplot</span>(<span class="at">binwidth =</span> <span class="fu">fd_binwidth</span>(iris<span class="sc">$</span>Sepal.Length), <span class="at">method =</span> <span class="st">"histodot"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Dot plot (histodot)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pp <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="dv">0</span>), <span class="at">width =</span> <span class="dv">0</span>, <span class="at">height =</span> .<span class="dv">05</span>, <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Strip chart with jitter"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>When to use.</strong> Dot/strip plots preserve individual observations; use for small n or to reveal clumping.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="twodimensional-distributions-bin2d-density2d" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> 7 🧭 Two‑Dimensional Distributions (bin2d &amp; density2d)</h1>
+<p>When your scatterplot becomes an unreadable cloud of ink, it’s time to stop plotting every point and start thinking about density. Instead of rendering each dot, we can ask: <em>where is the data concentrated?</em> This is where <strong>density mapping</strong> becomes powerful.</p>
+<p>There are two main ways to do this: you can divide the space into small rectangles (or hexagons) and count how many points fall into each — this is <strong>2D binning</strong>. Or, you can imagine dropping a tiny bell-shaped curve (a kernel) on each point, then summing the curves to create a continuous <strong>kernel density surface</strong>. Both methods let us visualise dense clusters and sparse regions without overloading the viewer.</p>
+<p>These density-based techniques translate chaos into clarity, turning millions of points into a smooth landscape of value — a heatmap of “where the data live.” But they’re only effective if we make wise design choices: using perceptually uniform colour scales, choosing appropriate bin widths or bandwidths, and ensuring that dense hotspots don’t drown out subtler gradients.</p>
+<section id="rectangular-2d-binning-heatmap-of-counts" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="rectangular-2d-binning-heatmap-of-counts"><span class="header-section-number">8.1</span> 7.1 Rectangular 2D binning (heatmap of counts)</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> diamonds <span class="sc">%&gt;%</span> <span class="fu">sample_n</span>(<span class="dv">6000</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(D, <span class="fu">aes</span>(carat, price)) <span class="sc">+</span> <span class="fu">stat_bin2d</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"C"</span>, <span class="at">direction =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"2D rectangular binning"</span>, <span class="at">x =</span> <span class="st">"Carat"</span>, <span class="at">y =</span> <span class="st">"Price"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Design.</strong> Avoid heavy gridlines; use perceptually uniform palettes.</p>
+</blockquote>
+</section>
+<section id="bivariate-kernel-density-contours" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="bivariate-kernel-density-contours"><span class="header-section-number">8.2</span> 7.2 Bivariate kernel density (contours)</h2>
+<p>Before diving into the plot, let’s clarify the key idea: what is a <strong>kernel</strong>?</p>
+<p>A kernel is a <strong>mathematical bump</strong>, usually shaped like a bell curve (Gaussian), that sits on top of each data point. Think of each point in your dataset dropping a smooth little hill at its location. What the kernel “encompasses” is nearby space — not just the point itself, but a neighbourhood around it. The height of the bump reflects how close a location is to the centre: highest at the point, then tapering off smoothly in all directions.</p>
+<p>Once you’ve dropped a bump on every point, the <strong>overall density</strong> is just the sum of all these overlapping hills. Where points cluster, the hills pile up and you get peaks; where data is sparse, the terrain flattens out. This composite surface is the <strong>kernel density estimate (KDE)</strong> — a smooth approximation of the true underlying distribution.</p>
+<p>In 2D, we often visualise the KDE using <strong>contour lines</strong>, like elevation rings on a topographic map. Each closed loop marks a region of equal density, helping us see where data is most concentrated.</p>
+<p>Here’s how it looks:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(D, <span class="fu">aes</span>(carat, price)) <span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_2d</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">colour =</span> <span class="fu">after_stat</span>(level)),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins =</span> <span class="dv">10</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"contour"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">15</span>, <span class="at">size =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Bivariate kernel density (contours)"</span>) <span class="sc">+</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Interpretation.</strong> Closed loops are density ridges. Compare them with the raw scatter to avoid misreading the structure. If the raw points are sparse but the contours suggest clear shapes, ask whether the smoothing bandwidth was too generous.</p>
+</blockquote>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(D, <span class="fu">aes</span>(carat, price)) <span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_density_2d</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">colour =</span> <span class="fu">after_stat</span>(level)), </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins =</span> <span class="dv">10</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">geom =</span> <span class="st">"contour"</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">15</span>, <span class="at">size =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Bivariate kernel density (contours)"</span>) <span class="sc">+</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Interpretation.</strong> Closed loops are density ridges; compare with raw points to avoid “phantom structure”.</p>
+</blockquote>
+</section>
+<section id="rasterised-density-from-masskde2d" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="rasterised-density-from-masskde2d"><span class="header-section-number">8.3</span> 7.3 Rasterised density from <code>MASS::kde2d</code></h2>
+<p><code>kde2d()</code> produces a <strong>grid of density values</strong> across the 2D domain (here, <code>carat</code> × <code>price</code>). It’s ideal for visualising the overall <strong>density landscape</strong> — a kind of terrain map of where data points cluster — without needing to plot every individual point.</p>
+<p>The result is not a data frame but a matrix of values arranged over a regular grid. To visualise this in <code>ggplot2</code>, we first reshape the matrix into a tidy format, then display it using a <strong>raster plot</strong>.</p>
+<p>A <strong>raster</strong> is essentially a pixelated image — a grid of coloured cells where each cell (or tile) represents a value. You’ve seen raster graphics in many real-world contexts: satellite imagery, digital elevation maps, heatmaps, and even photos on your screen are raster-based. Each pixel holds a value (in this case, density), and we can colour it using a scale that reveals patterns, hotspots, or gradients.</p>
+<p>Raster plots are especially helpful when you’re working with very large datasets or high-resolution spatial estimates. They allow for efficient rendering and intuitive reading of continuous spatial data — much like viewing thermal scans or weather radar maps.</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">with</span>(D, MASS<span class="sc">::</span><span class="fu">kde2d</span>(carat, price, <span class="at">n =</span> <span class="dv">80</span>))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(xy<span class="sc">$</span>z); <span class="fu">colnames</span>(K) <span class="ot">&lt;-</span> xy<span class="sc">$</span>y; K<span class="sc">$</span>x <span class="ot">&lt;-</span> xy<span class="sc">$</span>x</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(K, <span class="sc">-</span>x, <span class="at">names_to =</span> <span class="st">"y"</span>, <span class="at">values_to =</span> <span class="st">"z"</span>); K<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(K<span class="sc">$</span>y)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(K, <span class="fu">aes</span>(x, y, <span class="at">fill =</span> z)) <span class="sc">+</span> <span class="fu">geom_raster</span>(<span class="at">interpolate =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Bivariate density (kde2d → raster)"</span>, <span class="at">x =</span> <span class="st">"Carat"</span>, <span class="at">y =</span> <span class="st">"Price"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Why raster?</strong> Works in crowded areas; great as a background field; combine with transparent points or contour overlays.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="smoothers-smooth-lineribbon" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> 8 🧩 Smoothers (Smooth → Line/Ribbon)</h1>
+<p>Smoothers are not just trend lines added for aesthetic flourish — they are statistical <strong>models</strong>, and like all models, they come with assumptions, trade-offs, and interpretative consequences. Their goal is to estimate a “typical” relationship between variables — for example, how one variable tends to change as another varies — without assuming that this relationship is perfectly linear or fixed in form.</p>
+<p>Think of a smoother as an attempt to trace the <strong>underlying shape of the data</strong>, revealing patterns that might otherwise be obscured by noise or outliers. But because they summarise and simplify, smoothers can sometimes <strong>mislead</strong> if their assumptions go unexamined — especially regarding the degree of curvature, sensitivity to outliers, or how far the line should extend beyond the observed data.</p>
+<p>Just like fitting a regression model, adding a smoother implies a belief that some stable relationship exists. If the data are too sparse, noisy, or non‑stationary, that belief might be unwarranted. So whenever you add a smoother, think carefully: what kind of pattern are you trying to reveal? And is your method of smoothing well suited to that goal?</p>
+<section id="linear-model-vs-polynomial-and-why-polynomials-can-misbehave" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="linear-model-vs-polynomial-and-why-polynomials-can-misbehave"><span class="header-section-number">9.1</span> 8.1 Linear model vs polynomial — and why polynomials can misbehave</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>base <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(wt, mpg)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">7</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> x, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"OLS linear fit with 95% CI"</span>, <span class="at">x =</span> <span class="st">"Weight (1000 lbs)"</span>, <span class="at">y =</span> <span class="st">"MPG"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">poly</span>(x, <span class="dv">2</span>), <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Quadratic fit (degree 2)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-18-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Polynomials can fit curvature <strong>inside</strong> the data yet behave erratically <strong>outside</strong> it (wild extrapolation).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit cubic model and extrapolate</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>cubic_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> <span class="fu">poly</span>(wt, <span class="dv">3</span>), <span class="at">data =</span> mtcars)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>extrapolate_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">wt =</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="at">length.out =</span> <span class="dv">200</span>))</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>extrapolate_df<span class="sc">$</span>mpg <span class="ot">&lt;-</span> <span class="fu">predict</span>(cubic_mod, <span class="at">newdata =</span> extrapolate_df)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">data =</span> extrapolate_df, <span class="fu">aes</span>(wt, mpg), <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cubic model extrapolation"</span>, <span class="at">subtitle =</span> <span class="st">"Red line = prediction outside data range"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Rule of thumb.</strong> Use low‑degree polynomials only within range; for generalisation, prefer splines or domain‑specific models.</p>
+</blockquote>
+</section>
+<section id="loess-what-it-is-and-how-span-works" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="loess-what-it-is-and-how-span-works"><span class="header-section-number">9.2</span> 8.2 LOESS — what it is and how span works</h2>
+<p><strong>LOESS</strong> (Locally Estimated Scatterplot Smoothing) fits many small regressions on neighbourhoods of x, then stitches predictions into a smooth curve. <code>span</code> controls neighbourhood size (small = flexible &amp; noisy; large = stable &amp; biased).</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">span =</span> <span class="fl">0.6</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"LOESS (span = 0.6)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">span =</span> <span class="fl">0.25</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"LOESS (span = 0.25): chasing noise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-20-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Guideline.</strong> Start around 0.6, adjust with domain sense or validation; LOESS does <strong>not</strong> extrapolate.</p>
+</blockquote>
+</section>
+<section id="manual-ci-ribbon-via-predict" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="manual-ci-ribbon-via-predict"><span class="header-section-number">9.3</span> 8.3 Manual CI ribbon via <code>predict()</code></h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> mtcars)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>newx <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">wt =</span> <span class="fu">seq</span>(<span class="fu">min</span>(mtcars<span class="sc">$</span>wt), <span class="fu">max</span>(mtcars<span class="sc">$</span>wt), <span class="at">length.out =</span> <span class="dv">100</span>))</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>pr <span class="ot">&lt;-</span> <span class="fu">predict</span>(lm_fit, <span class="at">newdata =</span> newx, <span class="at">interval =</span> <span class="st">"confidence"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>pr_df <span class="ot">&lt;-</span> <span class="fu">cbind</span>(newx, <span class="fu">as.data.frame</span>(pr))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(wt, mpg)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> pr_df, <span class="fu">aes</span>(<span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr, <span class="at">y =</span> <span class="cn">NULL</span>), <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> pr_df, <span class="fu">aes</span>(<span class="at">y =</span> fit)) <span class="sc">+</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Manual confidence band (lm + predict)"</span>, <span class="at">x =</span> <span class="st">"wt"</span>, <span class="at">y =</span> <span class="st">"mpg"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="polygons-tilings-binsummary-tile" class="level1" data-number="10">
+<h1 data-number="10"><span class="header-section-number">10</span> 9 🧱 Polygons &amp; Tilings (Bin/Summary → Tile)</h1>
+<p><em>Tiles are tiny, equally spaced cells that fill space like pixels. This is </em><strong><em>tiling</em></strong><em>. It shines with matrix‑shaped data (e.g., correlations), gridded fields (e.g., elevation), or binned spatial summaries. Dividing space into adjacent, non‑overlapping regions is </em><strong><em>tessellation</em></strong><em>; rectangular and hexagonal grids are common in graphics.</em></p>
+<section id="matrix-heatmap-volcano" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="matrix-heatmap-volcano"><span class="header-section-number">10.1</span> 9.1 Matrix heatmap (<code>volcano</code>)</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>vol <span class="ot">&lt;-</span> volcano</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>vol_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(vol); <span class="fu">colnames</span>(vol_df) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"y"</span>, <span class="fu">seq_len</span>(<span class="fu">ncol</span>(vol_df))); vol_df<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(vol_df))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>vol_long <span class="ot">&lt;-</span> vol_df <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>x, <span class="at">names_to =</span> <span class="st">"y"</span>, <span class="at">values_to =</span> <span class="st">"z"</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">as.numeric</span>(<span class="fu">sub</span>(<span class="st">"y"</span>, <span class="st">""</span>, y)))</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(vol_long, <span class="fu">aes</span>(x, y, <span class="at">fill =</span> z)) <span class="sc">+</span> <span class="fu">geom_raster</span>() <span class="sc">+</span> <span class="fu">scale_fill_viridis_c</span>() <span class="sc">+</span> <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Volcano elevation heatmap (geom_raster)"</span>, <span class="at">x =</span> <span class="st">"X"</span>, <span class="at">y =</span> <span class="st">"Y"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="correlation-heatmap" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="correlation-heatmap"><span class="header-section-number">10.2</span> 9.2 Correlation heatmap</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>num <span class="ot">&lt;-</span> iris <span class="sc">%&gt;%</span> <span class="fu">select_if</span>(is.numeric)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">cor</span>(num)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>C_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(C) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">var1 =</span> <span class="fu">rownames</span>(C)) <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>var1, <span class="at">names_to =</span> <span class="st">"var2"</span>, <span class="at">values_to =</span> <span class="st">"r"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(C_df, <span class="fu">aes</span>(var1, var2, <span class="at">fill =</span> r)) <span class="sc">+</span> <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="fu">muted</span>(<span class="st">"blue"</span>), <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="fu">muted</span>(<span class="st">"red"</span>), <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span> <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Correlation heatmap (iris)"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="paths-link.joinsequence-linepath" class="level1" data-number="11">
+<h1 data-number="11"><span class="header-section-number">11</span> 10 🔗 Paths (Link.Join/Sequence → Line/Path)</h1>
+<p>Paths are visual connectors that help tell a story of change, flow, or correspondence. They are particularly useful for linking <strong>related measurements</strong> across <strong>time points</strong>, <strong>conditions</strong>, or <strong>categories</strong>. Rather than just showing endpoints — such as a value before and after an intervention — a path adds the connecting line that visually narrates the transition.</p>
+<p>In the real world, this technique is used in:</p>
+<ul>
+<li><strong>Slopegraphs</strong> that show before/after scores for each participant in a study, helping you spot who improved, declined, or remained unchanged.</li>
+<li><strong>Time series plots</strong>, where unemployment, GDP, or stock prices unfold month by month.</li>
+<li><strong>Paired experiments</strong>, where the same subjects are measured under two conditions (e.g., heart rate before and after a drug).</li>
+<li><strong>Migration or flow diagrams</strong>, such as tracking how customers shift between products or services over time.</li>
+</ul>
+<p>What makes paths so effective is their ability to <strong>preserve identity across change</strong> — the line ensures we’re not just seeing isolated points, but a connected narrative that links those points meaningfully. In visual storytelling, that connection is often more powerful than the points themselves.</p>
+<section id="paired-measurements-slopegraph" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="paired-measurements-slopegraph"><span class="header-section-number">11.1</span> 10.1 Paired measurements (slopegraph)</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">id =</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>), <span class="at">before =</span> <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">60</span>, <span class="dv">8</span>), <span class="at">after =</span> before <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">3</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>id, <span class="at">names_to =</span> <span class="st">"time"</span>, <span class="at">values_to =</span> <span class="st">"score"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(time, score, <span class="at">group =</span> id)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">alpha =</span> .<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(<span class="at">group =</span> time), <span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Slopegraph: paired before/after per subject"</span>, <span class="at">x =</span> <span class="cn">NULL</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Reading.</strong> Mean shift (red) offers context; lines reveal heterogeneity (responders vs non‑responders).</p>
+</blockquote>
+</section>
+<section id="time-series-line" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="time-series-line"><span class="header-section-number">11.2</span> 10.2 Time series line</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>E <span class="ot">&lt;-</span> economics <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">one_of</span>(<span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"unemploy"</span>)))</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(E, <span class="fu">aes</span>(date, unemploy)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"US unemployment over time"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Thousands"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="edges-boundaries-link-hullgraphtriangulation" class="level1" data-number="12">
+<h1 data-number="12"><span class="header-section-number">12</span> 11 🕸️ Edges &amp; Boundaries (Link → Hull/Graph/Triangulation)</h1>
+<p>These <em>joint</em> methods construct relationships among points without privileging x or y. That means they explore how the data behave <strong>in space as a whole</strong>, rather than treating one variable as the predictor and the other as the response. Unlike a regression line, which answers ‘what does y do when x changes?’, joint methods are agnostic — they care about patterns, structure, and relationships <em>between</em> all points regardless of axis roles.</p>
+<p>For example, a <strong>convex hull</strong> draws the smallest boundary that encloses a cloud of points. It tells you about spatial extent and shape, not directionality. A <strong>minimum spanning tree</strong> connects all the points with the shortest total length, revealing natural paths or clusters. And a <strong>Voronoi tessellation</strong> shows influence zones — which region is closest to which point — useful in ecology, resource mapping, and spatial partitioning.</p>
+<p>These methods are especially powerful in <strong>multivariate exploration</strong>, <strong>spatial analysis</strong>, or when building <strong>networks</strong> — anywhere relationships and structure matter more than cause and effect.</p>
+<section id="convex-hull-base-chull" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="convex-hull-base-chull"><span class="header-section-number">12.1</span> 11.1 Convex hull (base <code>chull</code>)</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>pts <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">200</span>), <span class="at">ncol =</span> <span class="dv">2</span>)); <span class="fu">colnames</span>(pts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>H <span class="ot">&lt;-</span> <span class="fu">chull</span>(pts<span class="sc">$</span>x, pts<span class="sc">$</span>y); H <span class="ot">&lt;-</span> <span class="fu">c</span>(H, H[<span class="dv">1</span>])</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pts, <span class="fu">aes</span>(x, y)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="at">data =</span> pts[H, ], <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Convex hull (base chull)"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="delaunay-voronoi-optional" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="delaunay-voronoi-optional"><span class="header-section-number">12.2</span> 11.2 Delaunay &amp; Voronoi (optional)</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"deldir"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Package 'deldir' not installed; skipping Delaunay/Voronoi demo."</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(deldir)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">4</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">runif</span>(<span class="dv">60</span>), <span class="at">y =</span> <span class="fu">runif</span>(<span class="dv">60</span>))</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  dd <span class="ot">&lt;-</span> <span class="fu">deldir</span>(P<span class="sc">$</span>x, P<span class="sc">$</span>y)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  vt <span class="ot">&lt;-</span> <span class="fu">tile.list</span>(dd)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  vor <span class="ot">&lt;-</span> <span class="fu">lapply</span>(vt, <span class="cf">function</span>(t) <span class="fu">data.frame</span>(<span class="at">x =</span> t<span class="sc">$</span>x, <span class="at">y =</span> t<span class="sc">$</span>y, <span class="at">id =</span> t<span class="sc">$</span>ptNum))</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  vor <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(vor)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_polygon</span>(<span class="at">data =</span> vor, <span class="fu">aes</span>(x, y, <span class="at">group =</span> id), <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">data =</span> P, <span class="fu">aes</span>(x, y), <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Voronoi tessellation with seeds"</span>) <span class="sc">+</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_equal</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="minimum-spanning-tree-optional" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="minimum-spanning-tree-optional"><span class="header-section-number">12.3</span> 11.3 Minimum Spanning Tree (optional)</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"igraph"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"Package 'igraph' not installed; skipping MST demo."</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(igraph)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">5</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">rnorm</span>(<span class="dv">40</span>), <span class="at">y =</span> <span class="fu">rnorm</span>(<span class="dv">40</span>))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  D <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist</span>(P))</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  g <span class="ot">&lt;-</span> <span class="fu">graph_from_adjacency_matrix</span>(D, <span class="at">mode =</span> <span class="st">"undirected"</span>, <span class="at">weighted =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  mst <span class="ot">&lt;-</span> <span class="fu">mst</span>(g)</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  E <span class="ot">&lt;-</span> igraph<span class="sc">::</span><span class="fu">as_data_frame</span>(mst, <span class="at">what =</span> <span class="st">"edges"</span>)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  edges <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> P<span class="sc">$</span>x[E<span class="sc">$</span>from], <span class="at">y =</span> P<span class="sc">$</span>y[E<span class="sc">$</span>from], <span class="at">xend =</span> P<span class="sc">$</span>x[E<span class="sc">$</span>to], <span class="at">yend =</span> P<span class="sc">$</span>y[E<span class="sc">$</span>to])</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(P, <span class="fu">aes</span>(x, y)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="at">data =</span> edges, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend), <span class="at">colour =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_equal</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Minimum Spanning Tree over points"</span>)</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="conditional-vs-joint-choosing-the-right-lens" class="level1" data-number="13">
+<h1 data-number="13"><span class="header-section-number">13</span> 12 🎯 Conditional vs Joint — choosing the right lens</h1>
+<p>Understanding the difference between <strong>conditional</strong> and <strong>joint</strong> methods is crucial for choosing the right lens to explore your data.</p>
+<ul>
+<li><strong>Conditional:</strong> “Given x, what do we expect y to be?” (e.g., <code>mpg ~ wt</code>) — great for prediction/causal narratives; draw fitted curves with CI bands.</li>
+<li><strong>Joint:</strong> “What’s the structure of the cloud as a whole?” (e.g., density, MST, hull) — great for clustering, anomaly detection, spatial reasoning.</li>
+</ul>
+<p><strong>Metaphor — a hilly landscape.</strong> Conditional is slicing the terrain at a fixed x and reading elevations along that slice. Joint is flying above the terrain looking for ridges and basins.</p>
+<p><strong>Side‑by‑side demo.</strong></p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>base <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(wt, mpg)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">7</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Conditional: OLS linear model"</span>, <span class="at">x =</span> <span class="st">"Weight"</span>, <span class="at">y =</span> <span class="st">"MPG"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">scale</span>(<span class="fu">cbind</span>(mtcars<span class="sc">$</span>wt, mtcars<span class="sc">$</span>mpg)); pca <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(X)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>center <span class="ot">&lt;-</span> <span class="fu">attr</span>(X, <span class="st">"scaled:center"</span>); scalev <span class="ot">&lt;-</span> <span class="fu">attr</span>(X, <span class="st">"scaled:scale"</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>vec <span class="ot">&lt;-</span> pca<span class="sc">$</span>rotation[,<span class="dv">1</span>]; s <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">2.5</span>, <span class="fl">2.5</span>, <span class="at">length =</span> <span class="dv">100</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">sweep</span>(s <span class="sc">%*%</span> <span class="fu">t</span>(vec), <span class="dv">2</span>, center, <span class="st">"+"</span>); L <span class="ot">&lt;-</span> <span class="fu">sweep</span>(L, <span class="dv">2</span>, scalev, <span class="st">"*"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(L); <span class="fu">colnames</span>(L) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"wt"</span>, <span class="st">"mpg"</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="at">data =</span> L, <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Joint: PCA direction (red)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-29-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="aesthetics-encodings-how-method-choices-change-the-marks" class="level1" data-number="14">
+<h1 data-number="14"><span class="header-section-number">14</span> 13 🎨 Aesthetics &amp; Encodings — how method choices change the marks</h1>
+<ul>
+<li><strong>Bins</strong> → <em>area/length</em> encodes counts (bar height; tile fill). Report bin rule.</li>
+<li><strong>Summaries</strong> → <em>position</em> encodes statistic; intervals add <em>length</em>. Label CI vs SD.</li>
+<li><strong>Regions</strong> → <em>area/opacity</em> encodes uncertainty/spread; avoid hiding points.</li>
+<li><strong>Smooths</strong> → <em>position/curvature</em> encodes model; annotate method and parameters.</li>
+<li><strong>Links</strong> → <em>connectivity</em> encodes relationships (pairings, neighbourhood).</li>
+</ul>
+<hr>
+</section>
+<section id="common-pitfalls-remedies" class="level1" data-number="15">
+<h1 data-number="15"><span class="header-section-number">15</span> 14 🧯 Common Pitfalls &amp; Remedies</h1>
+<section id="overundersmoothing" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="overundersmoothing"><span class="header-section-number">15.1</span> 14.1 Over/under‑smoothing</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">span =</span> <span class="fl">0.2</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Under‑smoothed loess: chases noise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Fix.</strong> Increase span; validate with held‑out data.</p>
+</blockquote>
+</section>
+<section id="misleading-binning" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="misleading-binning"><span class="header-section-number">15.2</span> 14.2 Misleading binning</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>bw_too_wide <span class="ot">&lt;-</span> <span class="fu">diff</span>(<span class="fu">range</span>(faithful<span class="sc">$</span>eruptions))<span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>p_bad <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(eruptions)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> bw_too_wide, <span class="at">fill =</span> <span class="st">"grey80"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Poor binwidth hides structure"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>p_good <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(faithful, <span class="fu">aes</span>(eruptions)) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fu">fd_binwidth</span>(faithful<span class="sc">$</span>eruptions), <span class="at">fill =</span> <span class="st">"grey85"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Better binning reveals structure"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>p_bad; p_good</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-31-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Fix.</strong> Compare FD/Scott, overlay density, report choice.</p>
+</blockquote>
+</section>
+<section id="ribbon-without-points" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="ribbon-without-points"><span class="header-section-number">15.3</span> 14.3 Ribbon without points</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>pp <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy))  <span class="co"># x = displ, y = hwy</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>pp <span class="sc">+</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> .<span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Show CI band *with* data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p><strong>Fix.</strong> Layer points or partial residuals so readers see variation.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="practice-blocks-guided" class="level1" data-number="16">
+<h1 data-number="16"><span class="header-section-number">16</span> 15 🧪 Practice Blocks (guided)</h1>
+<ul>
+<li><strong>Block A — Distributions.</strong> For <code>Petal.Width</code> in <code>iris</code>, compute FD binwidth; overlay kernel density at <code>adjust = 0.7</code> and <code>1.5</code>. Interpret modality and bandwidth effect.</li>
+<li><strong>Block B — Smoothers.</strong> For <code>mpg ~ wt</code> in <code>mtcars</code>, compare lm, loess (span 0.6), quadratic. Which best balances bias/variance?</li>
+<li><strong>Block C — Regions.</strong> Aggregate <code>AirPassengers</code> by month across years; draw mean ± SE band. Explain “spread vs uncertainty in the mean”.</li>
+<li><strong>Block D — Links.</strong> Simulate 2× repeated measures for 40 subjects; draw slopegraph; report mean change with CI.</li>
+</ul>
+<hr>
+</section>
+<section id="cheatsheet-method-geometry" class="level1" data-number="17">
+<h1 data-number="17"><span class="header-section-number">17</span> 16 📎 Cheat‑Sheet (method ↔︎ geometry)</h1>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 35%">
+<col style="width: 25%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method class</th>
+<th>Typical stats</th>
+<th>Geometries</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Bin</td>
+<td>counts, proportions</td>
+<td>bars, tiles, dots</td>
+<td>Histograms; 2D bin heatmaps</td>
+</tr>
+<tr class="even">
+<td>Summary</td>
+<td>mean/median, quantiles</td>
+<td>points, intervals</td>
+<td>Group means with 95% CI</td>
+</tr>
+<tr class="odd">
+<td>Region</td>
+<td>SD/SE bands; CI for smoothers</td>
+<td>ribbons, areas</td>
+<td>Mean ± SD band by month</td>
+</tr>
+<tr class="even">
+<td>Smooth</td>
+<td>lm, loess, poly; kernel density</td>
+<td>lines, contours, rasters</td>
+<td>OLS/loess; density contours</td>
+</tr>
+<tr class="odd">
+<td>Link</td>
+<td>joins, hulls, trees, triangulations</td>
+<td>paths, segments, polygons</td>
+<td>Slopegraph; convex hull; MST</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="appendix-base-r-equivalents-selected" class="level1" data-number="18">
+<h1 data-number="18"><span class="header-section-number">18</span> 17 🧰 Appendix — Base R equivalents (selected)</h1>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(faithful<span class="sc">$</span>eruptions, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="st">"grey85"</span>, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">main =</span> <span class="st">"Histogram"</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">density</span>(faithful<span class="sc">$</span>eruptions))</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">ecdf</span>(faithful<span class="sc">$</span>eruptions), <span class="at">main =</span> <span class="st">"ECDF"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>); pts <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">200</span>), <span class="at">ncol =</span> <span class="dv">2</span>)); <span class="fu">colnames</span>(pts) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"x"</span>,<span class="st">"y"</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pts, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> scales<span class="sc">::</span><span class="fu">alpha</span>(<span class="st">"black"</span>, .<span class="dv">6</span>))</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(pts[<span class="fu">chull</span>(pts<span class="sc">$</span>x, pts<span class="sc">$</span>y),], <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="statsvis_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="closing-advice" class="level1" data-number="19">
+<h1 data-number="19"><span class="header-section-number">19</span> Closing advice</h1>
+<p>Always annotate <strong>what statistical method</strong> produced the graphic and <strong>why that method is appropriate</strong>. A subtitle like “Loess (span = 0.6), 95% CI” or “Histogram (FD binwidth)” dramatically improves reproducibility and critique. When in doubt, show raw data. Keep the <strong>method/geometry</strong> separation in your head as you design, review, and communicate figures.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="statsvis_files/libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

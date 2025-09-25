@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="K.J. Mhango">
+<meta name="dcterms.date" content="2025-09-25">
+
+<title>Introduction to data visualisation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="visualisation-intro_files/libs/clipboard/clipboard.min.js"></script>
+<script src="visualisation-intro_files/libs/quarto-html/quarto.js"></script>
+<script src="visualisation-intro_files/libs/quarto-html/popper.min.js"></script>
+<script src="visualisation-intro_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="visualisation-intro_files/libs/quarto-html/anchor.min.js"></script>
+<link href="visualisation-intro_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="visualisation-intro_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="visualisation-intro_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="visualisation-intro_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="visualisation-intro_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#a-brief-history-of-data-visualisation" id="toc-a-brief-history-of-data-visualisation" class="nav-link active" data-scroll-target="#a-brief-history-of-data-visualisation"><span class="header-section-number">1</span> 1. A Brief History of Data Visualisation</a>
+  <ul class="collapse">
+  <li><a href="#pre-1600s-foundations-of-visual-thinking" id="toc-pre-1600s-foundations-of-visual-thinking" class="nav-link" data-scroll-target="#pre-1600s-foundations-of-visual-thinking"><span class="header-section-number">1.1</span> Pre-1600s – Foundations of Visual Thinking</a></li>
+  <li><a href="#measurement-and-theory-take-root" id="toc-measurement-and-theory-take-root" class="nav-link" data-scroll-target="#measurement-and-theory-take-root"><span class="header-section-number">1.2</span> 1600–1699 – Measurement and Theory Take Root</a></li>
+  <li><a href="#new-graphic-forms-emerge" id="toc-new-graphic-forms-emerge" class="nav-link" data-scroll-target="#new-graphic-forms-emerge"><span class="header-section-number">1.3</span> 1700–1799 – New Graphic Forms Emerge</a></li>
+  <li><a href="#beginnings-of-modern-statistical-graphics" id="toc-beginnings-of-modern-statistical-graphics" class="nav-link" data-scroll-target="#beginnings-of-modern-statistical-graphics"><span class="header-section-number">1.4</span> 1800–1850 – Beginnings of Modern Statistical Graphics</a></li>
+  <li><a href="#the-golden-age-of-statistical-atlases" id="toc-the-golden-age-of-statistical-atlases" class="nav-link" data-scroll-target="#the-golden-age-of-statistical-atlases"><span class="header-section-number">1.5</span> 1850–1900 – The Golden Age of Statistical Atlases</a></li>
+  <li><a href="#the-modern-dark-ages" id="toc-the-modern-dark-ages" class="nav-link" data-scroll-target="#the-modern-dark-ages"><span class="header-section-number">1.6</span> 1900–1950 – The Modern “Dark Ages”</a></li>
+  <li><a href="#rebirth-eda-and-theory" id="toc-rebirth-eda-and-theory" class="nav-link" data-scroll-target="#rebirth-eda-and-theory"><span class="header-section-number">1.7</span> 1950–1975 – Rebirth: EDA and Theory</a></li>
+  <li><a href="#present-structure-software-and-storytelling" id="toc-present-structure-software-and-storytelling" class="nav-link" data-scroll-target="#present-structure-software-and-storytelling"><span class="header-section-number">1.8</span> 1975–Present – Structure, Software, and Storytelling</a></li>
+  </ul></li>
+  <li><a href="#gestalt-principles-of-perception-in-data-visualisation" id="toc-gestalt-principles-of-perception-in-data-visualisation" class="nav-link" data-scroll-target="#gestalt-principles-of-perception-in-data-visualisation"><span class="header-section-number">2</span> 2. Gestalt Principles of Perception in Data Visualisation</a>
+  <ul class="collapse">
+  <li><a href="#proximity" id="toc-proximity" class="nav-link" data-scroll-target="#proximity"><span class="header-section-number">2.1</span> 2.1 Proximity</a></li>
+  <li><a href="#similarity" id="toc-similarity" class="nav-link" data-scroll-target="#similarity"><span class="header-section-number">2.2</span> 2.2 Similarity</a></li>
+  <li><a href="#continuity" id="toc-continuity" class="nav-link" data-scroll-target="#continuity"><span class="header-section-number">2.3</span> 2.3 Continuity</a></li>
+  <li><a href="#closure" id="toc-closure" class="nav-link" data-scroll-target="#closure"><span class="header-section-number">2.4</span> 2.4 Closure</a></li>
+  <li><a href="#figureground" id="toc-figureground" class="nav-link" data-scroll-target="#figureground"><span class="header-section-number">2.5</span> 2.5 Figure–Ground</a></li>
+  <li><a href="#common-fate" id="toc-common-fate" class="nav-link" data-scroll-target="#common-fate"><span class="header-section-number">2.6</span> 2.6 Common Fate</a></li>
+  <li><a href="#focal-point" id="toc-focal-point" class="nav-link" data-scroll-target="#focal-point"><span class="header-section-number">2.7</span> 2.7 Focal Point</a></li>
+  </ul></li>
+  <li><a href="#tuftes-principles-of-graphical-excellence" id="toc-tuftes-principles-of-graphical-excellence" class="nav-link" data-scroll-target="#tuftes-principles-of-graphical-excellence"><span class="header-section-number">3</span> 3. Tufte’s Principles of Graphical Excellence</a>
+  <ul class="collapse">
+  <li><a href="#graphical-integrity" id="toc-graphical-integrity" class="nav-link" data-scroll-target="#graphical-integrity"><span class="header-section-number">3.1</span> 3.1 Graphical Integrity</a></li>
+  <li><a href="#data-ink-ratio" id="toc-data-ink-ratio" class="nav-link" data-scroll-target="#data-ink-ratio"><span class="header-section-number">3.2</span> 3.2 Data-Ink Ratio</a></li>
+  <li><a href="#small-multiples" id="toc-small-multiples" class="nav-link" data-scroll-target="#small-multiples"><span class="header-section-number">3.3</span> 3.3 Small Multiples</a></li>
+  <li><a href="#avoid-chartjunk" id="toc-avoid-chartjunk" class="nav-link" data-scroll-target="#avoid-chartjunk"><span class="header-section-number">3.4</span> 3.4 Avoid Chartjunk</a></li>
+  <li><a href="#video-edward-tufte-on-design-principles" id="toc-video-edward-tufte-on-design-principles" class="nav-link" data-scroll-target="#video-edward-tufte-on-design-principles"><span class="header-section-number">3.5</span> Video: Edward Tufte on Design Principles</a></li>
+  </ul></li>
+  <li><a href="#hans-rosling-and-gapminder-data-as-drama" id="toc-hans-rosling-and-gapminder-data-as-drama" class="nav-link" data-scroll-target="#hans-rosling-and-gapminder-data-as-drama"><span class="header-section-number">4</span> 4. Hans Rosling and Gapminder: Data as Drama</a>
+  <ul class="collapse">
+  <li><a href="#data-storytelling" id="toc-data-storytelling" class="nav-link" data-scroll-target="#data-storytelling"><span class="header-section-number">4.1</span> 4.1 Data Storytelling</a></li>
+  <li><a href="#dynamic-visualisation" id="toc-dynamic-visualisation" class="nav-link" data-scroll-target="#dynamic-visualisation"><span class="header-section-number">4.2</span> 4.2 Dynamic Visualisation</a></li>
+  <li><a href="#comparisons-context" id="toc-comparisons-context" class="nav-link" data-scroll-target="#comparisons-context"><span class="header-section-number">4.3</span> 4.3 Comparisons &amp; Context</a></li>
+  <li><a href="#accessibility-and-impact" id="toc-accessibility-and-impact" class="nav-link" data-scroll-target="#accessibility-and-impact"><span class="header-section-number">4.4</span> 4.4 Accessibility and Impact</a></li>
+  <li><a href="#video-hans-rosling-the-best-stats-youve-ever-seen" id="toc-video-hans-rosling-the-best-stats-youve-ever-seen" class="nav-link" data-scroll-target="#video-hans-rosling-the-best-stats-youve-ever-seen"><span class="header-section-number">4.5</span> Video: Hans Rosling – “The Best Stats You’ve Ever Seen”</a></li>
+  </ul></li>
+  <li><a href="#final-reflection" id="toc-final-reflection" class="nav-link" data-scroll-target="#final-reflection"><span class="header-section-number">5</span> Final Reflection</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Introduction to data visualisation</h1>
+<p class="subtitle lead">On the shoulders of Tufte, Wilkinson and Rosling</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>K.J. Mhango </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">25 September 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="a-brief-history-of-data-visualisation" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="a-brief-history-of-data-visualisation"><span class="header-section-number">1</span> 1. A Brief History of Data Visualisation</h2>
+<section id="pre-1600s-foundations-of-visual-thinking" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="pre-1600s-foundations-of-visual-thinking"><span class="header-section-number">1.1</span> Pre-1600s – Foundations of Visual Thinking</h3>
+<p><strong>Why this period matters</strong>: This is where the seeds of data visualisation were planted—not in statistics, but in cartography, astronomy, and theology. People needed ways to represent spatial relationships (maps), time (astrological calendars), and structured knowledge (diagrams of cosmology or philosophy).</p>
+<p><strong>Distinctive features</strong>: - No formal statistics, but rich in visual-symbolic systems. - Use of stars, grids, and planetary paths suggest early axes. - Concept of encoding information spatially (e.g., heaven above, earth below).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/sinusidal.png" class="img-fluid figure-img"></p>
+<figcaption>10th century planetary movement chart — sinusoidal curves across a grid</figcaption>
+</figure>
+</div>
+<p><strong>Reflection</strong>: How would you describe the style of these early graphics? What aspects (e.g.&nbsp;symmetry, symbolism) feel familiar, even if they’re centuries old?</p>
+<hr>
+</section>
+<section id="measurement-and-theory-take-root" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="measurement-and-theory-take-root"><span class="header-section-number">1.2</span> 1600–1699 – Measurement and Theory Take Root</h3>
+<p><strong>Why this period matters</strong>: The scientific revolution sparked new ways of observing and measuring the world. Graphs began to link observation and theory. This was the start of visualisation as a <em>scientific</em> method.</p>
+<p><strong>Distinctive features</strong>: - Use of coordinate systems (Descartes). - Graphs of observational data (e.g., planetary paths). - Rise of political arithmetic — numeric data on populations, births, deaths.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/1600-map.jpg" class="img-fluid figure-img"></p>
+<figcaption>1600 map of africa</figcaption>
+</figure>
+</div>
+<p><strong>Reflection</strong>: This was a time of both scientific rigor and artistic flourish. How does the aesthetic of graphs from this time differ from modern ones? What do they suggest about their intended audience?</p>
+<hr>
+</section>
+<section id="new-graphic-forms-emerge" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="new-graphic-forms-emerge"><span class="header-section-number">1.3</span> 1700–1799 – New Graphic Forms Emerge</h3>
+<p><strong>Why this period matters</strong>: This century saw the invention of abstract statistical charts. Data were no longer just observed or recorded—they were compared, visualised, and published. It marked the birth of formal statistical graphics.</p>
+<p><strong>Distinctive features</strong>: - Playfair’s invention of bar, line, and pie charts. - Cartographers began adding <em>thematic</em> data to maps. - Time series graphs and economic data charts.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/Playfair-piechart.jpg" class="img-fluid figure-img"></p>
+<figcaption>Playfair’s pie chart</figcaption>
+</figure>
+</div>
+<p><strong>Reflection</strong>: Many of these charts were hand-drawn, highly styled, and persuasive. Do you think this adds or detracts from their credibility compared to today’s clean digital charts?</p>
+<hr>
+</section>
+<section id="beginnings-of-modern-statistical-graphics" class="level3" data-number="1.4">
+<h3 data-number="1.4" class="anchored" data-anchor-id="beginnings-of-modern-statistical-graphics"><span class="header-section-number">1.4</span> 1800–1850 – Beginnings of Modern Statistical Graphics</h3>
+<p><strong>Why this period matters</strong>: This was a period of creative explosion. Statistical graphics were used to inform, persuade, and even legislate. Thematic cartography flourished. Public health, social reform, and science all turned to visualisation.</p>
+<p><strong>Distinctive features</strong>: - Florence Nightingale’s rose diagrams. - Charles Dupin’s choropleths. - Guerry’s maps of crime, education, and morality.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/Nightingale-mortality.jpg" class="img-fluid figure-img"></p>
+<figcaption>Nightingale’s rose diagram</figcaption>
+</figure>
+</div>
+<p><strong>Reflection</strong>: Consider how these visualisations blend design, emotion, and argument. Are they still “data visualisations” by today’s standards, or something more?</p>
+<hr>
+</section>
+<section id="the-golden-age-of-statistical-atlases" class="level3" data-number="1.5">
+<h3 data-number="1.5" class="anchored" data-anchor-id="the-golden-age-of-statistical-atlases"><span class="header-section-number">1.5</span> 1850–1900 – The Golden Age of Statistical Atlases</h3>
+<p><strong>Why this period matters</strong>: Graphical excellence reached new heights in both form and ambition. Governments published statistical atlases with advanced graphic design. This was perhaps the most beautiful—and also most purpose-driven—era of visualisation.</p>
+<p><strong>Distinctive features</strong>: - Minard’s flow maps (Napoleon’s march). - Cheysson’s statistical albums in France. - Elaborate multi-dimensional maps and charts.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/minard.jpg" class="img-fluid figure-img"></p>
+<figcaption>Best chart ever?</figcaption>
+</figure>
+</div>
+<p><strong>Reflection</strong>: Many Golden Age charts are celebrated as art. Should data visualisation always strive to be beautiful? Or is functionality more important?</p>
+<hr>
+</section>
+<section id="the-modern-dark-ages" class="level3" data-number="1.6">
+<h3 data-number="1.6" class="anchored" data-anchor-id="the-modern-dark-ages"><span class="header-section-number">1.6</span> 1900–1950 – The Modern “Dark Ages”</h3>
+<p><strong>Why this period matters</strong>: Despite huge advances in statistics, visualisation declined. Data were prioritised in tables, models, and formal inference. Charts became simpler, and often secondary. But this also set the stage for a new revival.</p>
+<p><strong>Distinctive features</strong>: - Decline in graphical innovation. - Focus on tables, regression outputs. - Rise of inferential statistics.</p>
+<p><strong>Reflection</strong>: What might have led to this visual decline? Can you think of a domain today where visuals are undervalued in favour of numbers?</p>
+<hr>
+</section>
+<section id="rebirth-eda-and-theory" class="level3" data-number="1.7">
+<h3 data-number="1.7" class="anchored" data-anchor-id="rebirth-eda-and-theory"><span class="header-section-number">1.7</span> 1950–1975 – Rebirth: EDA and Theory</h3>
+<p><strong>Why this period matters</strong>: John Tukey’s exploratory data analysis revived interest in visual methods. Jacques Bertin introduced a visual grammar. Computer graphics began to emerge. This laid the groundwork for today’s data science.</p>
+<p><strong>Distinctive features</strong>: - Tukey’s boxplots, stem-and-leaf plots. - Bertin’s visual variables. - First uses of computers for graphics.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/boxplot.png" class="img-fluid figure-img"></p>
+<figcaption>Tukey’s boxplot</figcaption>
+</figure>
+</div>
+<p><strong>Reflection</strong>: These visuals are less ornate but highly functional. How do you feel about this balance of utility over aesthetics?</p>
+<hr>
+</section>
+<section id="present-structure-software-and-storytelling" class="level3" data-number="1.8">
+<h3 data-number="1.8" class="anchored" data-anchor-id="present-structure-software-and-storytelling"><span class="header-section-number">1.8</span> 1975–Present – Structure, Software, and Storytelling</h3>
+<p><strong>Why this period matters</strong>: Today’s era builds on everything before it: perception, aesthetics, ethics, interaction. We have a grammar (Wilkinson), a code ecosystem (ggplot2, D3), and dynamic storytelling (Rosling). Visualisation is now central to communication.</p>
+<p><strong>Distinctive features</strong>: - Rise of the Grammar of Graphics (Wilkinson → ggplot2). We will cover this extensively in later sessions - Emphasis on accessibility, clarity, storytelling. - Tools for interactivity and animation (Gapminder, dashboards).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/gapminder.gif" class="img-fluid figure-img"></p>
+<figcaption>Gapminder animation</figcaption>
+</figure>
+</div>
+<p><strong>Reflection</strong>: With so many tools and styles today, how do we balance visual creativity with clarity, truth, and accessibility?</p>
+<hr>
+</section>
+</section>
+<section id="gestalt-principles-of-perception-in-data-visualisation" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="gestalt-principles-of-perception-in-data-visualisation"><span class="header-section-number">2</span> 2. Gestalt Principles of Perception in Data Visualisation</h2>
+<p>Data visualisation works because the human brain is wired to spot patterns, group similar items, and interpret relationships. The Gestalt psychologists studied how we perceive visual stimuli, and their principles help us understand why certain designs are more intuitive.</p>
+<section id="proximity" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="proximity"><span class="header-section-number">2.1</span> 2.1 Proximity</h3>
+<p>We group elements that are close together. In charts, this affects how we interpret clusters or outliers.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/proximity.png" class="img-fluid figure-img"></p>
+<figcaption>proximity</figcaption>
+</figure>
+</div>
+</section>
+<section id="similarity" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="similarity"><span class="header-section-number">2.2</span> 2.2 Similarity</h3>
+<p>We group elements that look alike (in shape, colour, size).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/similarity.png" class="img-fluid figure-img"></p>
+<figcaption>Similarity</figcaption>
+</figure>
+</div>
+</section>
+<section id="continuity" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="continuity"><span class="header-section-number">2.3</span> 2.3 Continuity</h3>
+<p>We follow lines or smooth paths. Line graphs leverage this instinct to suggest trends.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/continuity.png" class="img-fluid figure-img"></p>
+<figcaption>Continuity</figcaption>
+</figure>
+</div>
+</section>
+<section id="closure" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="closure"><span class="header-section-number">2.4</span> 2.4 Closure</h3>
+<p>We perceive complete figures even if parts are missing. Works well in minimalist visual design.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/closure.png" class="img-fluid figure-img"></p>
+<figcaption>Gapminder animation</figcaption>
+</figure>
+</div>
+</section>
+<section id="figureground" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="figureground"><span class="header-section-number">2.5</span> 2.5 Figure–Ground</h3>
+<p>We distinguish between the main subject and the background. High contrast enhances this effect.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/figure-ground.png" class="img-fluid figure-img"></p>
+<figcaption>figure ground contrast illusion</figcaption>
+</figure>
+</div>
+</section>
+<section id="common-fate" class="level3" data-number="2.6">
+<h3 data-number="2.6" class="anchored" data-anchor-id="common-fate"><span class="header-section-number">2.6</span> 2.6 Common Fate</h3>
+<p>Elements moving together (in animation or layout) are perceived as a group.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/gapminder.gif" class="img-fluid figure-img"></p>
+<figcaption>Gapminder animation</figcaption>
+</figure>
+</div>
+</section>
+<section id="focal-point" class="level3" data-number="2.7">
+<h3 data-number="2.7" class="anchored" data-anchor-id="focal-point"><span class="header-section-number">2.7</span> 2.7 Focal Point</h3>
+<p>We are drawn to visual elements that break the pattern.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/focal-point.png" class="img-fluid figure-img"></p>
+<figcaption>Focal point</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+</section>
+<section id="tuftes-principles-of-graphical-excellence" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="tuftes-principles-of-graphical-excellence"><span class="header-section-number">3</span> 3. Tufte’s Principles of Graphical Excellence</h2>
+<p>Edward Tufte’s work reframes visualisation as a discipline of truth-telling. His focus was clarity, integrity, and minimalism.</p>
+<section id="graphical-integrity" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="graphical-integrity"><span class="header-section-number">3.1</span> 3.1 Graphical Integrity</h3>
+<p>The representation of numbers should be proportional to the quantities represented.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/integrity.png" class="img-fluid figure-img"></p>
+<figcaption>Hiding axes</figcaption>
+</figure>
+</div>
+</section>
+<section id="data-ink-ratio" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="data-ink-ratio"><span class="header-section-number">3.2</span> 3.2 Data-Ink Ratio</h3>
+<p>Maximise the proportion of “ink” (or pixels) that conveys data.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/dataink.png" class="img-fluid figure-img"></p>
+<figcaption>Data ink ratio</figcaption>
+</figure>
+</div>
+</section>
+<section id="small-multiples" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="small-multiples"><span class="header-section-number">3.3</span> 3.3 Small Multiples</h3>
+<p>Use a series of similar charts to show patterns across categories. Instead of one messy chart with dozens of overlapping lines, each panel isolates one category.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/multiples.png" class="img-fluid figure-img"></p>
+<figcaption>Multiple charts</figcaption>
+</figure>
+</div>
+</section>
+<section id="avoid-chartjunk" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="avoid-chartjunk"><span class="header-section-number">3.4</span> 3.4 Avoid Chartjunk</h3>
+<p>No unnecessary decoration. Clarity over flair.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="introimg/junk.png" class="img-fluid figure-img"></p>
+<figcaption>Chart junk</figcaption>
+</figure>
+</div>
+</section>
+<section id="video-edward-tufte-on-design-principles" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="video-edward-tufte-on-design-principles"><span class="header-section-number">3.5</span> Video: Edward Tufte on Design Principles</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Th_1azZA2OY" title="Edward Tufte Principles" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+<hr>
+</section>
+</section>
+<section id="hans-rosling-and-gapminder-data-as-drama" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="hans-rosling-and-gapminder-data-as-drama"><span class="header-section-number">4</span> 4. Hans Rosling and Gapminder: Data as Drama</h2>
+<p>Hans Rosling believed data could challenge stereotypes, surprise audiences, and tell human stories.</p>
+<section id="data-storytelling" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="data-storytelling"><span class="header-section-number">4.1</span> 4.1 Data Storytelling</h3>
+<p>Rosling used animation, voice, and pacing to narrate global trends in a way that was emotionally resonant.</p>
+</section>
+<section id="dynamic-visualisation" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="dynamic-visualisation"><span class="header-section-number">4.2</span> 4.2 Dynamic Visualisation</h3>
+<p>Animated scatterplots (e.g., Gapminder) allowed viewers to track change over time, reinforcing the Gestalt principle of common fate.</p>
+</section>
+<section id="comparisons-context" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="comparisons-context"><span class="header-section-number">4.3</span> 4.3 Comparisons &amp; Context</h3>
+<p>Rosling always situated the data—global vs regional, poor vs rich—not in isolation.</p>
+</section>
+<section id="accessibility-and-impact" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="accessibility-and-impact"><span class="header-section-number">4.4</span> 4.4 Accessibility and Impact</h3>
+<p>The Gapminder Foundation promotes open, understandable data for all.</p>
+</section>
+<section id="video-hans-rosling-the-best-stats-youve-ever-seen" class="level3" data-number="4.5">
+<h3 data-number="4.5" class="anchored" data-anchor-id="video-hans-rosling-the-best-stats-youve-ever-seen"><span class="header-section-number">4.5</span> Video: Hans Rosling – “The Best Stats You’ve Ever Seen”</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hVimVzgtD6w" title="Hans Rosling Data Visualisation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+<hr>
+</section>
+</section>
+<section id="final-reflection" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="final-reflection"><span class="header-section-number">5</span> Final Reflection</h2>
+<p>We’ve now traced the history of data visualisation, seen how perceptual psychology (Gestalt) informs design, examined principles of graphical integrity (Tufte), and explored modern dynamic storytelling (Rosling).</p>
+<ul>
+<li>Which of the four perspectives (historical, Gestalt, Tufte, Rosling) most resonates with your approach to data?</li>
+<li>Can you think of a time when visualising something changed the way <em>you</em> understood it?</li>
+<li>Try to spot Gestalt principles or Tufte’s rules in your favourite infographic or dashboard.</li>
+</ul>
+<p><strong>Next steps</strong>: We will heavily use the Gapminder dataset and ggplot, following Wilkinson’s grammar of graphics.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="visualisation-intro_files/libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

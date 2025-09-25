@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="K.J. Mhango">
+<meta name="dcterms.date" content="2025-09-06">
+
+<title>Graphics &amp; Object‑Oriented Design (OOD) — Foundations</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ood_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ood_files/libs/quarto-html/quarto.js"></script>
+<script src="ood_files/libs/quarto-html/popper.min.js"></script>
+<script src="ood_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ood_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ood_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ood_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ood_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ood_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ood_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="ood_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+
+<script src="ood_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#learning-outcomes" id="toc-learning-outcomes" class="nav-link active" data-scroll-target="#learning-outcomes"><span class="header-section-number">0.1</span> Learning outcomes</a></li>
+  <li><a href="#part-a-graphics-versus-charts" id="toc-part-a-graphics-versus-charts" class="nav-link" data-scroll-target="#part-a-graphics-versus-charts"><span class="header-section-number">1</span> Part A — Graphics <strong>versus</strong> charts</a>
+  <ul class="collapse">
+  <li><a href="#a1.-vocabulary-and-boundaries" id="toc-a1.-vocabulary-and-boundaries" class="nav-link" data-scroll-target="#a1.-vocabulary-and-boundaries"><span class="header-section-number">1.0.1</span> A1. Vocabulary and boundaries</a></li>
+  <li><a href="#a2.-rigid-charts" id="toc-a2.-rigid-charts" class="nav-link" data-scroll-target="#a2.-rigid-charts"><span class="header-section-number">1.0.2</span> A2. Rigid Charts</a></li>
+  <li><a href="#the-grammar-of-graphics-wilkinson-2005" id="toc-the-grammar-of-graphics-wilkinson-2005" class="nav-link" data-scroll-target="#the-grammar-of-graphics-wilkinson-2005"><span class="header-section-number">1.0.3</span> The Grammar of Graphics (Wilkinson, 2005)</a></li>
+  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters"><span class="header-section-number">1.0.4</span> Why This Matters</a></li>
+  <li><a href="#example-iterative-plot-building" id="toc-example-iterative-plot-building" class="nav-link" data-scroll-target="#example-iterative-plot-building"><span class="header-section-number">1.0.5</span> Example: Iterative Plot Building</a></li>
+  <li><a href="#what-ggplot2-does-not-do" id="toc-what-ggplot2-does-not-do" class="nav-link" data-scroll-target="#what-ggplot2-does-not-do"><span class="header-section-number">1.0.6</span> What ggplot2 Does Not Do</a></li>
+  <li><a href="#how-ggplot2-fits-with-other-r-graphics" id="toc-how-ggplot2-fits-with-other-r-graphics" class="nav-link" data-scroll-target="#how-ggplot2-fits-with-other-r-graphics"><span class="header-section-number">1.0.7</span> How ggplot2 Fits with Other R Graphics</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">1.0.8</span> Summary</a></li>
+  </ul></li>
+  <li><a href="#part-b-objectoriented-design" id="toc-part-b-objectoriented-design" class="nav-link" data-scroll-target="#part-b-objectoriented-design"><span class="header-section-number">2</span> Part B — Object‑Oriented Design</a>
+  <ul class="collapse">
+  <li><a href="#b1.-what-is-ood" id="toc-b1.-what-is-ood" class="nav-link" data-scroll-target="#b1.-what-is-ood"><span class="header-section-number">2.0.1</span> B1. What is OOD?</a></li>
+  <li><a href="#b2.-what-ood-is-not" id="toc-b2.-what-ood-is-not" class="nav-link" data-scroll-target="#b2.-what-ood-is-not"><span class="header-section-number">2.0.2</span> B2. What OOD is <strong>not</strong></a></li>
+  </ul></li>
+  <li><a href="#part-c-an-objectoriented-graphics-system" id="toc-part-c-an-objectoriented-graphics-system" class="nav-link" data-scroll-target="#part-c-an-objectoriented-graphics-system"><span class="header-section-number">3</span> Part C — An Object‑Oriented Graphics System</a>
+  <ul class="collapse">
+  <li><a href="#c1.-specification-assembly-display" id="toc-c1.-specification-assembly-display" class="nav-link" data-scroll-target="#c1.-specification-assembly-display"><span class="header-section-number">3.0.1</span> C1. Specification → Assembly → Display</a></li>
+  <li><a href="#c2.-the-six-specification-statements" id="toc-c2.-the-six-specification-statements" class="nav-link" data-scroll-target="#c2.-the-six-specification-statements"><span class="header-section-number">3.0.2</span> C2. The six specification statements</a></li>
+  <li><a href="#c3.-miniexamples-34-quick-studies" id="toc-c3.-miniexamples-34-quick-studies" class="nav-link" data-scroll-target="#c3.-miniexamples-34-quick-studies"><span class="header-section-number">3.0.3</span> C3. Mini‑examples (3–4 quick studies)</a></li>
+  <li><a href="#data-transform" id="toc-data-transform" class="nav-link" data-scroll-target="#data-transform"><span class="header-section-number">3.0.4</span> Data Transform</a></li>
+  <li><a href="#pseudo-scale-manual-axis-relabelling" id="toc-pseudo-scale-manual-axis-relabelling" class="nav-link" data-scroll-target="#pseudo-scale-manual-axis-relabelling"><span class="header-section-number">3.0.5</span> Pseudo-Scale (Manual Axis Relabelling)</a></li>
+  <li><a href="#why-the-distinction-matters" id="toc-why-the-distinction-matters" class="nav-link" data-scroll-target="#why-the-distinction-matters"><span class="header-section-number">3.0.6</span> Why the Distinction Matters</a></li>
+  <li><a href="#aspect-ratio-change-base-r" id="toc-aspect-ratio-change-base-r" class="nav-link" data-scroll-target="#aspect-ratio-change-base-r"><span class="header-section-number">3.0.7</span> Aspect Ratio Change (Base R)</a></li>
+  <li><a href="#ggplot2-example" id="toc-ggplot2-example" class="nav-link" data-scroll-target="#ggplot2-example"><span class="header-section-number">3.0.8</span> ggplot2 Example</a></li>
+  </ul></li>
+  <li><a href="#part-d-ggplot2-at-a-slightly-deeper-glance" id="toc-part-d-ggplot2-at-a-slightly-deeper-glance" class="nav-link" data-scroll-target="#part-d-ggplot2-at-a-slightly-deeper-glance"><span class="header-section-number">4</span> Part D — <code>ggplot2</code> at a slightly deeper glance</a>
+  <ul class="collapse">
+  <li><a href="#d1.-what-is-ggplot2" id="toc-d1.-what-is-ggplot2" class="nav-link" data-scroll-target="#d1.-what-is-ggplot2"><span class="header-section-number">4.0.1</span> D1. What is <code>ggplot2</code>?</a></li>
+  </ul></li>
+  <li><a href="#part-e-tutorials-baser-first" id="toc-part-e-tutorials-baser-first" class="nav-link" data-scroll-target="#part-e-tutorials-baser-first"><span class="header-section-number">5</span> Part E — Tutorials: base‑R first</a>
+  <ul class="collapse">
+  <li><a href="#e1.-identify-grammar-pieces-in-base-r" id="toc-e1.-identify-grammar-pieces-in-base-r" class="nav-link" data-scroll-target="#e1.-identify-grammar-pieces-in-base-r"><span class="header-section-number">5.0.1</span> E1. Identify grammar pieces in base R</a></li>
+  <li><a href="#e2.-simulate-a-tedious-task-that-ood-solves-better" id="toc-e2.-simulate-a-tedious-task-that-ood-solves-better" class="nav-link" data-scroll-target="#e2.-simulate-a-tedious-task-that-ood-solves-better"><span class="header-section-number">5.0.2</span> E2. Simulate a tedious task that OOD solves better</a></li>
+  <li><a href="#e3.-reflection" id="toc-e3.-reflection" class="nav-link" data-scroll-target="#e3.-reflection"><span class="header-section-number">5.0.3</span> E3. Reflection</a></li>
+  <li><a href="#common-pitfalls-tips" id="toc-common-pitfalls-tips" class="nav-link" data-scroll-target="#common-pitfalls-tips"><span class="header-section-number">5.1</span> Common pitfalls &amp; tips</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Graphics &amp; Object‑Oriented Design (OOD) — Foundations</h1>
+<p class="subtitle lead">Task‑Based Study Notes</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>K.J. Mhango </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 6, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><strong>How to use these notes</strong><br>
+This is a hands‑on introduction to <strong>Object‑Oriented Design</strong> using graphics as a motivating context. It is deliberately light on <code>ggplot2</code> (deep dives come later). Expect ~<strong>15 hours</strong> of learning across five parts. You’ll read short excerpts, run base‑R code, identify OOD concepts, and reflect. Work in your GitHub <strong>Codespace</strong> (R is pre‑configured).</p>
+</blockquote>
+<section id="learning-outcomes" class="level2" data-number="0.1">
+<h2 data-number="0.1" class="anchored" data-anchor-id="learning-outcomes"><span class="header-section-number">0.1</span> Learning outcomes</h2>
+<p>By the end, you will be able to:</p>
+<ol type="1">
+<li>Distinguish <strong>graphs</strong> from <strong>charts</strong>, <strong>plots</strong>, <strong>infographics</strong>, and <strong>figures</strong>.</li>
+<li>Explain core <strong>OOD</strong> ideas (objects, messages, encapsulation, inheritance, polymorphism) and clarify what <strong>OOD is not</strong>.</li>
+<li>Describe an <strong>Object‑Oriented Graphics System</strong> in terms of <strong>Specification → Assembly → Display</strong> and the six specification statements (<strong>DATA, TRANS, SCALE, COORD, ELEMENT, GUIDE</strong>).</li>
+<li>Recognise why <code>ggplot2</code> is considered an OOD‑aligned system (at a high level) without relying on it.</li>
+<li>Apply the ideas using <strong>base R</strong> graphics on simple datasets (e.g., <code>iris</code>) and articulate where OOD helps.</li>
+</ol>
+</section>
+<section id="part-a-graphics-versus-charts" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Part A — Graphics <strong>versus</strong> charts</h1>
+<section id="a1.-vocabulary-and-boundaries" class="level3" data-number="1.0.1">
+<h3 data-number="1.0.1" class="anchored" data-anchor-id="a1.-vocabulary-and-boundaries"><span class="header-section-number">1.0.1</span> A1. Vocabulary and boundaries</h3>
+<p><strong>Reading recap (short):</strong> - A <strong>graph</strong> is mathematical (a set of points/relations); a <strong>graphic</strong> is its <em>perceivable</em> representation. - <strong>Charts</strong> (bar, pie, line) are <em>named</em> visual forms; useful but limited typologies. - A <strong>plot</strong> is a specific rendered graphic of data in a coordinate system. - A <strong>figure</strong> is any labelled visual element in a document (may contain one or more plots/graphics). - An <strong>infographic</strong> blends data graphics with narrative/illustration for communication.</p>
+<blockquote class="blockquote">
+<p>The key shift: move from thinking of rigid <em>charts</em> to a <strong>grammar</strong> for constructing graphics.</p>
+</blockquote>
+<p><strong>Task A1.1 — Classify visuals</strong><br>
+List five visuals you’ve seen recently (e.g., bar chart of sales, choropleth map, donut chart). For each, label it as <strong>chart / plot / figure / infographic</strong> and justify in one line.</p>
+<p><strong>Task A1.2 — “Same look, different grammar”</strong><br>
+Sketch two visuals that <em>look similar</em> (e.g., bars), but explain how their <strong>grammar</strong> differs (e.g., histogram vs bar chart of categories). One paragraph each.</p>
+</section>
+<section id="a2.-rigid-charts" class="level3" data-number="1.0.2">
+<h3 data-number="1.0.2" class="anchored" data-anchor-id="a2.-rigid-charts"><span class="header-section-number">1.0.2</span> A2. Rigid Charts</h3>
+<p><strong>Posit:</strong> It is very easy to just have a standard set of charts that everyone should use. These things are already there, no need to re-invent the wheel. Microsoft Excel does a good job of this.</p>
+<p><strong>Task A1.3 —</strong> In 4–6 sentences, Argue for and against the above position.</p>
+<p>Glossary card deck: write a one‑line definition for graph, graphic, chart, plot, figure, infographic.</p>
+</section>
+<section id="the-grammar-of-graphics-wilkinson-2005" class="level3" data-number="1.0.3">
+<h3 data-number="1.0.3" class="anchored" data-anchor-id="the-grammar-of-graphics-wilkinson-2005"><span class="header-section-number">1.0.3</span> The Grammar of Graphics (Wilkinson, 2005)</h3>
+<p>The Grammar of Graphics answers the question: <strong>what makes up a statistical graphic?</strong> According to the grammar, every plot has a small number of core components that work together:</p>
+<ul>
+<li><strong>Data</strong>: the dataset containing the information you want to show.</li>
+<li><strong>Mappings (aesthetics)</strong>: instructions for how data variables connect to visual properties like x/y position, colour, size, or shape.</li>
+<li><strong>Geometric objects (geoms)</strong>: the shapes we see in the plot, e.g.&nbsp;points, lines, bars.</li>
+<li><strong>Statistical transformations (stats)</strong>: summaries of the data, such as counts for a histogram, or a fitted regression line.</li>
+<li><strong>Scales</strong>: links between the data and the visual properties, including axes, legends, and colour keys.</li>
+<li><strong>Coordinate system (coords)</strong>: describes how the data are placed on the page (e.g.&nbsp;Cartesian x–y grid, polar coordinates, map projections).</li>
+<li><strong>Facets</strong>: break the data into subplots (small multiples) so you can compare groups easily.</li>
+<li><strong>Theme</strong>: controls the overall look of the plot, such as fonts, grid lines, and backgrounds.</li>
+</ul>
+<p>Each of these components is independent, but when combined, they form a complete graphic.</p>
+<hr>
+</section>
+<section id="why-this-matters" class="level3" data-number="1.0.4">
+<h3 data-number="1.0.4" class="anchored" data-anchor-id="why-this-matters"><span class="header-section-number">1.0.4</span> Why This Matters</h3>
+<p>Most other graphics systems (like base R) are collections of special cases: one function for a scatterplot, another for a bar chart, etc. If you want something slightly new, it can be hard to extend.</p>
+<p>In ggplot2, because of the grammar, you describe a plot using higher-level components (data + mappings + geoms + stats + scales). These pieces are designed to fit together, so you can easily build new kinds of plots without starting from scratch.</p>
+<hr>
+</section>
+<section id="example-iterative-plot-building" class="level3" data-number="1.0.5">
+<h3 data-number="1.0.5" class="anchored" data-anchor-id="example-iterative-plot-building"><span class="header-section-number">1.0.5</span> Example: Iterative Plot Building</h3>
+<p>You usually start with the raw data, then add layers step by step.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.4.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start with raw data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(<span class="at">x =</span> Sepal.Length, <span class="at">y =</span> Petal.Length))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a layer: points</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add another layer: trend line</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This step-by-step layering reflects the grammar of graphics: you add geoms, scales, and other components to build up your plot.</p>
+<hr>
+</section>
+<section id="what-ggplot2-does-not-do" class="level3" data-number="1.0.6">
+<h3 data-number="1.0.6" class="anchored" data-anchor-id="what-ggplot2-does-not-do"><span class="header-section-number">1.0.6</span> What ggplot2 Does Not Do</h3>
+<ul>
+<li>It doesn’t tell you <strong>which type of graph</strong> to use. That depends on your question and data.</li>
+<li>It doesn’t directly support <strong>interactive graphics</strong> (though packages like <code>plotly</code> can convert ggplot plots into interactive ones).</li>
+</ul>
+<hr>
+</section>
+<section id="how-ggplot2-fits-with-other-r-graphics" class="level3" data-number="1.0.7">
+<h3 data-number="1.0.7" class="anchored" data-anchor-id="how-ggplot2-fits-with-other-r-graphics"><span class="header-section-number">1.0.7</span> How ggplot2 Fits with Other R Graphics</h3>
+<ul>
+<li><strong>Base R graphics:</strong> Quick, but limited and hard to modify once drawn. Works like “pen on paper.”</li>
+<li><strong>Grid graphics:</strong> A more flexible system that ggplot2 builds upon, but not designed for statistical plots directly.</li>
+<li><strong>Lattice graphics:</strong> Improves on base graphics by making conditioned plots easier, but lacks the formal grammar.</li>
+<li><strong>ggplot2:</strong> Combines the strengths of both — flexibility, extension, and a solid theory (the grammar of graphics).</li>
+</ul>
+<p>Other tools like <strong>htmlwidgets</strong> and <strong>plotly</strong> allow interactive plots, and ggplot2 can integrate with them.</p>
+<hr>
+</section>
+<section id="summary" class="level3" data-number="1.0.8">
+<h3 data-number="1.0.8" class="anchored" data-anchor-id="summary"><span class="header-section-number">1.0.8</span> Summary</h3>
+<ul>
+<li>ggplot2 uses a <em>grammar</em> to define plots in terms of simple components.</li>
+<li>You build plots by adding layers one by one.</li>
+<li>This approach makes ggplot2 flexible, powerful, and easier to extend compared with other graphics systems.</li>
+<li>The main components to remember are: <strong>data, mappings, geoms, stats, scales, coords, facets, and theme</strong>.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="part-b-objectoriented-design" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Part B — Object‑Oriented Design</h1>
+<section id="b1.-what-is-ood" class="level3" data-number="2.0.1">
+<h3 data-number="2.0.1" class="anchored" data-anchor-id="b1.-what-is-ood"><span class="header-section-number">2.0.1</span> B1. What is OOD?</h3>
+<ul>
+<li><p><strong>Objects</strong> are small, purpose-built components. <em>You are an object, but so is your hand</em></p>
+<ul>
+<li><p><strong>ggplot embodiment:</strong> In <code>ggplot2</code>, <strong>objects</strong> = data, mappings, geoms, scales, stats, coords, themes. You compose them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Length, Petal.Length)) <span class="sc">+</span>   <span class="co"># mapping object</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">geom_point</span>() <span class="sc">+</span>                                    <span class="co"># geom object</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>     <span class="fu">scale_x_continuous</span>() <span class="sc">+</span>                            <span class="co"># scale object</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>     <span class="fu">coord_cartesian</span>()                                 <span class="co"># coord object</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div></li>
+</ul></li>
+<li><p>Objects <strong>communicate</strong> via simple <strong>messages</strong>. <em>You can tell your hand to pick up a pen</em></p>
+<ul>
+<li><p><strong>ggplot embodiment:</strong> The <code>+</code> operator is a <em>message</em> — “add a component.” Printing <code>p</code> sends a <em>build/draw</em> message through the plot’s parts.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)  <span class="co"># message: add a smoothing layer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div></li>
+</ul></li>
+<li><p><strong>Encapsulation:</strong> internals hidden; clear interfaces. <em>When I need YOU to write the letter B, I don’t care which hand you use</em></p>
+<ul>
+<li><p><strong>ggplot embodiment:</strong> You set <strong>what</strong> (aesthetics &amp; geoms); ggplot hides <strong>how</strong> (pixel drawing, legend layout, scales training).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Length, Petal.Length, <span class="at">colour =</span> Species)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>                          <span class="co"># you don’t manage glyph rasterisation</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Sepal length"</span>, <span class="at">y =</span> <span class="st">"Petal length"</span>)  <span class="co"># clear interface (API)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div></li>
+</ul></li>
+<li><p><strong>Inheritance:</strong> classes derive behaviour from more general classes. <em>Both hands inherit the ability to “grip” as limbs</em></p>
+<ul>
+<li><strong>ggplot embodiment:</strong> Geoms/stats are <strong>ggproto</strong> objects: e.g., <code>GeomPoint</code> and <code>GeomPath</code> inherit shared behaviour from base <code>Geom</code> (draw key, handle NA, etc.). Themes also inherit defaults.</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="in"># Same inherited 'Geom' contract; different specialisation</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="in">p_points &lt;- ggplot(iris, aes(Sepal.Length, Petal.Length)) + geom_point()</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="in">p_path   &lt;- ggplot(iris, aes(Sepal.Length, Petal.Length)) + geom_path()</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="in">p_points; p_path</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>Concept:</em> different geoms share the <code>Geom</code> interface (legend key drawing, required aesthetics), but each refines how data become marks. :::</p></li>
+<li><p><strong>Polymorphism:</strong> same message → different appropriate behaviours. <em>If I say “write,” right hand is neat; left hand scribbles</em></p>
+<ul>
+<li><p><strong>ggplot embodiment:</strong> The “message” <em>draw this mapping</em> yields different results per geom. Same aesthetics, different behaviour.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>base <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Length, Petal.Length))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_point</span>()              <span class="co"># same mapping...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>)   <span class="co"># ...different receiver (geom) → different action</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Also polymorphic:</em> <code>print()</code> on a ggplot triggers different device-specific renderers (screen vs.&nbsp;PDF) via the same call. :::</p></li>
+</ul></li>
+<li><p><strong>System-level intelligence:</strong> elegant behaviour emerges from cooperating objects. <em>Brain, eyes, and hands coordinate so Da Vinci can draw the Monalisa</em></p>
+<ul>
+<li><p><strong>ggplot embodiment:</strong> Data → <strong>stat</strong> (transform) → <strong>position</strong> (adjust) → <strong>scale</strong> (train/map) → <strong>coord</strong> (project) → <strong>geom</strong> (render) → <strong>theme</strong> (layout). The pipeline produces sensible plots with minimal code.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Length, Petal.Length, <span class="at">colour =</span> Species)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span>   <span class="co"># stat computes smoother</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span>   <span class="co"># geom renders marks</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span>             <span class="co"># coordinates cooperate</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()             <span class="co"># theme orchestrates layout</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Legends, breaks, and guides “just work” because these objects collaborate through the grammar.</em></p></li>
+</ul></li>
+</ul>
+<p><strong>Task B1.1 — Spot OOD in everyday tools</strong><br>
+Open the ggplot documentation using ```<code>?ggplot```</code>. Read the help page, and wirte how this help page presents the concepts of encapsulation, inheritance, polymorphism and system-level intelligence</p>
+</section>
+<section id="b2.-what-ood-is-not" class="level3" data-number="2.0.2">
+<h3 data-number="2.0.2" class="anchored" data-anchor-id="b2.-what-ood-is-not"><span class="header-section-number">2.0.2</span> B2. What OOD is <strong>not</strong></h3>
+<ul>
+<li><strong>Not a language:</strong> Writing in an OO‑friendly language doesn’t guarantee OO <em>design</em>.</li>
+<li><strong>Not a GUI:</strong> Interactivity ≠ OO; you can build OO systems without any GUI.</li>
+<li><strong>Not just “interactive software”:</strong> Behaviour can be scripted; design principles are independent of UI.</li>
+</ul>
+</section>
+</section>
+<section id="part-c-an-objectoriented-graphics-system" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Part C — An Object‑Oriented Graphics System</h1>
+<section id="c1.-specification-assembly-display" class="level3" data-number="3.0.1">
+<h3 data-number="3.0.1" class="anchored" data-anchor-id="c1.-specification-assembly-display"><span class="header-section-number">3.0.1</span> C1. Specification → Assembly → Display</h3>
+<ul>
+<li><strong>Specification:</strong> This is the <em>deep grammar</em> of a graphic. It expresses <strong>DATA, TRANS, SCALE, COORD, ELEMENT, GUIDE</strong>.</li>
+<li><strong>Assembly:</strong> This is the orchestration of the specified geometry/layout. Responsible for linking components and keeping parts modular.</li>
+<li><strong>Display:</strong> rendering with device‑specific aesthetics (axes, legends, titles, forms).</li>
+</ul>
+</section>
+<section id="c2.-the-six-specification-statements" class="level3" data-number="3.0.2">
+<h3 data-number="3.0.2" class="anchored" data-anchor-id="c2.-the-six-specification-statements"><span class="header-section-number">3.0.2</span> C2. The six specification statements</h3>
+<ul>
+<li><strong>DATA:</strong> operations to create/choose variables.</li>
+<li><strong>TRANS:</strong> variable transformations (e.g., rank, log, bin).</li>
+<li><strong>SCALE:</strong> map data to aesthetic space (position, colour, size).</li>
+<li><strong>COORD:</strong> coordinate system (Cartesian, polar, map projections).</li>
+<li><strong>ELEMENT:</strong> graphical elements/statistics (points, lines, polygons, contours, labels).</li>
+<li><strong>GUIDE:</strong> axes, legends, titles, reference forms.</li>
+</ul>
+<p><strong>Task C2.1 — Identify the six in base R (≈35 min)</strong><br>
+Using <code>iris</code>, produce a basic scatter using <em>base R only</em> and annotate which line corresponds to each statement.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R scatter with a reference line (no ggplot2)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(iris<span class="sc">$</span>Sepal.Length, iris<span class="sc">$</span>Petal.Length,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Sepal Length"</span>, <span class="at">ylab =</span> <span class="st">"Petal Length"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">as.integer</span>(iris<span class="sc">$</span>Species), <span class="at">pch =</span> <span class="dv">19</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">levels</span>(iris<span class="sc">$</span>Species),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a =</span> <span class="dv">0</span>, <span class="at">b =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)  <span class="co"># a simple "form" guide</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p><strong>Task:</strong> Mark/discuss <strong>DATA / TRANS / SCALE / COORD / ELEMENT / GUIDE</strong> for the plot above. (Hint: axes/legend/abline are <strong>GUIDE</strong>.)</p>
+</blockquote>
+</section>
+<section id="c3.-miniexamples-34-quick-studies" class="level3" data-number="3.0.3">
+<h3 data-number="3.0.3" class="anchored" data-anchor-id="c3.-miniexamples-34-quick-studies"><span class="header-section-number">3.0.3</span> C3. Mini‑examples (3–4 quick studies)</h3>
+<p><strong>Example 1 — Labels instead of points</strong><br>
+Replace points with short labels to show <strong>ELEMENT</strong> swap while holding the <em>spec</em> constant.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(iris<span class="sc">$</span>Sepal.Length, iris<span class="sc">$</span>Petal.Length, <span class="at">type =</span> <span class="st">"n"</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Sepal Length"</span>, <span class="at">ylab =</span> <span class="st">"Petal Length"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(iris<span class="sc">$</span>Sepal.Length, iris<span class="sc">$</span>Petal.Length,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">substr</span>(iris<span class="sc">$</span>Species, <span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Example 2 — Scale vs Transform</strong></p>
+<p>A common point of confusion is the difference between <em>transforming the data</em> versus <em>transforming the scale</em>. These are not the same, even if the plots end up looking similar.</p>
+</section>
+<section id="data-transform" class="level3" data-number="3.0.4">
+<h3 data-number="3.0.4" class="anchored" data-anchor-id="data-transform"><span class="header-section-number">3.0.4</span> Data Transform</h3>
+<p>Here we apply <code>log10()</code> directly to the data before plotting:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">log10</span>(iris<span class="sc">$</span>Sepal.Length), iris<span class="sc">$</span>Petal.Length,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"log10 Sepal Length"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Petal Length"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>The <strong>x-values themselves</strong> are changed: <code>Sepal.Length = 5</code> becomes <code>log10(5) ≈ 0.70</code>.</li>
+<li>The axis labels reflect the transformed values naturally, because that’s the actual data being plotted.</li>
+<li>In Grammar of Graphics terms, the transformation happened in the <strong>DATA</strong> stage.</li>
+</ul>
+<hr>
+</section>
+<section id="pseudo-scale-manual-axis-relabelling" class="level3" data-number="3.0.5">
+<h3 data-number="3.0.5" class="anchored" data-anchor-id="pseudo-scale-manual-axis-relabelling"><span class="header-section-number">3.0.5</span> Pseudo-Scale (Manual Axis Relabelling)</h3>
+<p>Here we plot the raw data but override the axis labels to mimic a log scale:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(iris<span class="sc">$</span>Sepal.Length, iris<span class="sc">$</span>Petal.Length,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xaxt =</span> <span class="st">"n"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Sepal Length (log10 scale)"</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Petal Length"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>),</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">round</span>(<span class="fu">log10</span>(<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>)), <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>The <strong>data remain unchanged</strong> on a linear scale.</li>
+<li>Only the <strong>axis labels</strong> are modified, giving the <em>appearance</em> of a log transformation.</li>
+<li>In Grammar of Graphics terms, this is a crude substitute for altering the <strong>SCALE</strong> stage.</li>
+</ul>
+<hr>
+</section>
+<section id="why-the-distinction-matters" class="level3" data-number="3.0.6">
+<h3 data-number="3.0.6" class="anchored" data-anchor-id="why-the-distinction-matters"><span class="header-section-number">3.0.6</span> Why the Distinction Matters</h3>
+<ul>
+<li><strong>Transforming data</strong> changes the underlying statistical relationships. For example, regression lines fitted on <code>log10(Sepal.Length)</code> are not the same as those fitted on raw values.</li>
+<li><strong>Transforming scales</strong> only changes how values are displayed, not how the underlying analysis is performed.</li>
+</ul>
+<p>In base R you often have to manage these steps manually, which can blur the distinction. In <strong>ggplot2</strong>, the difference is explicit:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data transform</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(<span class="fu">log10</span>(Sepal.Length), Petal.Length)) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale transform</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Length, Petal.Length)) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Both produce similar looking plots, but in the second case the data are untouched — only the <strong>scale mapping</strong> is log-transformed.</p>
+<hr>
+<p><strong>Example 3 — Coordinates</strong></p>
+<p>Changing the coordinate system is not the same as changing the data or the scales. Coordinates determine how data positions map onto the plotting surface.</p>
+</section>
+<section id="aspect-ratio-change-base-r" class="level3" data-number="3.0.7">
+<h3 data-number="3.0.7" class="anchored" data-anchor-id="aspect-ratio-change-base-r"><span class="header-section-number">3.0.7</span> Aspect Ratio Change (Base R)</h3>
+<p>In base R you can set the aspect ratio with <code>asp</code>, but this is not a true coordinate transformation — it only changes how units on the axes are displayed relative to each other:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(iris<span class="sc">$</span>Sepal.Width, iris<span class="sc">$</span>Petal.Width, <span class="at">asp =</span> <span class="dv">1</span>,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Sepal Width"</span>, <span class="at">ylab =</span> <span class="st">"Petal Width"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>The data remain unchanged.</li>
+<li>Only the <em>shape of the plotting window</em> changes so that one unit on the x-axis equals one unit on the y-axis.</li>
+<li>This is the closest base R offers to coordinate system control — true remapping (like polar coordinates) is very limited.</li>
+</ul>
+</section>
+<section id="ggplot2-example" class="level3" data-number="3.0.8">
+<h3 data-number="3.0.8" class="anchored" data-anchor-id="ggplot2-example"><span class="header-section-number">3.0.8</span> ggplot2 Example</h3>
+<p>In ggplot2, coordinates are explicit and extensible:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Width, Petal.Width)) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>()   <span class="co"># true equal aspect ratio</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or even polar coordinates</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Width, Petal.Width)) <span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ood_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here <code>coord_equal()</code> is the ggplot2 equivalent of <code>asp = 1</code>, but you can also switch to entirely new coordinate systems such as <code>coord_polar()</code>.</p>
+<hr>
+<p><strong>Task C3.1 — Write the spec lines</strong><br>
+For <strong>Example 1</strong> and <strong>Example 2</strong>, write six‑line specs.</p>
+<p><strong>Checkpoint C</strong><br>
+In 3–4 sentences, explain why keeping <strong>spec</strong> separate from <strong>assembly</strong> helps revision.</p>
+<hr>
+</section>
+</section>
+<section id="part-d-ggplot2-at-a-slightly-deeper-glance" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Part D — <code>ggplot2</code> at a slightly deeper glance</h1>
+<blockquote class="blockquote">
+<p><strong>Purpose here:</strong> historical context and OOD flavour — <em>not</em> a full tutorial.</p>
+</blockquote>
+<section id="d1.-what-is-ggplot2" class="level3" data-number="4.0.1">
+<h3 data-number="4.0.1" class="anchored" data-anchor-id="d1.-what-is-ggplot2"><span class="header-section-number">4.0.1</span> D1. What is <code>ggplot2</code>?</h3>
+<ul>
+<li><code>gg</code> stands for <strong>Grammar of Graphics</strong>.</li>
+<li><code>ggplot2</code> implements a grammar‑based, layered system: data + mappings (spec) → layers (elements/stats) → scales → coords → guides → theme.</li>
+<li>Why OOD‑aligned? Layers, scales, coords, guides behave like objects with clear responsibilities and message‑passing via the <code>+</code> operator.</li>
+</ul>
+<p><strong>Task D1.1 — Read &amp; tell</strong><br>
+Read: <a href="https://ggplot2-book.org/introduction.html" class="uri">https://ggplot2-book.org/introduction.html</a>. Then in 120–150 words: Summarise why <code>ggplot2</code> reflects an OOD mindset (encapsulation, polymorphism of geoms, replaceable scales/guides).</p>
+</section>
+</section>
+<section id="part-e-tutorials-baser-first" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Part E — Tutorials: base‑R first</h1>
+<section id="e1.-identify-grammar-pieces-in-base-r" class="level3" data-number="5.0.1">
+<h3 data-number="5.0.1" class="anchored" data-anchor-id="e1.-identify-grammar-pieces-in-base-r"><span class="header-section-number">5.0.1</span> E1. Identify grammar pieces in base R</h3>
+<p>Recreate three simple visuals using <strong>only base R</strong> and, for each, label the six spec statements.</p>
+<p>1. Scatter with legend and a dashed reference line.<br>
+2. A grouped line plot (e.g., means by species across an index).<br>
+3. A labelled plot (replace points with first letters of species).</p>
+</section>
+<section id="e2.-simulate-a-tedious-task-that-ood-solves-better" class="level3" data-number="5.0.2">
+<h3 data-number="5.0.2" class="anchored" data-anchor-id="e2.-simulate-a-tedious-task-that-ood-solves-better"><span class="header-section-number">5.0.2</span> E2. Simulate a tedious task that OOD solves better</h3>
+<p>Pick one of the following tasks and attempt it with <strong>base R and with GGPlot</strong>:</p>
+<ul>
+<li><p>Make the same scatterplot (e.g., one variable vs another, coloured by species) several times for different subsets of the data, keeping the axes and legend consistent, and save each plot as a separate file.</p></li>
+<li><p>Make one scatterplot and then add another summary on top (for example, a smoothed line or average points). Add a custom legend and adjust the axis labels (for example, make the x-axis show transformed or “log-like” labels)</p></li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Think:</strong> Why is this repetitive? Which parts should be “objects” (reusable units)?</p>
+</blockquote>
+</section>
+<section id="e3.-reflection" class="level3" data-number="5.0.3">
+<h3 data-number="5.0.3" class="anchored" data-anchor-id="e3.-reflection"><span class="header-section-number">5.0.3</span> E3. Reflection</h3>
+<p>In ~200 words, describe where base‑R plotting felt brittle or repetitive, and how an OOD/grammar approach could reduce effort and increase reproducibility.</p>
+<hr>
+</section>
+<section id="common-pitfalls-tips" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="common-pitfalls-tips"><span class="header-section-number">5.1</span> Common pitfalls &amp; tips</h2>
+<ul>
+<li><strong>Spec vs code:</strong> If you can’t state the six spec lines in words, your code will be harder to maintain.</li>
+<li><strong>Transform vs scale:</strong> Data transforms change values; scale changes <em>mapping/labels</em>.</li>
+<li><strong>Over‑customising early:</strong> Get <strong>ELEMENT</strong> and <strong>SCALE</strong> right before adjusting <strong>GUIDE</strong> styling.</li>
+</ul>
+<blockquote class="blockquote">
+<p>You’re set for the follow‑up sessions where we’ll dive into <code>ggplot2</code> layering, facets, stats, themes, and coordinates with the OOD lens in mind.</p>
+</blockquote>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

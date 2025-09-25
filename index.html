@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SQ4003 • Data visualisation</title>
+  <meta name="description" content="Landing page for SQ4012 slide decks." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b1020;--card:#131933;--muted:#96a0c8;--text:#e8ecff;--brand:#7aa2ff;--hover:#202a55}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#0b1020,#0b1020 40%,#0f1630);color:var(--text)}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 64px}
+    header{display:block;margin-bottom:16px}
+    .brand{display:flex;align-items:flex-start;gap:12px}
+    .logo{height:48px;width:auto;flex:0 0 auto}
+    .badge{font-size:12px;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);border:1px solid #243069;border-radius:999px;padding:6px 10px}
+    h1{font-size:clamp(22px,3vw,28px);margin:0;font-weight:700}
+    .tagline{margin:.35rem 0 0;color:var(--muted);font-size:14px}
+    .tagline a{color:var(--brand);text-decoration:underline}
+    .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:var(--card);border:1px solid #1a2247;border-radius:12px;padding:12px 12px;margin:12px 0 24px}
+    .input,.select{background:var(--card);border:1px solid #212954;color:var(--text);border-radius:12px;padding:12px 14px;outline:none}
+    .input{min-width:260px;flex:1 1 360px}
+    .select{min-width:160px;flex:0 0 200px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{background:var(--card);border:1px solid #1a2247;border-radius:16px;padding:18px 16px;transition:transform .12s ease,border-color .12s ease,background .12s ease;cursor:pointer}
+    .card:hover{transform:translateY(-3px);border-color:#2a3875;background:var(--hover)}
+    .thumb{width:100%;aspect-ratio:16/9;border-radius:12px;background:linear-gradient(135deg,#1a2247,#2a3875 60%,#3a4a95);border:1px solid #1a2247;object-fit:contain;object-position:center;display:block;margin-bottom:10px}
+    .card h3{margin:4px 0 6px;font-size:18px}
+    .card-title{display:inline-block;padding:4px 10px;border-radius:999px;background:#0f1630;border:1px solid #283268;color:#b9c6ff;text-decoration:none;transition:color .12s ease,border-color .12s ease}
+    .card-title:hover{color:#ff8c00;border-color:#ff8c00}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;color:var(--muted);font-size:13px}
+    .tag{padding:2px 8px;border-radius:999px;background:#0f1630;border:1px solid #283268;color:#b9c6ff}
+    .lead-pill{padding:2px 8px;border-radius:999px;background:#0f1630;border:1px solid #283268;color:#b9c6ff}
+    .slide-list{margin:8px 0 0 0;padding:0 0 0 16px}
+    .slide-list li{margin:2px 0}
+    .slide-link{display:inline-block;padding:4px 10px;border-radius:999px;background:#0f1630;border:1px solid #283268;color:#b9c6ff;text-decoration:none;transition:color .12s ease,border-color .12s ease}
+    .slide-link:hover{color:#ff8c00;border-color:#ff8c00}
+    .footer{margin-top:36px;color:var(--muted);font-size:13px}
+    .empty{opacity:.8;border:1px dashed #2b356c;padding:28px;border-radius:16px;text-align:center}
+    /* Header three-column layout */
+    .site-header{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;margin-bottom:16px}
+    .header-center{text-align:center}
+    .assessment-box{border:2px solid #ff8c00;border-radius:16px;padding:16px;margin:16px 0;background:rgba(255,140,0,0.08)}
+    .assessment-box .card{ text-align:center }
+    .assessment-box .slide-list{ padding:0; list-style:none; text-align:center }
+    .assessment-box .slide-list li{ margin:6px 0 }
+    .assessment-box .meta{ justify-content:center }
+    .assessment-box .card:hover{ box-shadow:0 0 0 3px rgba(255,140,0,0.35), 0 10px 20px rgba(0,0,0,0.25); border-color:#ff8c00 }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-header">
+      <div class="header-left">
+        <img src="HAU-logo.svg" alt="Harper Adams University" class="logo" />
+      </div>
+      <div class="header-center">
+        <h1>Data visualisation (SQ4012)</h1>
+        <p class="tagline">This module is part of the <a href="https://www.harper-adams.ac.uk/courses/station-quarter/201227/2025/applied-data-science" target="_blank" rel="noopener">Applied Data Science Route</a> at Harper Adams University.</p>
+      </div>
+      <div class="header-right">
+        <img src="thumbnails/SQ4012.png" alt="AgriDat" class="logo" />
+      </div>
+    </header>
+    <nav class="controls" aria-label="Slide filters">
+      <input id="q" class="input" type="search" placeholder="Search title, topic, or week…" aria-label="Search" />
+      <select id="week" class="select" aria-label="Filter by week">
+        <option value="">All weeks</option>
+      </select>
+      <select id="topic" class="select" aria-label="Filter by topic">
+        <option value="">All topics</option>
+      </select>
+    </nav>
+
+    <div id="cards" class="grid" role="list"></div>
+    <div id="empty" class="empty" hidden>No decks match your filters.</div>
+
+    <!--<section class="assessment-box" aria-labelledby="assessment-title">
+      <h2 id="assessment-title">Assessment Center</h2>
+      <div class="grid">
+        <a class="card" href="https://vle.harper-adams.ac.uk/course/view.php?id=278" target="_blank" rel="noopener">
+          <h3>Module descriptor</h3>
+          <div class="meta"><span>Student-only access, takes you to the VLE</span></div>
+        </a>
+        <a class="card" href="https://vle.harper-adams.ac.uk/course/view.php?id=278" target="_blank" rel="noopener">
+          <h3>Assignment Brief</h3>
+          <div class="meta"><span>Student-only access, takes you to the VLE</span></div>
+        </a>
+        <div class="card">
+          <h3>Assignment support files</h3>
+          <ul class="slide-list">
+            <li><a class="slide-link" href="https://vle.harper-adams.ac.uk/course/view.php?id=278" target="_blank" rel="noopener">Support pack (VLE)</a></li>
+            <li><a class="slide-link" href="https://vle.harper-adams.ac.uk/course/view.php?id=278">Supporting files</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>-->
+
+    <section aria-labelledby="reading-title">
+      <h2 id="reading-title">Recommended reading</h2>
+      <ul>
+        <li>Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York. <a href="https://ggplot2.tidyverse.org" target="_blank" rel="noopener">(online)</a></li>
+        <li>Wilkinson, L. (2005). The Grammar of Graphics (2nd ed.). Springer-Verlag New York.</li>
+        <li>Cleveland, W. S. (1993). Visualizing Data. Hobart Press.</li>
+      </ul>
+    </section>
+        <p class="footer"><code>Copyright 2025 Harper Adams University</code></p>
+
+  </div>
+
+  <script>
+    // --- slide decks live under /slides ---
+    // title: what users see; file: href under /slides; week: number or string; topics: tags for filtering
+    const slides = [
+      // --- Week 1---
+    { title: "Introduction", file: "visualisation-intro.html", week: 1, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/intro.png" },
+      // --- Week 2---
+      { title: "R-fundamentals", file: "https://rstats-bootcamp.github.io/website/", week: 2, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/scopus.jpg" },      
+      { title: "R Bootcamp 1", file: "https://www.youtube.com/watch?v=CaktME4w32I", week: 2, topics: ["Lead: Dr K.J. Mhango"], thumbVideo: true },
+      // --- Week 3---
+      { title: "Foundations of Graphics and Object-Oriented Design", file: "ood.html", week: 3, topics: ["Critical thinking and analytical skills","Research design and methodology","Report writing","Lead: Dr K.J. Mhango"],image: "thumbnails/ood.png" },
+      // --- Week 4---
+      { title: "Data and Variables for visualisation", file: "data.html", week: 4, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/data.png" },
+      // --- Week 5---
+      { title: "Encoding visual representations", file: "scaling.html", week: 5, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/scaling.png" },
+      // --- Week 6---
+      { title: "Space, Geometry, and Coordinate Systems", file: "geometry.html", week: 6, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/geometry.png" },
+      // --- Week 7---
+      { title: "Aesthetics, Facets, and Guides", file: "aesthetics.html", week: 7, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/aesthetics.png" },
+      
+      // --- Week 8---
+      { title: "Esquisse", file: "https://www.youtube.com/watch?v=GkGkUcwzpRM", week: 8, topics: ["Lead: Dr K.J. Mhango"], thumbVideo: true },
+      // --- Week 9---
+      { title: "Exploratory data analysis", file: "eda.html", week: 9, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/SQ4012.png" },
+      // --- Week 10---
+      { title: "Interactive data visualization", file: "shiny.html", week: 10, topics: ["Lead: Simon Bicknell"], image: "thumbnails/SQ4012.png" },
+      // --- Week 11---
+      { title: "Interactive data visualization", file: "quarto.html", week: 11, topics: ["Lead: Simon Bicknell"], image: "thumbnails/SQ4012.png" },
+      // --- Week 12---
+      { title: "Effective communication with graphics", file: "plotlyanimation.html", week: 12, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/SQ4012.png" },
+      // --- Week 13---
+      { title: "Ethics & Critical Evaluation", file: "gapminder.html", week: 13, topics: ["Lead: Dr K.J. Mhango"], image: "thumbnails/SQ4012.png" }
+    ];
+
+    // --- Utility helpers ---
+    const unique = (arr) => [...new Set(arr)];
+    const isExternalLink = (url) => /^https?:\/\//i.test(url);
+    const hrefForFile = (file) => file ? (isExternalLink(file) ? file : `slides/${encodeURIComponent(file)}`) : '#';
+    function toYouTubeEmbed(url){
+      if(!isExternalLink(url)) return '';
+      let id = '';
+      if(url.includes('youtube.com/watch')){
+        try { id = new URL(url).searchParams.get('v') || ''; } catch(e) { id = ''; }
+      } else if(url.includes('youtu.be/')){
+        id = url.split('youtu.be/')[1]?.split(/[?&]/)[0] || '';
+      }
+      return id ? `https://www.youtube.com/embed/${id}?rel=0` : '';
+    }
+
+    function groupByWeek(slidesArr){
+      const map = new Map();
+      for(const s of slidesArr){
+        const key = String(s.week ?? '');
+        if(!map.has(key)) map.set(key, []);
+        map.get(key).push(s);
+      }
+      const groups = Array.from(map.entries()).map(([week, items])=>{
+        const sorted = items.slice().sort((a,b)=>a.title.localeCompare(b.title, undefined, {numeric:true,sensitivity:'base'}));
+        const topics = unique(sorted.flatMap(s=>s.topics||[])).sort((a,b)=>a.localeCompare(b));
+        const first = sorted[0];
+        const lead = sorted.map(s => (s.topics||[]).find(t => /^lead/i.test(t))).find(Boolean) || '';
+        return { week, slides: sorted, topics, image: first?.image, defaultFile: first?.file, lead };
+      });
+      return groups.sort((a,b)=>Number(a.week)-Number(b.week));
+    }
+
+    function populateFilters() {
+      const weekSel = document.getElementById('week');
+      const topicSel = document.getElementById('topic');
+      const weeks = unique(slides.map(s => String(s.week))).sort((a,b)=>Number(a)-Number(b));
+      for (const w of weeks) {
+        const opt = document.createElement('option');
+        opt.value = w; opt.textContent = `Week ${w}`;
+        weekSel.appendChild(opt);
+      }
+      const allTopics = unique(slides.flatMap(s => (s.topics||[]))).sort((a,b)=>a.localeCompare(b));
+      for (const t of allTopics) {
+        const opt = document.createElement('option');
+        opt.value = t; opt.textContent = t;
+        topicSel.appendChild(opt);
+      }
+    }
+
+    function groupCardTemplate(g){
+      const defHref = hrefForFile(g.defaultFile);
+
+      const preferredSlide = g.slides.find(s => s.thumbVideo && toYouTubeEmbed(s.file));
+      const anyVideo = g.slides.map(s => toYouTubeEmbed(s.file)).find(Boolean);
+      const ytEmbed = preferredSlide ? toYouTubeEmbed(preferredSlide.file) : (anyVideo || '');
+
+      const firstImage = g.slides.map(s => s.image).find(Boolean) || g.image;
+
+      const thumb = ytEmbed
+        ? `<iframe class="thumb" src="${ytEmbed}" title="Week ${g.week} video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`
+        : (firstImage ? `<img class="thumb" src="${firstImage}" alt="Week ${g.week} slides" />` : `<div class="thumb" aria-hidden="true"></div>`);
+
+      const list = g.slides.map(s=>{
+        const href = hrefForFile(s.file);
+        return `<li><a class="slide-link" href="${href}">${s.title}</a></li>`;
+      }).join('');
+      const count = g.slides.length;
+      const lead = g.lead ? `<span class="lead-pill">${g.lead}</span>` : '';
+      return `
+        <div class="card" role="link" tabindex="0" data-default-href="${defHref}">
+          ${thumb}
+          <h3><a class="card-title" href="${defHref}">Week ${g.week}</a></h3>
+          <div class="meta">
+            <span>${count} ${count===1?'slide':'slides'}</span> ${lead}
+          </div>
+          <ul class="slide-list">${list}</ul>
+        </div>
+      `;
+    }
+
+    function bindCardNavigation(){
+      document.querySelectorAll('.card').forEach(card=>{
+        const href = card.getAttribute('data-default-href');
+        card.addEventListener('click',(e)=>{
+          if(e.target.closest('a')) return; // let inner links work
+          if(e.target.closest('iframe')) return; // ignore clicks inside video
+          if(href && href !== '#') window.location.href = href;
+        });
+        card.addEventListener('keydown',(e)=>{
+          if((e.key==='Enter' || e.key===' ') && href && href !== '#'){
+            e.preventDefault();
+            window.location.href = href;
+          }
+        });
+      });
+    }
+
+    function render(){
+      const q = document.getElementById('q').value.toLowerCase().trim();
+      const week = document.getElementById('week').value;
+      const topic = document.getElementById('topic').value;
+      const groups = groupByWeek(slides).filter(g=>{
+        const inWeek = !week || String(g.week)===week;
+        const inTopic = !topic || g.slides.some(s => (s.topics||[]).includes(topic));
+        const hay = [g.week, ...g.slides.map(s=>s.title), ...g.slides.flatMap(s=>s.topics||[])].join(' ').toLowerCase();
+        const inSearch = !q || hay.includes(q);
+        return inWeek && inTopic && inSearch;
+      });
+      document.getElementById('cards').innerHTML = groups.map(groupCardTemplate).join('');
+      document.getElementById('empty').hidden = groups.length>0;
+      bindCardNavigation();
+    }
+
+    populateFilters();
+    render();
+
+    document.getElementById('q').addEventListener('input', render);
+    document.getElementById('week').addEventListener('change', render);
+    document.getElementById('topic').addEventListener('change', render);
+  </script>
+</body>
+</html>
