@@ -1,0 +1,189 @@
+---
+title: "Graphics, Grammar & Object‑Oriented Design"
+author: "Kanthu Joseph Mhango"
+format: revealjs
+---
+
+## Learning outcomes
+
+By the end of this session, students should be able to:
+
+1. Distinguish graphs, charts, plots, figures, infographics  
+2. Explain the key ideas of object‑oriented design (objects, messages, encapsulation, inheritance, polymorphism)  
+3. Describe the structure of an object‑oriented graphics system (Specification → Assembly → Display) and the six specification statements (DATA, TRANS, SCALE, COORD, ELEMENT, GUIDE)  
+4. Understand how `ggplot2` embodies a grammar of graphics and OOD principles  
+5. Apply these ideas using base R and see where OOD gives advantage  
+
+---
+
+## Part A — Graphics versus charts
+
+### Vocabulary & boundaries
+
+- **Graph**: a mathematical object (points, relationships)  
+- **Graphic**: a perceivable representation of that graph  
+- **Chart**: a named visual form (bar chart, line chart, pie chart)  
+- **Plot**: a concrete rendering of data in a coordinate system  
+- **Figure**: a labeled visual element in a document (could include multiple plots)  
+- **Infographic**: data graphic + narrative/illustration  
+
+> *Exercise:* Think of five visuals you’ve seen recently. Label each as chart / plot / figure / infographic (with justification).
+
+---
+
+### Rigid charts vs flexible grammar
+
+- Many systems are built around fixed chart types (scatter, bar, histogram).  
+- If you want something slightly “off‑template,” you often fight the system.  
+- A **grammar** approach posits that every graphic is built from composable pieces (data, mapping, geom, scale, etc.).
+
+---
+
+### The Grammar of Graphics (Wilkinson, 2005)
+
+Every statistical graphic can be decomposed into components:
+
+1. **Data** — the dataset you are visualizing  
+2. **Mappings (aesthetics)** — mapping data variables to visual properties (x, y, color, size, shape)  
+3. **Geometric objects (geoms)** — the visual marks (points, lines, bars)  
+4. **Statistical transformations (stats)** — summarizing or modeling data (counts, smoothing, binning)  
+5. **Scales** — mapping data values to aesthetic space (and managing legends/axes)  
+6. **Coordinate system (coords)** — how data positions map onto the plot surface (Cartesian, polar, maps)  
+7. **Facets** — break data into sub‑plots (small multiples)  
+8. **Theme / styling** — non‑data ink: gridlines, fonts, background, axes style  
+
+---
+
+### Why the grammar matters
+
+- Traditional systems = collections of rigid chart functions.  
+- Grammar = **reusable, orthogonal components**.  
+- You can mix & match, extend, or create new visuals.
+
+---
+
+### Example: building iteratively in `ggplot2`
+
+```r
+library(ggplot2)
+p <- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length))
+
+# Add a layer of points
+p + geom_point()
+
+# Add a smoothing trend line
+p + geom_point() + geom_smooth(method = "lm", se = FALSE)
+```
+
+---
+
+### What ggplot2 does *not* do
+
+- Doesn’t tell you *which* chart to choose  
+- Doesn’t inherently provide interactivity (though can integrate with plotly etc.)
+
+---
+
+### How ggplot2 fits with other R graphics systems
+
+- **Base R graphics**: immediate, simple, hard to modify after drawing  
+- **Grid graphics**: lower‑level drawing primitives  
+- **Lattice**: offers conditioning but lacks full grammar  
+- **ggplot2**: grammar + object orientation, built on grid  
+- Ecosystem integrates with plotly, htmlwidgets for interactivity
+
+---
+
+## Part B — Object‑Oriented Design (OOD)
+
+### What is OOD?
+
+- **Objects**: modular components with behavior  
+- **Messages**: objects communicate via operations (`+` in ggplot)  
+- **Encapsulation**: hides internal complexity  
+- **Inheritance**: share behavior via class hierarchies  
+- **Polymorphism**: same message, different behaviors depending on object  
+
+In `ggplot2`:  
+- Data, geoms, scales, coords, themes are objects  
+- The `+` operator is message passing  
+- Geoms inherit from base classes  
+- Mapping interpreted differently in `geom_point()` vs `geom_smooth()`
+
+---
+
+### What OOD *is not*
+
+- Not just a programming language feature  
+- Not equivalent to GUI or interactivity  
+- It’s a design principle for modularity
+
+---
+
+## Part C — An Object‑Oriented Graphics System
+
+### Specification → Assembly → Display
+
+1. **Specification**: describe *what* to display (data, mapping, scale, etc.)  
+2. **Assembly**: link components, resolve layout  
+3. **Display**: render on device (screen, PDF, PNG)
+
+---
+
+### The six specification statements
+
+- **DATA**: dataset/variables  
+- **TRANS**: transformations on variables  
+- **SCALE**: mapping from data to aesthetics  
+- **COORD**: coordinate system  
+- **ELEMENT**: geometric/statistical object  
+- **GUIDE**: axes, legends, labels  
+
+> *Exercise:* Identify each spec statement in a base R plot with `plot()`, `abline()`, `legend()`.
+
+---
+
+### Transform vs Scale
+
+- **Transform**: changes the underlying data (e.g. `log(x)`)  
+- **Scale**: changes how data are displayed (e.g. `scale_x_log10()`)  
+- **Coords**: changes the geometry of display (e.g. `coord_polar()`)  
+
+---
+
+## Part D — ggplot2 at a deeper glance
+
+- Implements the grammar of graphics  
+- Layered, object‑oriented system: data + mapping → layers → scales → coords → guides → theme  
+- Components are objects, added via `+`  
+- Extendable: custom geoms, stats, scales, themes
+
+---
+
+## Part E — Tutorials & exercises
+
+### Base R practice
+
+- Recreate scatterplots, lines, labelled plots.  
+- Annotate with six spec statements.
+
+### Compare base vs ggplot2
+
+- Make same plot multiple times.  
+- Base R = repetition; ggplot2 = reuse components.
+
+### Reflection
+
+- Can you explain each of the six spec statements?  
+- Be careful: transform vs scale.  
+- Style/theme comes last.
+
+---
+
+## Summary
+
+- Vocabulary: graph, chart, plot, figure, infographic  
+- Grammar of graphics: composable components  
+- OOD: objects, messages, encapsulation, inheritance, polymorphism  
+- Object‑oriented graphics system: specification → assembly → display  
+- ggplot2: grammar + OOD, modular and extendable
