@@ -4,6 +4,7 @@
     "dockerfile": "Dockerfile"
   },
   "forwardPorts": [8787],
-  "remoteUser": "rstudio"
+  "remoteUser": "rstudio",
+  "postStartCommand": "rserver --server-user rstudio --www-port 8787 --auth-none=1"
 }
 
