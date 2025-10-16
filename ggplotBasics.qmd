@@ -1,0 +1,179 @@
+---
+title: "Progressive Construction of a ggplot"
+subtitle: "Understanding the Grammar of Graphics"
+author: "K.J. Mhango"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: false
+    smooth-scroll: true
+    anchor-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+lang: en-GB
+---
+
+
+# Building a ggplot: The Grammar of Graphics in Action
+
+The idea behind **ggplot2** is that *a plot is built piece by piece*, just like a sentence is built from words. Each layer corresponds to a component of the **grammar of graphics**.
+
+| Component   | Meaning                                            | ggplot2 Analogue                           |
+| ----------- | -------------------------------------------------- | ------------------------------------------ |
+| **DATA**    | The dataset we want to visualize.                  | `data = iris`                              |
+| **TRANS**   | Transformations we apply to data before plotting.  | e.g. `log(x)`, `cut()`, `rank()`           |
+| **SCALE**   | The mapping from data values to visual properties. | `scale_x_log10()`, `scale_colour_manual()` |
+| **COORD**   | The coordinate system for displaying the data.     | `coord_cartesian()`, `coord_polar()`       |
+| **ELEMENT** | The geometric/statistical elements drawn.          | `geom_point()`, `stat_smooth()`            |
+| **GUIDE**   | Visual references: axes, legends, labels.          | `labs()`, `theme()`, `guides()`            |
+
+---
+
+## 1. Start with an empty `ggplot()`
+
+```{r}
+library(ggplot2)
+ggplot()
+```
+
+**Meaning:**
+
+* This is the **empty canvas**.
+* There’s no data, no mappings, and no geometry — just a potential coordinate space.
+* In grammar terms, we have **no nouns or verbs** yet — only the sentence structure.
+
+---
+
+## 2. Add `data = iris`
+
+```{r}
+ggplot(data = iris)
+```
+
+**Meaning:**
+
+* We’ve added **DATA**, the conceptual substrate of the graphic.
+* `iris` now forms the *intangible graph*: a set of variables and observations waiting to be mapped.
+* Still, nothing appears — we have not told ggplot *what aesthetic mappings* to use.
+
+---
+
+## 3. Add `aes()` — the aesthetic mappings
+
+```{r}
+ggplot(data = iris, aes(x = Sepal.Length, y = Petal.Length))
+```
+
+**Meaning:**
+
+* We’ve specified **how** to translate data into visual form.
+* `aes()` defines a **mapping** from variables → aesthetic space (position, colour, size, etc.).
+* This is the **SCALE** stage of the grammar — telling ggplot *how data values correspond to graphical features*.
+* We still have no visible plot, because there’s no geometry to draw with.
+
+---
+
+## 4. Add a geometry (`geom_point()`)
+
+```{r}
+ggplot(data = iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point()
+```
+
+**Meaning:**
+
+* Now we’ve added an **ELEMENT** — a geometric layer that knows *how to draw points*.
+* Together, DATA + AESTHETIC + GEOM form the minimal structure to assemble a visible graphic.
+* This expresses the sentence: *“Plot Petal.Length against Sepal.Length as points.”*
+
+---
+
+## 5. Add manual scales
+
+```{r}
+ggplot(data = iris, aes(x = Sepal.Length, y = Petal.Length, colour = Species)) +
+  geom_point(size = 3) +
+  scale_colour_manual(values = c("setosa" = "tomato",
+                                 "versicolor" = "steelblue",
+                                 "virginica" = "darkgreen"))
+```
+
+**Meaning:**
+
+* Here, we refine the **SCALE** component.
+* By default, ggplot chooses scales automatically (continuous, discrete, etc.), but we can define our own.
+* Scales connect *data domain → aesthetic range* (e.g., Species → colour values).
+* The grammar allows explicit control over this mapping.
+
+---
+
+## 6. Add guides (legends, labels, and themes)
+
+```{r}
+ggplot(data = iris, aes(x = Sepal.Length, y = Petal.Length, colour = Species)) +
+  geom_point(size = 3) +
+  scale_colour_manual(values = c("setosa" = "tomato",
+                                 "versicolor" = "steelblue",
+                                 "virginica" = "darkgreen")) +
+  labs(title = "Sepal vs Petal Length",
+       x = "Sepal Length (cm)",
+       y = "Petal Length (cm)",
+       colour = "Iris Species") +
+  theme_minimal()
+```
+
+**Meaning:**
+
+* **GUIDE** components frame how the viewer interprets the visual space — axes, legends, and titles.
+* They are not data, but *interpretive aids* derived from the mapping.
+* In linguistic analogy: these are *punctuation and annotation* that make the sentence readable.
+
+---
+
+## 7. Add facets (conditioning)
+
+```{r}
+ggplot(data = iris, aes(x = Sepal.Length, y = Petal.Length, colour = Species)) +
+  geom_point(size = 2) +
+  facet_wrap(~ Species) +
+  labs(title = "Iris Morphology by Species") +
+  theme_bw()
+```
+
+**Meaning:**
+
+* **Facets** are small multiples — subplots that condition the data by one or more variables.
+* They extend the grammar to *partition* the data space.
+* This is a **higher-order structure**: rather than mapping to colour or size, we map to *panels*.
+* In the grammar, this introduces a new *coordinate context* (each facet has its own local scale domain).
+
+---
+
+## Summary Table
+
+| Layer                           | Grammar Component     | Conceptual Role                               |
+| ------------------------------- | --------------------- | --------------------------------------------- |
+| `ggplot()`                      | Empty **COORD** space | The plot canvas — potential coordinate system |
+| `data = iris`                   | **DATA**              | The dataset underpinning the visual           |
+| `aes()`                         | **SCALE**             | Mapping from data → visual properties         |
+| `geom_point()`                  | **ELEMENT**           | Geometric representation of data              |
+| `scale_*()`                     | **SCALE refinement**  | Defines data→aesthetic range mappings         |
+| `labs()`, `theme()`, `guides()` | **GUIDE**             | Interpretation aids for the viewer            |
+| `facet_*()`                     | **COORD partition**   | Conditional plotting by variable              |
+
+---
+
+## Optional Extensions
+
+* **TRANS:** Add transformations like `aes(x = log(Sepal.Length))` or use `stat_bin()` to summarise data before drawing.
+* **COORD:** Change coordinate systems, e.g. `coord_polar()` to convert the Cartesian mapping into circular space.
+
+---
+
+**a ggplot is not a picture, but a structured sentence describing how data become a visual argument** — each part of the grammar tells ggplot how to *compose meaning from data*.
