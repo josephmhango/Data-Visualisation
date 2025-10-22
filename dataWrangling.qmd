@@ -1,0 +1,247 @@
+---
+title: "DATA in the Grammar of Graphics — Understanding Data Types and Wrangling with dplyr"
+author: "Dr K.J. Mhango"
+format:
+  html:
+    toc: true
+    number-sections: true
+execute:
+  echo: true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+theme_set(theme_minimal(base_size = 13))
+```
+
+# The “DATA” Component in the Grammar of Graphics
+
+In Wilkinson’s (*2005*) **Grammar of Graphics**, a visualisation consists of seven layers:  
+**DATA**, **TRANS**, **SCALE**, **COORD**, **ELEMENT**, **GUIDE**, and **CONTEXT**.
+
+> The **DATA** layer defines *what* you’re visualising — the variables, their structure, and their types.  
+> Everything else in a plot (e.g. scales, aesthetics, geometry) depends on the data foundation.
+
+Understanding how to manipulate and prepare data is crucial for meaningful visualisation. This tutorial walks through how to explore, wrangle, and understand datasets using the `tidyverse`, focusing on **dplyr**, **tidyr**, and **ggplot2**.
+
+---
+
+# Tibbles and Data Frames
+
+In R, a **data frame** is a two-dimensional table structure that stores data in columns (variables) and rows (observations). A **tibble** is an enhanced version of a data frame provided by the **tibble** package (part of the tidyverse).
+
+### Key differences:
+- **Printing**: Tibbles print only the first 10 rows and the columns that fit your screen.
+- **Type stability**: Tibbles never change variable names or types when subsetting.
+- **No partial matching**: Tibbles require exact column names.
+- **Creation**: Use `tibble()` instead of `data.frame()`.
+
+Example:
+
+```{r}
+data_frame_example <- tibble(
+  Name = c("Alice", "Bob", "Charlie"),
+  Age = c(25, 30, 35)
+)
+```
+
+---
+
+# Anatomy of a dplyr Pipeline
+
+A **dplyr** pipeline is a sequence of data manipulation commands connected by the **pipe operator** `%>%`.
+
+### The pipe `%>%`
+The pipe passes the output of one function as the input to the next function. It reads like natural language:
+
+```r
+mpg %>%
+  filter(hwy > 30) %>%
+  select(manufacturer, model, hwy)
+```
+
+This means: *Take the `mpg` dataset → keep rows where `hwy > 30` → keep only the selected columns.*
+
+This syntax improves readability by avoiding nested parentheses like:
+```r
+select(filter(mpg, hwy > 30), manufacturer, model, hwy)
+```
+
+---
+
+# Core Functions in dplyr
+
+## `select()`
+Chooses specific columns by name.
+```{r}
+mpg %>% select(manufacturer, model, hwy)
+```
+**Arguments:**
+- `manufacturer, model, hwy`: column names to keep.
+
+You can also use **helper functions** such as `starts_with()`, `ends_with()`, `contains()`, or select by position.
+
+---
+
+## `filter()`
+Keeps rows that satisfy logical conditions.
+```{r}
+mpg %>% filter(hwy > 30, class == "compact")
+```
+**Arguments:**
+- Logical expressions using column names.
+- Multiple conditions separated by commas mean *AND* (both must be true).
+
+---
+
+## `arrange()`
+Sorts rows by one or more columns.
+```{r}
+mpg %>% arrange(desc(hwy))
+```
+**Arguments:**
+- Columns to sort by.
+- `desc()` sorts in descending order.
+
+---
+
+## `mutate()`
+Adds new variables or transforms existing ones.
+```{r}
+mpg %>% mutate(kmpl = hwy / 2.35)
+```
+**Arguments:**
+- `kmpl`: the name of the new variable.
+- `hwy / 2.35`: expression defining how to compute it.
+
+You can use **vectorised functions** (operate element-wise) inside mutate.
+
+---
+
+## `summarise()` (or `summarize()`)
+Creates summary statistics for each group of data.
+
+```{r}
+mpg %>% summarise(mean_hwy = mean(hwy))
+```
+**Arguments:**
+- New variable name (`mean_hwy`)
+- Summary expression (`mean(hwy)`).
+
+---
+
+## `group_by()`
+Groups rows based on one or more columns so that subsequent operations (like summarise) act within each group.
+```{r}
+mpg %>%
+  group_by(class) %>%
+  summarise(mean_hwy = mean(hwy))
+```
+`group_by()` changes how dplyr verbs behave: they now operate **within each group**.
+
+---
+
+## `across()` and `everything()`
+
+### `across()`
+Allows you to apply a function to multiple columns within `summarise()` or `mutate()`.
+```{r}
+mpg %>% summarise(across(where(is.numeric), mean, na.rm = TRUE))
+```
+**Arguments:**
+- First argument: columns to apply the function to (e.g., `where(is.numeric)` selects all numeric columns).
+- Second: function to apply (`mean`).
+
+### `everything()`
+A helper that refers to *all columns*.
+```{r}
+mpg %>% summarise(across(everything(), class))
+```
+This returns the **class** (data type) of every column.
+
+---
+
+# Discovering Datasets in ggplot2 and tidyverse
+
+You can explore built-in datasets to practice wrangling and plotting.
+
+```{r}
+library(ggplot2)
+data(package = "ggplot2")
+```
+Load and preview one:
+```{r}
+data(mpg)
+glimpse(mpg)
+```
+View summary statistics:
+```{r}
+summary(mpg)
+```
+
+---
+
+# Data Types and ggplot Behaviour
+
+| Data Type | Example | ggplot Behaviour | Typical Geoms |
+|------------|----------|------------------|----------------|
+| Numeric | `hwy`, `displ` | Continuous scale | `geom_point()` |
+| Factor | `class` | Discrete scale | `geom_bar()` |
+| Ordered | `Low/Med/High` | Ordered discrete | `geom_col()` |
+| Binary | TRUE/FALSE | Two discrete fills | `geom_point()` |
+| Date | Date | Continuous time | `geom_line()` |
+
+---
+
+# Example of Wrangling and Plotting
+
+```{r}
+mpg %>%
+  mutate(efficient = ifelse(hwy > 30, "Efficient", "Standard")) %>%
+  group_by(efficient, class) %>%
+  summarise(mean_displ = mean(displ), .groups = "drop") %>%
+  ggplot(aes(class, mean_displ, fill = efficient)) +
+  geom_col(position = "dodge") +
+  coord_flip() +
+  labs(title = "Wrangled Data → Meaningful Visual")
+```
+
+### Explanation of Components
+- `mutate()`: Creates a new variable `efficient`.
+- `ifelse()`: Applies a conditional test (returns one of two outcomes per row).
+- `group_by()`: Groups data by efficiency and class.
+- `summarise()`: Calculates mean displacement per group.
+- `.groups = "drop"`: Removes grouping after summarisation.
+- `ggplot()`: Maps variables to visual aesthetics.
+- `geom_col()`: Draws bars whose heights represent values.
+
+---
+
+# Quick Reference: Dataset Discovery & Inspection
+
+| Task | Function | Description |
+|------|-----------|--------------|
+| List datasets | `data(package = "ggplot2")` | Lists all available datasets in the package |
+| Load dataset | `data("mpg")` | Loads the dataset into memory |
+| View structure | `glimpse(mpg)` | Compact view of columns and types |
+| Summaries | `summary(mpg)` | Basic descriptive stats per variable |
+| Frequency table | `count(mpg, class)` | Counts of each class |
+| Skim overview | `skimr::skim(mpg)` | Extended descriptive summary |
+
+---
+
+# Summary
+
+| Goal | Function(s) | Purpose |
+|------|--------------|----------|
+| Subset columns | `select()` | Keep or reorder variables |
+| Filter observations | `filter()` | Keep specific rows |
+| Add or transform variables | `mutate()` | Create new information |
+| Aggregate | `group_by()`, `summarise()` | Compute summaries per group |
+| Apply functions | `across()`, `everything()` | Transform multiple columns |
+| Reshape | `pivot_longer()`, `pivot_wider()` | Convert between wide and long formats |
+| Combine | `join()`, `bind_rows()` | Merge data sources |
+| Inspect | `glimpse()`, `skim()` | Understand dataset structure |
+
+---
+
