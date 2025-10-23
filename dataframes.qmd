@@ -1,0 +1,222 @@
+---
+title: "Understanding Data Frames in R"
+author: "K.J. Mhango"
+format:
+  html:
+    toc: true
+    number-sections: true
+execute:
+  echo: true
+---
+
+# Introduction
+
+When you work with data in **R**, the most common and powerful structure you will encounter is the **data frame**.
+A data frame is a **table-like structure** that stores data in rows and columns—similar to a spreadsheet, but with much greater flexibility for analysis and manipulation.
+
+This tutorial explains what a data frame is, how it works, and how you can create, inspect, and modify one.
+
+---
+
+# 1. What is a Data Frame?
+
+A **data frame** is a two-dimensional structure where:
+
+* **Each column** represents a **variable** (for example, age, income, or species).
+* **Each row** represents an **observation** (for example, a single person, measurement, or sample).
+
+Data frames are special because **each column can contain different types of data**:
+
+* One column might be numeric,
+* Another might be character (text),
+* Another might be a factor (categorical).
+
+This flexibility makes data frames the workhorse of data analysis in R.
+
+Let’s look at an example.
+
+```{r}
+# Create a simple data frame
+students <- data.frame(
+  name = c("Alice", "Ben", "Carla", "David"),
+  age = c(20, 22, 21, 23),
+  course = c("Biology", "Maths", "Physics", "Chemistry"),
+  passed = c(TRUE, TRUE, FALSE, TRUE)
+)
+
+students
+```
+
+Each row here is a student, and each column describes a property of that student.
+
+---
+
+# 2. Structure of a Data Frame
+
+You can think of a data frame as **a list of equal-length vectors**.
+Each vector is one column. All columns must have the same number of elements (rows).
+
+```{r}
+str(students)
+```
+
+The `str()` function shows that:
+
+* `name` is a **character vector**
+* `age` is **numeric**
+* `course` is **character**
+* `passed` is **logical**
+
+All have 4 elements—so they form a valid data frame.
+
+---
+
+# 3. Accessing Data
+
+You can access data from a frame in multiple ways:
+
+### By column name
+
+```{r}
+students$name
+students$age
+```
+
+### By position
+
+```{r}
+students[ , 2]   # Second column
+students[1, ]    # First row
+```
+
+### By combining both
+
+```{r}
+students[1, "name"]  # Cell: Row 1, column "name"
+```
+
+---
+
+# 4. Adding and Removing Columns
+
+You can add new variables to a data frame using `$` or `mutate()` from **dplyr**.
+
+```{r}
+students$year <- c(1, 2, 2, 3)
+students
+```
+
+Or using the **tidyverse**:
+
+```{r}
+library(dplyr)
+
+students <- students %>%
+  mutate(grade = c("A", "B", "C", "A"))
+students
+```
+
+To remove a column, you can set it to `NULL`:
+
+```{r}
+students$passed <- NULL
+students
+```
+
+---
+
+# 5. Inspecting a Data Frame
+
+R provides many useful functions to explore your data:
+
+```{r}
+head(students)    # First 6 rows
+tail(students)    # Last 6 rows
+nrow(students)    # Number of rows
+ncol(students)    # Number of columns
+names(students)   # Column names
+summary(students) # Quick summary of each variable
+```
+
+---
+
+# 6. Tibbles vs Data Frames
+
+The **tibble** (from the `tibble` or `dplyr` package) is a **modern version** of the base R data frame.
+
+Tibbles:
+
+* Print nicely to the console (show only what fits).
+* Don’t automatically convert strings to factors.
+* Work better with the tidyverse (e.g. `ggplot2`, `dplyr`).
+
+```{r}
+library(tibble)
+students_tbl <- as_tibble(students)
+students_tbl
+```
+
+Notice how it prints: only the first few rows and columns are shown neatly.
+
+---
+
+# 7. Example with Built-in Data
+
+R comes with built-in data frames you can explore, such as `mtcars`, `iris`, and `airquality`.
+
+```{r}
+data("iris")
+head(iris)
+summary(iris)
+```
+
+You can check the list of all available datasets in R:
+
+```{r}
+data()  # Lists all built-in datasets
+```
+
+---
+
+# 8. Why Data Frames Matter
+
+Data frames are the foundation of nearly every data analysis task in R.
+They connect to:
+
+* **Visualization** (`ggplot2`)
+* **Data wrangling** (`dplyr`, `tidyr`)
+* **Statistical modeling** (`lm`, `glm`, `lme4`)
+* **Machine learning** (`caret`, `tidymodels`)
+
+In fact, most R workflows begin with:
+
+1. Importing a dataset as a data frame,
+2. Cleaning or transforming it,
+3. Visualizing or modeling it.
+
+---
+
+# 9. Key Takeaways
+
+A **data frame** is a table of data (rows = observations, columns = variables).
+Each column can store a different data type.
+You can create, access, modify, and summarize data frames easily.
+The **tibble** is a modern data frame with enhanced printing and behavior.
+Mastering data frames is the first step to mastering data analysis in R.
+
+---
+
+# 10. Next Steps
+
+Now that you understand data frames, try exploring:
+
+* `dplyr` for data wrangling (`filter()`, `mutate()`, `summarise()`)
+* `tidyr` for reshaping data (`pivot_longer()`, `pivot_wider()`)
+* `ggplot2` for visualizing data frames
+
+Each of these tools builds directly on your understanding of what a **data frame** is and how it represents structured data.
+
+---
+
+> In summary:
+> A data frame is not just a table — it’s the foundation of how R *understands* your data.
