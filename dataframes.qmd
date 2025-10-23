@@ -18,7 +18,7 @@ This tutorial explains what a data frame is, how it works, and how you can creat
 
 ---
 
-# 1. What is a Data Frame?
+# What is a Data Frame?
 
 A **data frame** is a two-dimensional structure where:
 
@@ -51,7 +51,7 @@ Each row here is a student, and each column describes a property of that student
 
 ---
 
-# 2. Structure of a Data Frame
+# Structure of a Data Frame
 
 You can think of a data frame as **a list of equal-length vectors**.
 Each vector is one column. All columns must have the same number of elements (rows).
@@ -71,7 +71,7 @@ All have 4 elements—so they form a valid data frame.
 
 ---
 
-# 3. Accessing Data
+# Accessing Data
 
 You can access data from a frame in multiple ways:
 
@@ -97,7 +97,7 @@ students[1, "name"]  # Cell: Row 1, column "name"
 
 ---
 
-# 4. Adding and Removing Columns
+# Adding and Removing Columns
 
 You can add new variables to a data frame using `$` or `mutate()` from **dplyr**.
 
@@ -125,7 +125,7 @@ students
 
 ---
 
-# 5. Inspecting a Data Frame
+# Inspecting a Data Frame
 
 R provides many useful functions to explore your data:
 
@@ -140,7 +140,7 @@ summary(students) # Quick summary of each variable
 
 ---
 
-# 6. Tibbles vs Data Frames
+# Tibbles vs Data Frames
 
 The **tibble** (from the `tibble` or `dplyr` package) is a **modern version** of the base R data frame.
 
@@ -160,7 +160,7 @@ Notice how it prints: only the first few rows and columns are shown neatly.
 
 ---
 
-# 7. Example with Built-in Data
+# Example with Built-in Data
 
 R comes with built-in data frames you can explore, such as `mtcars`, `iris`, and `airquality`.
 
@@ -178,7 +178,7 @@ data()  # Lists all built-in datasets
 
 ---
 
-# 8. Why Data Frames Matter
+# Why Data Frames Matter
 
 Data frames are the foundation of nearly every data analysis task in R.
 They connect to:
@@ -196,7 +196,7 @@ In fact, most R workflows begin with:
 
 ---
 
-# 9. Key Takeaways
+# Key Takeaways
 
 A **data frame** is a table of data (rows = observations, columns = variables).
 Each column can store a different data type.
@@ -206,7 +206,7 @@ Mastering data frames is the first step to mastering data analysis in R.
 
 ---
 
-# 10. Next Steps
+# Next Steps
 
 Now that you understand data frames, try exploring:
 
