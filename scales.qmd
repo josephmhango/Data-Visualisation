@@ -1,0 +1,722 @@
+---
+title: "Encoding Visual Representations"
+author: "K.J. Mhango"
+date: "2025-09-06"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: show
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Session Overview
+
+**Topic:** Encoding visual representations — scale theory, scale transformations, and their practical use in data visualisation.
+
+**What you should be able to do after this session:**
+
+1. Explain measurement **scale types** (nominal, ordinal, interval, ratio, absolute) and **unit-based** scale systems in plain language.
+2. Tell the difference between **aesthetics** (what we see) and **scales** (how data gets turned into what we see).
+3. Tell the difference between **variable**, **scale**, and **coordinate** transformations and choose the right one for a situation.
+4. Use common scales in **ggplot2** (categorical, continuous/linear, date/time, log, power/sqrt, arcsine, logit) and explain what each is doing to the data and to the viewer.
+5. Design visual encodings that respect **semantic meaning** (e.g. bars that must start at 0) and **invariance** properties (e.g. ratios only on ratio scales).
+6. Work through guided labs that show the effect of scale choice on real datasets.
+
+---
+
+# Part I — Foundations
+
+## What is a scale?
+
+When we make a chart, we are really doing this:
+
+1. We have **data** (numbers, dates, categories).
+2. We want to **show** it (points, bars, lines, colours).
+3. We need a **rule** that says: “this value is drawn *here* and looks *like this*.”
+
+That rule is called a **scale**.
+
+A **scale** is the bridge between **data space** and **picture space**.
+
+* **Data space**: 5 kg, 2024‑09‑06, “female”, 0.73
+* **Picture space**: x = 120 pixels, y = 40 pixels, colour = blue, size = 3
+
+A scale takes a value in data space and **maps** it to a value in picture space.
+
+## Aesthetics vs Scales (disambiguation)
+
+This often confuses beginners, so let’s make it very explicit.
+
+* An **aesthetic** is a **visual channel**. It is the *thing that can change visually*.
+
+  * Examples: `x`, `y`, `colour`, `fill`, `size`, `shape`, `alpha` (transparency).
+  * These are named in `aes(...)` in ggplot2.
+
+* A **scale** is the **translator** that says: “when the data is 10, draw it *here*; when the data is 20, draw it *there*.”
+
+  * Examples: `scale_x_continuous()`, `scale_y_log10()`, `scale_fill_brewer()`, `scale_x_date()`.
+
+You can think of it like this:
+
+* **Aesthetic** = *what* we are changing (position? colour? size?)
+* **Scale** = *how* the data gets converted to that aesthetic
+
+**Example in code:**
+
+```r
+library(ggplot2)
+
+ggplot(mtcars, aes(x = wt, y = mpg, colour = factor(cyl))) +
+  geom_point()
+```
+
+* `x = wt` → x **aesthetic**
+* `y = mpg` → y **aesthetic**
+* `colour = factor(cyl)` → colour **aesthetic**
+* ggplot2 automatically picks **scales** for you:
+
+  * because `wt` and `mpg` are numbers → **continuous** x and y scales
+  * because `factor(cyl)` is categorical → **discrete** colour scale
+
+Later you can **override** the automatic scales to make the plot clearer.
+
+## Why are they called “scales”?
+
+The word “scale” comes from measuring instruments (rulers, thermometers, weighing scales). A scale gives us:
+
+* a **range** (min → max)
+* a **unit** (cm, °C, kg)
+* **marks/ticks** to help us read values
+
+Data visualisation reuses this idea: an axis is just a **drawn scale**. When we change the scale, we change:
+
+* the start and end
+* the tick locations
+* the labels
+* sometimes the *mathematics* used to spread the values (linear vs log)
+
+## Why scales matter
+
+Scales determine what the viewer thinks is **big**, **small**, **far apart**, **close together**, **missing**, or **important**. Poor scale choices can make correct data look wrong.
+
+Some common problems that come from bad scales:
+
+* Truncated bars that start at 50 instead of 0 → makes small differences look huge.
+* Using a log scale without saying so → makes growth look flat.
+* Using a colour scale that implies order for categories that have no order → misleads the reader.
+
+**Your job as a data visualiser is to pick scales that tell the truth about the data.**
+
+## Measurement scales (Stevens)
+
+We often mix up “measurement scale” (nominal, ordinal, interval, ratio) with “visual scale” (linear, log, etc.). Both are important.
+
+### 5.1 Measurement scales
+
+| Type     | What it means                  | Example                       | What you can safely do                  |
+| -------- | ------------------------------ | ----------------------------- | --------------------------------------- |
+| Nominal  | Just naming / labelling        | crop type, gender, country    | count, group, mode                      |
+| Ordinal  | Order matters, gaps not equal  | Likert 1–5, small/med/large   | sort, compare order                     |
+| Interval | Equal steps, zero is arbitrary | °C, calendar years            | add, subtract                           |
+| Ratio    | Equal steps, true zero         | height, mass, rainfall, speed | add, subtract, multiply, compare ratios |
+| Absolute | Counts from 0, identity only   | number of seedlings           | treat as exact count                    |
+
+Why do we care? Because **some visual encodings imply operations**.
+
+* Bar charts → compare **length** → good for ratio or at least interval data
+* Pie charts → compare **parts of a whole** → needs ratio (or at least proportion)
+* Line charts → show change over **ordered** x → needs ordinal, interval, or ratio x
+
+## Units as strong typing
+
+When you see a number, always ask: **“in what units?”**
+
+* Is it metres or centimetres?
+* Is it kg or g?
+* Is it a percentage or a proportion?
+
+Why this matters for scales:
+
+* A log scale cannot take 0 or negative numbers → so a variable of rainfall in mm (which can be 0) might need an **offset** or a different view
+* A time variable must be handled with a **date/time** scale, not a continuous numeric scale, because months/years are irregular
+
+## Variable vs scale vs coordinate transformation
+
+This is one of the most important ideas in the whole document.
+
+### Variable transformation
+
+You change the data **before** plotting.
+
+```r
+df$log_y <- log(df$y)
+```
+
+Then you plot `log_y`. Both the statistic and the plot “see” the transformed values.
+
+### Scale transformation
+
+You keep the data as it is, but tell ggplot2 to **display** it on a transformed axis.
+
+```r
+ggplot(df, aes(x, y)) +
+  geom_point() +
+  scale_y_log10()
+```
+
+The data is still `y`, but the axis is log‑spaced and labelled nicely.
+
+### Coordinate transformation
+
+You change the **view** of the whole plot.
+
+```r
+ggplot(df, aes(x, y)) +
+  geom_col() +
+  coord_flip()
+```
+
+The bars become horizontal. The data and scales stay the same.
+
+**Rule of thumb:**
+
+* if a method (like a regression) needs the data transformed → **variable** or **scale** transformation
+* if you only want a different layout → **coordinate** transformation
+
+---
+
+# Part II — Linear, Categorical, and Time Scales
+
+In this part we look at three very common situations:
+
+1. **Categorical** data → things in groups
+2. **Linear/continuous** data → numbers along a range
+3. **Time** data → dates and datetimes
+
+We will also explain every line of code so that a first‑time R user can follow.
+
+## Categorical scales
+
+Categorical data is data that falls into **separate boxes**. Examples:
+
+* month name
+* crop variety
+* treatment group
+* gender
+* soil class
+
+In R, we often represent these as **factors**. Factors have **levels** — the order in which categories will appear.
+
+### Example: boxplots by month
+
+```r
+library(ggplot2)
+month_levels <- month.abb            # built‑in: Jan, Feb, ..., Dec
+set.seed(1)
+df <- data.frame(
+  month = factor(sample(month_levels, 200, TRUE), levels = month_levels),
+  value = rnorm(200, 10, 3)
+)
+
+ggplot(df, aes(x = month, y = value)) +
+  geom_boxplot() +
+  labs(x = "Month (categorical)", y = "Value")
+```
+
+**Line‑by‑line explanation:**
+
+* `library(ggplot2)` — load the plotting package.
+* `month.abb` — gives the 12 abbreviated month names.
+* `set.seed(1)` — makes the random numbers reproducible.
+* `data.frame(...)` — builds a table with two columns: `month` and `value`.
+* `factor(..., levels = month_levels)` — turns month into an ordered categorical variable so plots show Jan→Dec, not alphabetical order.
+* `ggplot(df, aes(...))` — start the plot, say which columns map to which **aesthetics**.
+* `geom_boxplot()` — draw one box per category.
+* `labs(...)` — label the axes for the reader.
+
+**Why use `scale_x_discrete()`?**
+
+By default, ggplot2 knows how to plot factors on x. But sometimes you want to:
+
+* reorder levels
+* change labels
+* drop unused levels
+
+You can do:
+
+```r
+ggplot(df, aes(x = month, y = value)) +
+  geom_boxplot() +
+  scale_x_discrete(limits = month_levels, labels = month_levels) +
+  labs(x = "Month", y = "Value")
+```
+
+Here, `scale_x_discrete()` is the **scale** that controls how categories become x positions.
+
+## Linear scales and “nice numbers”
+
+A **linear** scale is the most common scale. Equal data steps → equal visual steps.
+
+In ggplot2, continuous x and y axes are linear by default. But we often want to **customise**:
+
+* the range (`limits`)
+* the tick locations (`breaks`)
+* the spacing around the plot (`expand`)
+
+### Example: mtcars, manual scale
+
+```r
+p <- ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  scale_x_continuous(
+    expand = c(0.02, 0),      # 2% padding at start, 0 at end
+    breaks = seq(1, 6, 1)     # ticks at 1,2,3,4,5,6
+  ) +
+  scale_y_continuous(
+    limits = c(10, 35),       # show from 10 to 35
+    breaks = seq(10, 35, 5)   # ticks every 5
+  ) +
+  coord_cartesian(clip = "off") +
+  labs(x = "Weight (1000 lbs)", y = "Miles per gallon (MPG)")
+
+p
+```
+
+**What each argument does:**
+
+* `scale_x_continuous(...)` — we are controlling the x **scale** (even though x is numeric already).
+* `expand = c(0.02, 0)` — first number is *multiplier* expansion, second is *additive* expansion.
+* `breaks = seq(1, 6, 1)` — generate 1, 2, 3, 4, 5, 6.
+* `scale_y_continuous(limits = ..., breaks = ...)` — same logic for y.
+* `coord_cartesian(clip = "off")` — allows labels or marks to show even if they fall slightly outside the plot panel.
+
+**Important idea:** sometimes you should **not** start at zero. Why?
+
+* If you are comparing **ratios** (twice as big), then start at 0.
+* If you are showing **detail** in a narrow range, you can start above 0, but you must make it clear, and you must not claim ratio differences.
+
+## Time scales
+
+Dates and times are special because the calendar is **irregular**. February has 28 or 29 days. Months have 30 or 31. Weeks cut across months.
+
+In ggplot2, for dates you should use **date scales**.
+
+### Example: daily data over 6 months
+
+```r
+library(lubridate)
+set.seed(42)
+d <- seq.Date(as.Date("2024-01-01"), as.Date("2024-06-30"), by = "day")
+df <- data.frame(
+  date = d,
+  y = cumsum(rnorm(length(d)))  # running total, just to have a curve
+)
+
+ggplot(df, aes(x = date, y = y)) +
+  geom_line() +
+  scale_x_date(
+    date_labels = "%b %d",    # Jan 01, Feb 01, ...
+    date_breaks = "1 month"    # one tick per month
+  ) +
+  labs(x = "Date", y = "Value")
+```
+
+**Why not `scale_x_datetime()` here?** Because we have dates only, not date‑times. `scale_x_datetime()` is for POSIXct or POSIXlt objects (date + time).
+
+**Key takeaway:** **always match the scale to the data type.**
+
+---
+
+# Part III — One‑bend Scales (Log & Power)
+
+Sometimes data is **very skewed** — a few very large values and many small ones. Plotting such data on a linear scale makes the small values look squashed. To fix this, we can use a **non‑linear** scale.
+
+Two common choices:
+
+1. **Logarithmic** scale — good for multiplicative processes, growth, data spanning orders of magnitude
+2. **Power / sqrt** scale — good for counts and over‑dispersed data
+
+## Logarithmic scales
+
+### When to use a log scale
+
+* Data covers a wide range (e.g. 1 to 1,000,000)
+* We care about **rates of change** or **ratios** (“twice as big”, “ten times bigger”)
+* We want to make multiplicative patterns look straight
+
+### Important constraints
+
+* Log of 0 is **undefined** → cannot log 0
+* Log of negative numbers is **undefined** (for our purposes here)
+* So: you must have **positive** values
+
+### Example: raw vs log y
+
+```r
+set.seed(3)
+df <- data.frame(
+  x = 1:100,
+  y = rlnorm(100, meanlog = 0, sdlog = 1)  # lognormal → skewed
+)
+
+p_raw <- ggplot(df, aes(x = x, y = y)) +
+  geom_point() +
+  labs(title = "Raw scale", y = "Value (raw)")
+
+p_log <- ggplot(df, aes(x = x, y = y)) +
+  geom_point() +
+  scale_y_log10() +                           # THIS is the scale transform
+  annotation_logticks(sides = "l") +          # add log tick marks on left
+  labs(title = "Log10 scale", y = "Value (log10)")
+
+p_raw
+p_log
+```
+
+**Explanation of new functions:**
+
+* `scale_y_log10()` — tells ggplot to display y on a base‑10 log scale; tick labels are 1, 10, 100, ...
+* `annotation_logticks(sides = "l")` — draws little ticks that match the log spacing; `"l"` means left, you can also do `"b"` bottom.
+
+**What you should notice:** on the raw scale, points are bunched at the bottom. On the log scale, they are spread more evenly.
+
+## Power / Box–Cox / sqrt scales
+
+Counts (like insects caught, number of seeds) often have **variance that increases with the mean**. A square‑root transformation can make the spread more even.
+
+```r
+set.seed(7)
+counts <- rpois(200, lambda = 10)
+df <- data.frame(x = 1:200, y = counts)
+
+ggplot(df, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6) +
+  scale_y_sqrt() +                   # square‑root scale
+  labs(y = "Counts (sqrt scale)")
+```
+
+**Why this helps:** If some values are much higher, sqrt pulls them down a bit, making it easier to compare across the whole range.
+
+---
+
+# Part IV — Two‑bend & Probability‑Type Scales
+
+Proportions and probabilities are special because they live in **[0, 1]**. Values cannot go below 0 or above 1. Also, the **variance** often depends on the mean. So we sometimes transform them to make differences easier to see or to prepare them for modelling.
+
+## Proportions: arcsine vs logit/probit
+
+### Arcsine‑sqrt transformation
+
+Traditionally used in biology/agronomy for proportions from binomial data with **fixed n**.
+
+Formula: `asin(sqrt(p))`
+
+* pulls values near 0 and 1 into the middle
+* can stabilise variance
+
+### Logit transformation
+
+Formula: `log(p / (1 - p))`
+
+* p must be strictly between 0 and 1 → we often add a tiny epsilon
+* maps (0,1) to (−∞, +∞)
+* good for logistic regression / odds interpretation
+
+### Example with simulated binomial data
+
+```r
+set.seed(11)
+n <- 50
+p <- c(0.1, 0.5, 0.9)
+S <- lapply(p, function(pp) rbinom(1000, n, pp)/n)
+df <- data.frame(
+  p = factor(rep(p, each = 1000)),
+  val = unlist(S)
+)
+
+trans_asin <- function(x) asin(sqrt(x))
+
+ggplot(df, aes(x = p, y = val)) +
+  geom_violin() +
+  labs(title = "Proportion (raw)", y = "Proportion")
+
+ggplot(df, aes(x = p, y = trans_asin(val))) +
+  geom_violin() +
+  labs(title = "Arcsine‑sqrt transformed", y = "asin(sqrt(p))")
+```
+
+**What to notice:** on the raw scale, the group with p = 0.9 is squashed near 1. On the transformed scale, it is more spread out.
+
+## Probability scales & Q–Q style visuals
+
+A **Q–Q plot** compares your data to a theoretical distribution. It uses an **inverse CDF** (a kind of probability‑based scale) to put data and theory on the same frame.
+
+```r
+set.seed(13)
+y <- rgamma(300, shape = 3)
+qplot(sample = y) +
+  stat_qq_line() +
+  labs(title = "Normal Q–Q (for comparison)")
+```
+
+Here, the **scale** on the x is theoretical quantiles; on the y is your sample. If the data really were normal, the points would lie on the line.
+
+---
+
+# Part V — Putting It Together (Design Decisions)
+
+Now that we know many scale types, we must learn to **choose**.
+
+## Choosing scales by semantic intent
+
+Ask:
+
+1. **What comparisons do I want the viewer to make?**
+
+   * differences?
+   * ratios?
+   * shapes/patterns over time?
+2. **What is the measurement level of my data?**
+
+   * categorical → discrete scale
+   * date/time → date/time scale
+   * ratio with many orders of magnitude → log scale
+3. **Is zero meaningful?**
+
+   * for temperature in °C: no (interval scale)
+   * for money, length, rainfall: yes (ratio scale)
+
+### Bars and zero
+
+* If a bar’s **length** = value, and we want to compare *how much bigger*, we must start at **0**.
+* If we only want to show small variation around a non‑zero reference, we can start above 0, **but then we should not claim ratio differences**.
+
+## Layered encodings
+
+Sometimes a single plot has multiple layers, each with its own scale. Example: points + ribbon + secondary summary.
+
+* Keep the main message on one clear scale
+* Avoid dual y‑axes with unrelated units
+* If you must use different scales, make the difference extremely obvious in labels
+
+## Case studies (described)
+
+### Inequality & skew
+
+Income data is typically skewed. On a linear scale, almost everyone is at the bottom. On a log scale, middle and upper incomes become visible. **Lesson:** log scale helps compare multiplicative differences.
+
+### Ecology: body size vs metabolism
+
+Allometric relationships are often power laws. A log–log plot turns them into a straight line. **Lesson:** use log–log to reveal scaling exponents.
+
+### Time‑on‑task dashboards
+
+Irregular time units (weeks vs months) require explicit date breaks. **Lesson:** use `scale_x_date()` with `date_breaks` and `date_labels` to make time legible.
+
+---
+
+# Part VI — Design Patterns & Anti‑patterns
+
+## Good patterns
+
+* Use **scale transforms** (log, sqrt) to match distributional shape.
+* Always **label transformed axes** clearly, e.g. “log₁₀(Price)”.
+* Show **tick logic** (e.g. `annotation_logticks()`) so viewers can read the scale.
+* Keep **categorical** scales ordered in a meaningful way (time, size, importance).
+
+## Anti‑patterns
+
+* Logging data with zeros or negatives **without** explaining how they were handled (e.g. adding 1).
+* Using dual y‑axes for unrelated quantities.
+* Making **ratio** claims on **interval** data (e.g. “20°C is twice 10°C”).
+* Using colour scales that imply order for non‑ordered categories.
+
+---
+
+# Part VII — Labs (Self‑contained)
+
+All labs below:
+
+* use **built‑in** datasets (`mtcars`, `ggplot2::diamonds`, `InsectSprays`, `Titanic`, `AirPassengers`)
+* require only `ggplot2` and very common tidyverse tools
+* are designed for self‑study — read the code **and** the prose
+
+## Lab 1: Log and Power Scales in Practice
+
+**Aim:** See how log and sqrt scales change the *appearance* of skewed data.
+
+**Datasets:**
+
+* `ggplot2::diamonds` → skewed variable = `price`
+* `InsectSprays` → count data that can benefit from sqrt
+
+### Task A — Diamonds: price vs carat
+
+```r
+library(ggplot2)
+# Raw
+p_raw <- ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point(alpha = 0.15) +
+  labs(title = "Diamonds: raw scale", x = "Carat", y = "Price (USD)")
+
+# Log y
+p_log <- ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_point(alpha = 0.15) +
+  scale_y_log10() +
+  annotation_logticks(sides = "l") +
+  labs(title = "Diamonds: log10 y‑scale", x = "Carat", y = "log10 Price")
+
+p_raw
+p_log
+```
+
+**What to write in your notebook:**
+
+* On the raw plot, where are most points?
+* On the log plot, do you see a clearer relationship between carat and price?
+* Which plot would you show to someone who wants to understand *price growth*?
+
+### Task B — Insect sprays: counts
+
+```r
+library(dplyr)
+
+p_counts <- ggplot(InsectSprays, aes(x = spray, y = count)) +
+  geom_jitter(width = 0.1, alpha = 0.5) +
+  stat_summary(fun = median, geom = "point", size = 3, colour = "black") +
+  labs(title = "Counts (raw)", x = "Spray", y = "Count")
+
+p_sqrt <- ggplot(InsectSprays, aes(x = spray, y = count)) +
+  geom_jitter(width = 0.1, alpha = 0.5) +
+  stat_summary(fun = median, geom = "point", size = 3, colour = "black") +
+  scale_y_sqrt() +
+  labs(title = "Counts (sqrt scale)", x = "Spray", y = "sqrt(Count)")
+
+p_counts
+p_sqrt
+```
+
+**Questions:**
+
+1. Did the sqrt scale make the differences between sprays easier to see?
+2. Does the median marker (black point) become easier to compare?
+3. Would you report results on the original scale or the transformed scale? Why?
+
+## Lab 2: Proportions — arcsine vs logit
+
+**Aim:** Explore different ways of displaying proportions so that groups with very high or very low proportions are still comparable.
+
+**Dataset:** `Titanic` (built‑in contingency table of passengers)
+
+### Step 1 — Prepare data
+
+```r
+TT <- as.data.frame(Titanic)
+TT <- tidyr::pivot_wider(TT, names_from = Survived, values_from = Freq)
+TT <- dplyr::mutate(TT, total = No + Yes, prop = Yes / total)
+head(TT)
+```
+
+* `as.data.frame(Titanic)` — turn the table into rows
+* `pivot_wider(...)` — make columns `No` and `Yes`
+* `mutate(...)` — total passengers in each group and the proportion who survived
+
+### Step 2 — Plot raw proportions
+
+```r
+p1 <- ggplot(TT, aes(x = Class, y = prop, fill = Sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "Proportion survived (raw)", y = "Proportion")
+```
+
+### Step 3 — Plot arcsine‑sqrt transformed
+
+```r
+trans_asin <- function(p) asin(sqrt(p))
+
+p2 <- ggplot(TT, aes(x = Class, y = trans_asin(prop), fill = Sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "asin(sqrt(p))", y = "asin(sqrt(p))")
+```
+
+### Step 4 — Plot logit (with small epsilon)
+
+```r
+trans_logit <- function(p) qlogis(p)
+TT_eps <- dplyr::mutate(TT, prop = pmin(pmax(prop, 1e-6), 1 - 1e-6))
+
+p3 <- ggplot(TT_eps, aes(x = Class, y = trans_logit(prop), fill = Sex)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "logit(p)", y = "logit(p)")
+```
+
+**Questions to answer:**
+
+1. Which plot looks most even across classes?
+2. Which one do you think a non‑technical audience would understand best?
+3. When would you *not* transform proportions?
+
+## Lab 3: Time scales & calendar irregularities
+
+**Aim:** Learn how to plot monthly data on a readable date axis, and how log scale on y can make growth clearer.
+
+**Dataset:** `AirPassengers`
+
+### Step 1 — Convert to data frame
+
+```r
+library(dplyr)
+library(ggplot2)
+AP <- AirPassengers
+start_year <- floor(time(AP))[1]
+start_month <- cycle(AP)[1]
+idx <- seq(
+  as.Date(sprintf("%d-%02d-01", start_year, start_month)),
+  by = "1 month",
+  length.out = length(AP)
+)
+AP_df <- data.frame(date = idx, passengers = as.numeric(AP))
+head(AP_df)
+```
+
+### Step 2 — Plot with yearly ticks
+
+```r
+p_time <- ggplot(AP_df, aes(x = date, y = passengers)) +
+  geom_line() +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(title = "AirPassengers (1949–1960)", x = "Year", y = "Passengers (thousands)")
+
+p_time
+```
+
+### Step 3 — Compare linear vs log y
+
+```r
+p_lin <- ggplot(AP_df, aes(x = date, y = passengers)) +
+  geom_line() +
+  labs(title = "Linear y‑scale", x = "Year", y = "Passengers")
+
+p_log <- ggplot(AP_df, aes(x = date, y = passengers)) +
+  geom_line() +
+  scale_y_log10() +
+  annotation_logticks(sides = "l") +
+  labs(title = "Log y‑scale (multiplicative growth)", x = "Year", y = "log10 Passengers")
+
+p_lin
+p_log
+```
+
+**Questions:**
+
+1. On the log plot, does the series look more like a straight line? If yes, that suggests **constant growth rate**.
+2. What `date_breaks`/`date_labels` would you use if you wanted **quarterly** ticks? (Hint: `date_breaks = "3 months"`, labels like `"%b %Y"`.)
+
+---
+
