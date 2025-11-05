@@ -401,7 +401,7 @@ bind_rows(tri, tri2) |>
 
 ---
 
-### 2.4 Polar Coordinates: Circles, Roses, and Spider (Radar) Plots
+### 2.4 Polar Coordinates: Circles, Roses e.t.c.
 
 Polar coordinates often feel unintuitive at first, especially if you're used to thinking in straight lines and grids. But they are more common in everyday data visualisation than most people realise.
 
@@ -425,63 +425,6 @@ p1 <- ggplot(mpg, aes(x = 1, fill = class)) +
   theme_void() + guides(fill = guide_legend(title = "Class")) +
   labs(title = "Pie (rose) via coord_polar")
 p1
-```
-
-**Polar cluster tree (radial branches):**
-
-```{r}
-# Build a simple radial tree using angles
-set.seed(2)
-levels <- 3
-branches <- data.frame()
-angle <- seq(0, 2*pi, length.out = 7)[-7]
-for (a in angle){
-  # trunk
-  branches <- rbind(branches, data.frame(x = 0, y = 0, xend = cos(a), yend = sin(a), lvl=1))
-  # second level
-  for (k in c(-0.3, 0, 0.3)){
-    a2 <- a + k
-    branches <- rbind(branches,
-      data.frame(x = cos(a), y = sin(a), xend = 1.6*cos(a2), yend = 1.6*sin(a2), lvl=2))
-  }
-}
-
-ggplot(branches, aes(x, y, xend = xend, yend = yend, linewidth = factor(lvl))) +
-  geom_segment(lineend = "round") + coord_equal() +
-  theme_void() + scale_linewidth_discrete(range = c(0.4, 0.8)) +
-  labs(title = "Polar cluster tree (radial branches)")
-```
-
-**Spider/Radar plot:**
-
-```{r}
-# Create a radar/spider from wide -> long
-rad <- data.frame(group = c("A","B"), speed = c(7,5), power = c(4,8), agility = c(6,7), stamina = c(8,6))
-rad_long <- tidyr::pivot_longer(rad, -group, names_to = "metric", values_to = "value")
-
-# Put metrics around a circle
-rad_long$metric <- factor(rad_long$metric, levels = unique(rad_long$metric))
-
-# Close the polygons by repeating the first metric at the end
-rad_closed <- rad_long |>
-  group_by(group) |>
-  arrange(metric, .by_group = TRUE) |>
-  tidyr::complete(metric, fill = list(value = NA)) |>
-  mutate(value = zoo::na.locf(value, na.rm = FALSE)) |>
-  tidyr::drop_na() |>
-  bind_rows(rad_long |> group_by(group) |> slice(1))
-
-# Angular position
-ang <- data.frame(metric = levels(rad_long$metric), theta = seq(0, 2*pi, length.out = length(levels(rad_long$metric)) + 1)[-1])
-rad_plot <- rad_long |> left_join(ang, by = "metric")
-
-# Draw in polar via coord_polar
-p_spider <- ggplot(rad_long, aes(metric, value, group = group, colour = group, fill = group)) +
-  geom_point(size = 2) +
-  geom_polygon(alpha = 0.2) +
-  coord_polar() +
-  labs(title = "Spider/Radar in ggplot (coord_polar)") + theme_minimal()
-p_spider
 ```
 
 ---
@@ -523,7 +466,7 @@ Ternary plots let you locate any composition within a triangle, where each verte
 
 > Implementation note: The **ggtern** package extends ggplot2 with full support for ternary plots. If unavailable, we can simulate barycentric mapping manually by converting A+B+C=1 compositions into 2D (x, y) triangle coordinates. **Idea:** For 3‑part compositions that sum to 1 (or 100%): `(A, B, C)`. Soil texture (sand, silt, clay) is a classic example.
 
-> Implementation note: The **ggtern** extension adds ternary coordinates to ggplot. If not available, you can still *demonstrate* barycentric logic by constraining A+B+C=1 and drawing a filled triangle with `geom_polygon`.
+> Implementation note: The **ggtern** extension adds ternary coordinates to ggplot. If not available, you can still *view* barycentric logic by constraining A+B+C=1 and drawing a filled triangle with `geom_polygon`.
 
 ```{r}
 # Using ggtern (if installed)
@@ -533,7 +476,7 @@ Ternary plots let you locate any composition within a triangle, where each verte
 # ggtern(comp, aes(A, B, C)) + geom_point(alpha = 0.6) + theme_bw() + labs(title = "Barycentric (ternary) coordinates")
 ```
 
-**Fallback demo (no ggtern):**
+**No ggtern:**
 
 ```{r}
 tri <- data.frame(x = c(0, 1, 0.5), y = c(0, 0, sqrt(3)/2))
@@ -695,19 +638,11 @@ ggplot(df, aes(x, y)) +
 
 - Build a heat‑tile grid and practice changing `coord_equal`, `coord_fixed`, and aspect ratios. Observe shape distortion.
 
-### F. Isometries & Affines
-
-- Apply rotation/reflection to a simple point set. Apply a shear and discuss which properties changed.
-
-### G. Polar & Spider
-
-- Make a spider plot for 4–6 variables for two groups. Explain why area comparisons are tricky in polar.
-
-### H. Ternary
+### F. Ternary
 
 - Generate 200 (A,B,C) with A+B+C=1. Use either `ggtern` or the fallback conversion. Interpret a cluster near the A–B edge.
 
-### I. Maps & Projections
+### G. Maps & Projections
 
 - Plot the world with `maps` then compare to an equal‑area projection (if using `sf`). Which countries “shrink” or “grow”? Why does that matter?
 
@@ -719,17 +654,6 @@ ggplot(df, aes(x, y)) +
 - **Isometries** move without distortion; **affines** can shear/scale; **projections** flatten curved spaces — each has perceptual consequences.
 - In 2‑D static graphics, “3‑D” is achieved by mapping the third variable to **fill**, **contour**, **size/alpha**, or **facets**.
 - **Collision modifiers** (stack/dodge/jitter) are design decisions, not afterthoughts — they change counts and comparisons.
-
----
-
-## Appendix: Minimal Matrix Forms
-
-- Rotation by θ:  \(R(\theta) = \begin{bmatrix}\cos\theta & -\sin\theta\\ \sin\theta & \cos\theta\end{bmatrix}\)
-- Reflection across y=x: swap coordinates \((x,y)\to(y,x)\)
-- Shear (x fixed, y += kx): \(A = \begin{bmatrix}1 & k\\ 0 & 1\end{bmatrix}\)
-- Similarity (scale s then rotate): \(sR(\theta)\)
-
-> Use these to transform *data* before plotting, or use ggplot’s `coord_*` to transform the *space*.
 
 ---
 
