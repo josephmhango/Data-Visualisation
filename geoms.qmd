@@ -1,0 +1,508 @@
+---
+title: "Geometry & Coordinate Systems"
+subtitle: "Reframing the building blocks of statistical graphics"
+author: "Joseph Mhango"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    incremental: false
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| include: false
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(maps)
+library(reshape2)
+library(zoo)
+```
+
+## Geometry & Coordinate Systems
+
+Reframing the building blocks of statistical graphics <span style="opacity:.7;font-size:.6em">Prepared for data visualisation</span>
+
+---
+
+## Why talk about geometry?
+
+* Every chart is a drawing of some **shape** in some **space**.
+* **Shape** = geometry (points, lines, areas, paths, partitions, networks).
+* **Space** = coordinate system (Cartesian, polar, ternary, projected maps...).
+* If we can name both, we can rebuild or critique the graphic in R/ggplot2.
+
+<span style="opacity:.6;font-size:.6em">Mental model: “what is drawn?” + “where is it drawn?”</span>
+
+---
+
+## What we’ll cover
+
+1. Geometric families
+2. Adjusting collisions (stack, dodge, jitter)
+3. Coordinate systems & transformations
+4. Questions to ask of any plot
+5. Small practice prompts
+
+---
+
+## 1. Geometric families
+
+“Geometry” here just means: **which graphical object is representing a data record?**
+
+---
+
+## 1.1 Points — code
+
+```{r}
+#| label: points-code
+#| output: false
+points_plot <- ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point(alpha = 0.8) +
+  labs(title = "Iris sepal scatter", x = "Length", y = "Width") +
+  theme_minimal()
+```
+
+---
+
+## 1.1 Points — visual
+
+```{r}
+#| echo: false
+points_plot
+```
+
+---
+
+## 1.2 Lines — code
+
+```{r}
+#| label: lines-code
+#| output: false
+lines_plot <- ggplot(economics, aes(date, unemploy)) +
+  geom_line() +
+  labs(title = "Unemployment through time", y = "Thousands") +
+  theme_minimal()
+```
+
+---
+
+## 1.2 Lines — visual
+
+```{r}
+#| echo: false
+lines_plot
+```
+
+<span style="opacity:.6;font-size:.6em">If the x variable is unordered categorical, lines can mislead.</span>
+
+---
+
+## 1.3 Areas — code
+
+```{r}
+#| label: areas-code
+#| output: false
+set.seed(1)
+df <- data.frame(x = 1:80,
+                 y = cumsum(rnorm(80)))
+areas_plot <- ggplot(df, aes(x, y)) +
+  geom_area(alpha = 0.35, fill = "skyblue") +
+  geom_line() +
+  labs(title = "Area chart as accumulation") +
+  theme_minimal()
+```
+
+---
+
+## 1.3 Areas — visual
+
+```{r}
+#| echo: false
+areas_plot
+```
+
+---
+
+## 1.4 Paths — code
+
+```{r}
+#| label: paths-code
+#| output: false
+path_df <- data.frame(t = seq(0, 2*pi, length.out = 400))
+path_df$x <- sin(3 * path_df$t)
+path_df$y <- sin(4 * path_df$t)
+
+paths_plot <- ggplot(path_df, aes(x, y)) +
+  geom_path() +
+  coord_equal() +
+  labs(title = "A path: order matters") +
+  theme_minimal()
+```
+
+---
+
+## 1.4 Paths — visual
+
+```{r}
+#| echo: false
+paths_plot
+```
+
+---
+
+## 1.5 Schematic geometries (boxplot) — code
+
+```{r}
+#| label: boxplot-code
+#| output: false
+box_plot <- ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.6) +
+  guides(fill = "none") +
+  labs(title = "Boxplot as a distribution schema") +
+  theme_minimal()
+```
+
+---
+
+## 1.5 Schematic geometries (boxplot) — visual
+
+```{r}
+#| echo: false
+box_plot
+```
+
+---
+
+## 1.5 Schematic geometries (2D density) — code
+
+```{r}
+#| label: density2d-code
+#| output: false
+density2d_plot <- ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  stat_density_2d() +
+  geom_point(alpha = 0.4) +
+  labs(title = "2D density contours as schema") +
+  theme_minimal()
+```
+
+---
+
+## 1.5 Schematic geometries (2D density) — visual
+
+```{r}
+#| echo: false
+density2d_plot
+```
+
+---
+
+## 1.6 Partitions — code
+
+```{r}
+#| label: partitions-code
+#| output: false
+grid <- expand.grid(x = 1:10, y = 1:6)
+grid$val <- with(grid, (x - 5)^2 + (y - 3)^2)
+
+partitions_plot <- ggplot(grid, aes(x, y, fill = val)) +
+  geom_tile(color = "grey90") +
+  coord_equal() +
+  labs(title = "Partitioning space with tiles") +
+  theme_minimal()
+```
+
+---
+
+## 1.6 Partitions — visual
+
+```{r}
+#| echo: false
+partitions_plot
+```
+
+---
+
+## 1.7 Networks / graphs — code
+
+```{r}
+#| label: network-code
+#| output: false
+nodes <- data.frame(
+  id = LETTERS[1:5],
+  x = c(0, 1, 2, 1, 0),
+  y = c(0, 0, 1.2, 2, 1.2)
+)
+
+edges <- data.frame(
+  from = c("A","B","C","C","E"),
+  to   = c("B","C","D","E","D")
+)
+
+edges_plot_df <- merge(edges, nodes, by.x = "from", by.y = "id")
+edges_plot_df <- merge(edges_plot_df, nodes, by.x = "to", by.y = "id",
+                       suffixes = c("_from", "_to"))
+
+network_plot <- ggplot() +
+  geom_segment(data = edges_plot_df,
+               aes(x = x_from, y = y_from,
+                   xend = x_to, yend = y_to),
+               linewidth = 1) +
+  geom_point(data = nodes, aes(x, y), size = 4) +
+  geom_text(data = nodes, aes(x, y, label = id),
+            vjust = -1) +
+  coord_equal() +
+  labs(title = "Simple network sketch") +
+  theme_void()
+```
+
+---
+
+## 1.7 Networks / graphs — visual
+
+```{r}
+#| echo: false
+network_plot
+```
+
+---
+
+## 2. Collision decisions
+
+What do we do when multiple geoms want the same space?
+
+---
+
+## Stack — code
+
+```{r}
+#| label: stack-code
+#| output: false
+stack_plot <- ggplot(mpg, aes(class, fill = drv)) +
+  geom_bar(position = "stack") +
+  labs(title = "Stacked counts by drive") +
+  theme_minimal()
+```
+
+---
+
+## Stack — visual
+
+```{r}
+#| echo: false
+stack_plot
+```
+
+---
+
+## Dodge — code
+
+```{r}
+#| label: dodge-code
+#| output: false
+dodge_plot <- ggplot(mpg, aes(class, fill = drv)) +
+  geom_bar(position = position_dodge(width = 0.8)) +
+  labs(title = "Dodged counts by drive") +
+  theme_minimal()
+```
+
+---
+
+## Dodge — visual
+
+```{r}
+#| echo: false
+dodge_plot
+```
+
+---
+
+## Jitter — code
+
+```{r}
+#| label: jitter-code
+#| output: false
+jitter_plot <- ggplot(iris, aes(Species, Petal.Length, colour = Species)) +
+  geom_jitter(width = 0.12, alpha = 0.5) +
+  labs(title = "Jitter to reduce overlap") +
+  theme_minimal()
+```
+
+---
+
+## Jitter — visual
+
+```{r}
+#| echo: false
+jitter_plot
+```
+
+---
+
+## 3. Coordinate systems
+
+Now: **where** do we draw the geometry?
+
+---
+
+## 3.1 Cartesian — code
+
+```{r}
+#| label: cartesian-code
+#| output: false
+cartesian_plot <- ggplot(mtcars, aes(wt, mpg)) +
+  geom_point() +
+  coord_cartesian(expand = TRUE) +
+  labs(title = "Default Cartesian space") +
+  theme_minimal()
+```
+
+---
+
+## 3.1 Cartesian — visual
+
+```{r}
+#| echo: false
+cartesian_plot
+```
+
+---
+
+## 3.2 Polar — code
+
+```{r}
+#| label: polar-code
+#| output: false
+polar_plot <- ggplot(mpg, aes(x = 1, fill = class)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y") +
+  theme_void() +
+  labs(title = "Part-to-whole in polar space")
+```
+
+---
+
+## 3.2 Polar — visual
+
+```{r}
+#| echo: false
+polar_plot
+```
+
+---
+
+## 3.3 Ternary / barycentric
+
+* When three components sum to 1 (or 100%).
+* Soil texture diagrams are the classic example.
+* In base ggplot we’d convert A/B/C to x/y or use **ggtern** (extra package).
+
+---
+
+## Soil texture triangle
+
+```{r}
+#| echo: false
+library(soiltexture)
+
+# 1. Tell soiltexture which triangle to use (USDA is common)
+data(USDA.TT)
+
+# 2. Plot an empty USDA triangle
+TT.plot(
+  class.sys = "USDA.TT",  # use the built-in USDA system
+  main = "USDA Soil Texture Triangle"
+)
+
+```
+
+---
+
+## 3.4 Map projections — code
+
+```{r}
+#| label: map-code
+#| output: false
+world <- map_data("world")
+
+map_plot <- ggplot(world, aes(long, lat, group = group)) +
+  geom_polygon(fill = "grey85", colour = "white") +
+  coord_quickmap() +
+  theme_void() +
+  labs(title = "World map (quick, Mercator-ish)")
+```
+
+---
+
+## 3.4 Map projections — visual
+
+```{r}
+#| echo: false
+map_plot
+```
+
+---
+
+## 3.5 Transformations — code
+
+```{r}
+#| label: transform-code
+#| output: false
+set.seed(3)
+xyz <- data.frame(
+  x = rnorm(500),
+  y = rnorm(500),
+  z = rnorm(500)
+)
+
+transform_plot <- ggplot(xyz, aes(x, y)) +
+  geom_point(aes(size = scales::rescale(-z),
+                 alpha = scales::rescale(-z))) +
+  scale_alpha(range = c(0.2, 0.9), guide = "none") +
+  labs(title = "Depth cue with size/alpha") +
+  theme_minimal()
+```
+
+---
+
+## 3.5 Transformations — visual
+
+```{r}
+#| echo: false
+transform_plot
+```
+
+---
+
+## 4. How to read any graphic
+
+1. What geom(s) are used?
+2. Which coordinate system?
+3. Any transformation or projection?
+4. How are overlaps handled?
+5. What comparisons is this design encouraging?
+
+---
+
+## 5. Practice
+
+* Take a time series, redraw it as points: what did you lose?
+* Make an area chart and then force `coord_equal()`: what gets distorted?
+* Turn a bar chart into polar: is the message still clear?
+* Plot the same network with and without labels; when are labels necessary?
+
+---
+
+## Key message
+
+If you can **name the geometry** and **the coordinate system**, you can rebuild the chart.
+
+<span style="opacity:.6">That’s the core of this lecture.</span>
+
+```
+```
