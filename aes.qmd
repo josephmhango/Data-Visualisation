@@ -1,0 +1,626 @@
+---
+title: "Aesthetics, Facets & Guides"
+subtitle: "Data Visualisation (SQ4012)"
+author: "Joseph Mhango"
+css: scroll.css
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 3
+    incremental: false
+    code-line-numbers: false
+    chalkboard: true
+    controls: true
+    hash: true
+editor: visual
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 0. Welcome & Goals
+
+**What you'll learn**
+
+- Aesthetics: mapping data → perception with `aes()`  
+- Scales: how mappings are transformed (`scale_*()`)  
+- Facets: small multiples with `facet_wrap()` / `facet_grid()`  
+- Guides: legends, colourbars, axes; how to tune with `guides()`  
+- Accessibility: colour‑vision safety, redundancy, annotations  
+- Critique & best practices with reproducible R examples
+
+> Tip: Run every code cell; most use built‑in datasets like `mpg`, `iris`, `diamonds`.
+
+---
+
+## 1. Foundations: `aes()` taxonomy & value types
+
+### 1.1 What is `aes()`?
+`aes()` declares **mappings** from variables in your data to **aesthetics** (visual channels). Mappings are *instructions*; they don’t draw anything by themselves—geoms use them to render.
+
+- **Mapping** (inside `aes()`): *data‑driven*. Example: `aes(colour = species)` → legend appears; scale chosen by data type.
+- **Setting** (outside `aes()`): *constant*. Example: `colour = "steelblue"` → no legend; same colour for all points.
+
+> Rule of thumb: if it should vary with the data, put it **in** `aes()`. If it’s the same for all marks, set it **outside** `aes()`.
+
+### 1.2 Value types accepted in `aes()`
+| Value type | Example | Meaning |
+|---|---|---|
+| **Column name** | `aes(y = hwy)` | Map each row’s value in `hwy` to the y position. |
+| **Expression** | `aes(x = log10(carat))` | Compute on the fly; mapped as continuous. |
+| **Factor/character column** | `aes(colour = class)` | Creates **discrete** scale with one legend key per level. |
+| **Numeric column** | `aes(colour = cty)` | Creates **continuous** scale (or binned if using steps). |
+| **String literal** (discouraged) | `aes(colour = "red")` | Treated as a 1‑level **discrete** mapping → odd legend. Prefer `colour = "red"` outside `aes`. |
+| **After‑stat** result | `aes(y = after_stat(density))` | Use outputs from a stat (e.g., hist density). |
+| **After‑scale** (advanced) | `aes(colour = after_scale(scales::desaturate(colour, .5)))` | Modify values post‑scale (ggplot2 ≥ 3.5). |
+
+> ggplot decides **discrete vs continuous** from the mapped vector’s type: logical/character/factor → discrete; numeric/date/datetime → continuous.
+
+### 1.3 Core aesthetics (generic)
+| Aesthetic | Purpose | Typical values | Notes & gotchas |
+|---|---|---|---|
+| `x`, `y` | Position on axes | numeric, date, datetime | Use `scale_x/y_continuous`, `scale_x/y_date`, `scale_x/y_datetime` for breaks/labels/transforms. |
+| `colour` | Stroke/outline colour | discrete **or** continuous | For points/lines; use `scale_colour_*`. Discrete for categories; continuous for gradients. |
+| `fill` | Interior fill colour | discrete **or** continuous | For areas (bars, boxplots, violins) and shapes 21–25. Use `scale_fill_*`. |
+| `size` | Point/area size | numeric (continuous/binned) | Legend shows circles. Use `scale_size_continuous()` or `scale_size_binned()`. |
+| `linewidth` | Line thickness | numeric (continuous/binned) | Prefer over `size` for lines (ggplot2 ≥ 3.4). `scale_linewidth_*`. |
+| `shape` | Point glyph | integer (0–25) or names | **Discrete** only. Shapes 21–25 support both `fill` & `colour` + `stroke` width. |
+| `linetype` | Dash pattern | names or codes | Discrete mapping: `"solid"`, `"dashed"`, `"dotted"`, etc. `scale_linetype_*`. |
+| `alpha` | Transparency | 0–1 numeric | Map or set. Too low (<0.05) becomes unreadable in print. `scale_alpha_*`. |
+| `group` | Grouping for stats/paths | factor/id | Ensures separate lines/smoothers per group; no legend by itself. |
+| `label` | Text content | character | For `geom_text/label`; pair with `ggrepel`. |
+| `weight` | Observation weight | numeric | Used by `stat_bin`, `stat_count`, etc. |
+
+### 1.4 Positional & extent aesthetics used by specific geoms
+| Geom family | Extra aesthetics | Meaning |
+|---|---|---|
+| `geom_segment`, `geom_curve` | `xend`, `yend` | Endpoints of segments/curves. |
+| `geom_rect`, `geom_ribbon`, `geom_linerange`, `geom_pointrange` | `xmin`, `xmax`, `ymin`, `ymax`, `ymin/ymax` | Extents for intervals/bands. |
+| `geom_bar` (stat = "identity") | `y` (height) or `x` | Use when providing pre‑summarised values. |
+| `geom_tile`, `geom_raster` | `width`, `height` (params) | Often controlled via arguments, not aesthetics. |
+| `geom_text/label` | `hjust`, `vjust`, `angle`, `family`, `fontface` | Some are parameters, some are aesthetics (e.g., `angle` can be mapped). |
+
+> Check `?geom_<name>` for the exact list of aesthetics that geom understands.
+
+### 1.5 Choosing scales per aesthetic (cheat‑sheet)
+| Aesthetic | Discrete scale(s) | Continuous/binned scale(s) | Common args |
+|---|---|---|---|
+| `x`, `y` | `scale_x/y_discrete()` | `scale_x/y_continuous()`, `scale_x/y_log10()`, `scale_x/y_date()`, `scale_x/y_datetime()` | `limits`, `breaks`, `labels`, `expand`, `trans` |
+| `colour` | `scale_colour_brewer()`, `*_viridis_d()`, `*_manual()` | `scale_colour_viridis_c()`, `scale_colour_gradient()`, `scale_colour_gradient2()`, `scale_colour_gradientn()`, `scale_colour_steps()` | `name`, `limits`, `oob`, `na.value`, `guide` |
+| `fill` | `scale_fill_brewer()`, `*_viridis_d()`, `*_manual()` | `scale_fill_viridis_c()`, `scale_fill_gradient*()`, `scale_fill_steps()` | same as colour |
+| `size` | `scale_size_discrete()` | `scale_size_continuous()`, `scale_size_binned()` | `range`, `breaks`, `labels` |
+| `linewidth` | `scale_linewidth_discrete()` | `scale_linewidth_continuous()`, `scale_linewidth_binned()` | `range` |
+| `shape` | `scale_shape()` / `scale_shape_manual()` | — | Shapes are discrete only; keep ≤6–7 |
+| `linetype` | `scale_linetype()`, `*_manual()` | — | Discrete only |
+| `alpha` | `scale_alpha_discrete()` | `scale_alpha_continuous()`, `scale_alpha_binned()` | `range` |
+
+### 1.6 Facets and guides (where they fit)
+- **Facets** are not aesthetics; they subset the data into small multiples (`facet_wrap`, `facet_grid`).
+- **Guides** (legends/colourbars/axes) are derived from **scales**. Control with `guides()`/`guide_*()` and with `labs(name = ...)`.
+
+### 1.7 Minimal working examples (mapping vs setting)
+```{r}
+library(ggplot2)
+# Mapping colour to a column (legend appears)
+ggplot(mpg, aes(displ, hwy, colour = class)) + geom_point()
+
+# Setting constant colour (no legend)
+ggplot(mpg, aes(displ, hwy)) + geom_point(colour = "steelblue")
+
+# Expression inside aes
+ggplot(diamonds, aes(x = log10(carat), y = log10(price))) + geom_point(alpha = 0.1)
+
+# After-stat for histogram density
+ggplot(diamonds, aes(x = carat, y = after_stat(density))) + geom_histogram(binwidth = 0.1)
+```
+
+---
+
+## 2. Aesthetics: the language of perception
+
+### 1.1 What is an aesthetic?
+
+- A **channel** that makes data perceptible (position, colour, size, shape, etc.).  
+- Declare mappings with `aes()`; geoms give **form** (points, lines, bars).  
+- Think: *what to map* (in `aes`) vs *how to map* (in `scale_*`).
+
+```{r}
+library(ggplot2)
+
+ggplot(mpg, aes(x = displ, y = hwy, colour = class)) +
+  geom_point()
+```
+
+### 1.2 Global vs local mappings
+
+- Global mapping in `ggplot()` is inherited by layers; local mapping overrides.
+
+```{r}
+base <- ggplot(mpg, aes(displ, hwy))
+base + geom_point() + geom_smooth(method = "lm")
+
+# Local override: colour only in points
+base + geom_point(aes(colour = class)) +
+  geom_smooth(method = "lm", se = TRUE)
+```
+
+### 1.3 Continuous vs categorical aesthetics
+
+- Continuous → size, colour gradients; Categorical → hue/shape.  
+- Use redundancy (colour + shape) judiciously.
+
+```{r}
+# Categorical colour + shape
+ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species, shape = Species)) +
+  geom_point(size = 3)
+```
+
+---
+
+## 2. Scales: how mappings are performed
+
+### 2.1 Position scales
+
+- Position scales control how variables become axis positions. 
+
+- They handle transforms (e.g., log), limits, tick breaks, and labels. 
+
+- Clear axes make patterns readable: choose human‑friendly breaks, label units, and set limits so outliers don’t crush the main cloud.
+
+```{r}
+# Custom axis limits, breaks, labels
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  scale_x_continuous(name = "Engine displacement (L)", limits = c(1, 7), breaks = 1:7) +
+  scale_y_continuous(name = "Highway MPG")
+```
+
+### 2.2 Size scales & perception
+
+- People judge **length** better than **area** or **angle**.  
+- Control dot sizes with `scale_size_continuous(range=...)`; use sqrt/log transforms when needed.
+
+```{r}
+# Map cylinders to size; bound on-screen span
+ggplot(mpg, aes(displ, hwy, size = cyl)) +
+  geom_point(alpha = 0.6) +
+  scale_size_continuous(range = c(2, 12))
+```
+
+### 2.3 Colour scales: categorical vs continuous
+
+- Colour communicates category or magnitude. 
+
+- Discrete scales assign one colour per level (legend keys); continuous scales map numbers to gradients (colourbars). 
+
+- Use perceptually uniform palettes for continuous data; use qualitative palettes with good separation for categories. Prefer diverging palettes when zero/midpoint carries meaning.
+
+```{r}
+# Continuous, perceptually uniform
+
+ggplot(mpg, aes(displ, hwy, colour = cty)) +
+  geom_point() +
+  scale_colour_viridis_c(option = "C", direction = -1)
+
+# Categorical palette
+ggplot(mpg, aes(class, fill = drv)) +
+  geom_bar(position = "dodge") +
+  scale_fill_brewer(palette = "Set2")
+```
+
+### 2.4 Alpha (transparency) for overplotting
+
+```{r}
+# Dense scatter with transparency
+set.seed(1)
+small <- diamonds[sample(nrow(diamonds), 3000), ]
+
+ggplot(small, aes(carat, price)) +
+  geom_point(alpha = 0.25)
+```
+
+
+---
+
+## 3. Facets: the algebra of small multiples
+
+### 3.1 `facet_wrap()` for one variable
+
+- Faceting splits your data into separate panels for each level of a variable while keeping shared axes. 
+
+- This reduces clutter and makes comparisons across categories easy.
+
+When to use:
+
+  - One categorical variable with several levels.
+
+  - You want to preserve common axes across panels for fair comparisons.
+
+How to read:
+
+  - Scan across panels for changes in pattern, spread, and outliers.
+
+  - Because axes are shared by default, differences reflect the data, not rescaling.
+
+```{r}
+# Wrap by car class
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(alpha = 0.6) +
+  facet_wrap(~ class, ncol = 4)
+```
+
+### 3.2 `facet_grid()` for two variables
+
+- `facet_grid()` builds a matrix of panels using one variable for rows and another for columns. 
+
+- It is ideal for spotting interactions: look for patterns that change across rows differently than across columns. 
+
+- Empty panels indicate combinations with no data.
+
+```{r}
+# Grid by drive type and cylinders
+mpg$cyl_f <- factor(mpg$cyl)
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(alpha = 0.6) +
+  facet_grid(drv ~ cyl_f)
+```
+
+### 3.3 Scales and space in facets
+
+- `scales = "free" | "free_x" | "free_y"`  
+
+- `space = "free"` lets panels grow with data density.
+
+```{r}
+# Free y-scale per panel
+by_drv <- ggplot(mpg, aes(displ, hwy)) + geom_point(alpha = 0.6)
+by_drv + facet_wrap(~ drv, scales = "free_y")
+```
+
+Guidance:
+- Use fixed scales when you need absolute comparisons across panels.
+
+- Use free scales to reveal within‑panel detail when ranges differ widely.
+
+- If panels are imbalanced, `space = "free"` lets wider panels hold denser data.
+
+### 3.4 When to facet vs colour vs small‑multiple glyphs
+
+- Facet when comparisons across **distributions** or **subgroups** matter.  
+
+- Use colour/shape when comparing **within the same axes**.  
+
+- Don’t overcrowd: >12 panels often harms scanability.
+
+---
+
+## 4. Guides: helping readers decode
+
+### 4.1 Legends & colourbars
+
+- Guides explain your mappings. 
+
+- Legends (discrete) and colourbars (continuous) are created automatically when you map aesthetics inside `aes()`. 
+
+- Improve readability by renaming titles, ordering keys, and sizing the colourbar. Remove redundant guides and consolidate when multiple aesthetics describe the same grouping.
+
+```{r}
+# Continuous colourbar
+p <- ggplot(mpg, aes(displ, hwy, colour = cty)) + geom_point()
+
+p + guides(colour = guide_colourbar(barheight = grid::unit(80, "pt"),
+                                    barwidth  = grid::unit(8, "pt")))
+```
+
+```{r}
+# Discrete legend with custom title and order
+p2 <- ggplot(mpg, aes(displ, hwy, colour = class)) + geom_point()
+
+p2 + scale_colour_brewer(name = "Vehicle class", palette = "Dark2") +
+  guides(colour = guide_legend(reverse = TRUE, override.aes = list(size = 4)))
+```
+
+### 4.2 Axes as guides
+
+- Use meaningful breaks, labels, and units; rotate long labels sparingly.
+
+```{r}
+# Label formatting
+library(scales)
+
+ggplot(economics, aes(date, unemploy)) +
+  geom_line() +
+  scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+  scale_y_continuous(labels = scales::label_number(scale_cut = scales::cut_short_scale())) +
+  labs(y = "Unemployed (persons)")
+```
+
+### 4.3 Legend placement and themes
+
+- Place guides where they don’t compete with data. 
+
+- Below or to the right works well for most plots. 
+
+- Start with a minimal theme to reduce ink, then selectively adjust gridlines, fonts, and spacing for clarity.
+
+```{r}
+# Place legend below; compact theme
+p2 + theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom",
+        legend.box = "vertical",
+        legend.title = element_text(face = "bold"))
+```
+
+---
+
+## 5. Design principles & accessibility
+
+### 5.1 Perceptual ranking (Cleveland & McGill)
+
+- Most accurate → **position** on common axis  
+- Then **length**, **angle/slope**, **area**, **colour**
+
+- Why this matters: your choice of chart encodes how precisely readers can compare values. If the goal is accurate comparison, prefer position (e.g., aligned bars/points) over angles (pie) or areas (bubbles).
+ 
+- Practical tips:
+ 
+  - Align bars on a common baseline and sort to support fast scanning.
+ 
+  - Use length along a common scale to compare magnitudes; reserve area/colour for rough patterns.
+ 
+  - When ranges span orders of magnitude, consider log scales but label clearly.
+ 
+  - Avoid 3D and perspective effects that distort perceived length/area.
+ 
+```{r}
+# Avoid pie when bar does better
+counts <- as.data.frame(table(mpg$class))
+
+# Bar (better)
+ggplot(counts, aes(Var1, Freq)) + geom_col() + coord_flip() +
+  labs(x = "Class", y = "Count")
+```
+
+### 5.2 Colour‑vision safety & redundancy
+
+- About 8% of men have red–green colour‑vision deficiency. Plots should remain interpretable under such conditions, in grayscale, and when printed.
+ 
+- Safer choices:
+ 
+  - Use perceptually uniform, colour‑blind‑friendly palettes (e.g., viridis, Okabe–Ito, Brewer Set2/Dark2).
+ 
+  - Ensure sufficient luminance contrast between categories and against the background.
+ 
+  - Test your plot in grayscale and with CVD simulators when possible.
+ 
+- Redundancy improves robustness:
+ 
+  - Pair colour with shape or linetype for lines/points.
+ 
+  - Add labels or annotations for key items so meaning isn’t colour‑only.
+ 
+```{r}
+# Categorical palette with good separability
+p_bar <- ggplot(mpg, aes(class, fill = drv)) +
+  geom_bar(position = position_dodge(width = 0.8)) +
+  scale_fill_brewer(palette = "Set2", name = "Drive") +
+  theme_minimal(base_size = 12) + theme(legend.position = "bottom")
+
+p_bar
+```
+
+### 5.3 Direct labels & annotations
+
+- Legends force eye movement between keys and marks. Direct labels reduce this indirection by placing text near the data they describe.
+ 
+- Good practice:
+ 
+  - Place labels adjacent to marks (line ends, cluster centroids) with consistent alignment.
+ 
+  - Keep labels short; use abbreviations or symbols explained in a caption if needed.
+ 
+  - Avoid overlap; use nudging or repelling tools to maintain legibility.
+ 
+  - Use subtle guides (thin lines, light arrows) sparingly to connect labels to distant marks.
+ 
+  - Reserve heavier emphasis (bold, colour) for the few items you want the reader to remember.
+ 
+```{r}
+library(ggrepel)
+
+g <- ggplot(mtcars, aes(wt, mpg, label = rownames(mtcars))) +
+  geom_point() +
+  geom_text_repel(size = 3) +
+  labs(x = "Weight (1000 lbs)", y = "MPG")
+
+g
+```
+
+---
+
+## 6. Patterns, textures, and density
+
+```{r}
+# Textures (requires ggpattern if installed)
+# install.packages("ggpattern")
+# library(ggpattern)
+# ggplot(mpg, aes(class, fill = drv)) +
+#   geom_bar_pattern(pattern = "stripe")
+```
+
+```{r}
+# Density & binning alternatives for overplotting
+p_hex <- ggplot(diamonds, aes(carat, price)) +
+  geom_hex(bins = 40) +
+  scale_fill_viridis_c()
+
+p_bin2d <- ggplot(diamonds, aes(carat, price)) +
+  geom_bin2d(bins = 40)
+
+p_hex
+```
+
+---
+
+## 7. Faceting: advanced practice
+
+### 7.1 Free scales & facet labellers
+
+- Free scales let each panel choose its own axis range, which can reveal structure hidden by a single global scale. 
+
+- The trade‑off is that absolute comparisons across panels become harder. 
+
+- Use free scales when ranges differ greatly, and fixed scales when magnitude comparisons are important.
+
+- Facet labellers control how panel headers appear. 
+
+- Good labels carry useful context (variable names and values) without being verbose. 
+
+- Use `label_both` to display both the variable and its value; write custom labellers for human‑friendly text or units.
+
+```{r}
+lab_fun <- labeller(.rows = label_both, .cols = label_both)
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(alpha = 0.6) +
+  facet_grid(drv ~ cyl_f, scales = "free_y", labeller = lab_fun)
+```
+
+### 7.2 Balancing panels & `space = "free"`
+
+- When some panels have many observations and others have few, fixed panel widths waste space or cause overplotting. 
+
+- With `space = "free"`, panels expand or contract to fit their content, improving readability. 
+
+- Combine with appropriate bin widths and alpha to keep distributions legible.
+
+```{r}
+# Panels resized to content
+by_cyl <- ggplot(mpg, aes(hwy, fill = drv)) +
+  geom_histogram(binwidth = 2, position = "identity", alpha = 0.5) +
+  facet_wrap(~ cyl_f, scales = "free_y")
+
+by_cyl
+```
+
+---
+
+## 8. Guides: cookbook
+
+- This section gives concrete patterns for common guide tasks. 
+
+- Use these snippets to control visibility, naming, ordering, and legend merging so readers can decode your plot quickly.
+
+```{r}
+# Remove a guide
+p2 + guides(colour = "none")
+```
+
+```{r}
+# Rename titles in a single place (flows to guides and axes)
+p2 + labs(colour = "Class", x = "Displacement (L)", y = "Hwy MPG")
+```
+
+```{r}
+# Multi-aesthetic legends: order guides and override aesthetics for clarity
+ggplot(mpg, aes(displ, hwy, colour = class, shape = drv)) +
+  geom_point(size = 3) +
+  guides(
+    colour = guide_legend(order = 1),
+    shape  = guide_legend(order = 2)
+  )
+```
+
+---
+
+## 9. Themes, layout, and typography
+
+- Themes control non‑data ink: gridlines, fonts, spacing, and backgrounds. 
+
+- Start with a simple base theme to reduce clutter, then adjust only what supports your message. 
+
+- Keep typography readable (base size 11–12 for slides), use bold/italics sparingly, and place legends where they don’t compete with data.
+
+```{r}
+# Theme families
+p2 + theme_minimal()
+p2 + theme_classic()
+p2 + theme_bw()
+```
+
+```{r}
+# Establish a clear baseline, then emphasise what's important
+p2 + theme_minimal(base_size = 12, base_family = "") +
+  theme(panel.grid.minor = element_blank(),
+        plot.title = element_text(face = "bold")) +
+  labs(title = "Fuel economy by class")
+```
+
+---
+
+## 10. Common pitfalls & fixes
+
+- Mapping vs setting: `aes(colour = "red")` (WRONG) vs `colour = "red"` (RIGHT)  
+- Overloaded legends: remove unused aesthetics; combine guides.  
+- Overplotting: use alpha, binning, `geom_smooth()`, sampling.  
+- Too many categories: group, reorder, facet; avoid rainbow palettes.  
+- Facet overload (>12 panels): prioritise or filter.
+
+```{r}
+# Mapping vs setting example
+bad <- ggplot(mpg, aes(displ, hwy, colour = "red")) + geom_point()
+good <- ggplot(mpg, aes(displ, hwy)) + geom_point(colour = "red")
+
+list(bad = bad, good = good)
+```
+
+---
+
+
+## 11. Cheatsheet
+
+- **Map:** `ggplot(df, aes(x, y, colour = g, size = z)) + geom_point()`  
+- **Scales:** `scale_x/y_*`, `scale_colour_*`, `scale_size_*`, `scale_shape_*`, `scale_alpha_*`  
+- **Facets:** `facet_wrap(~ g)`, `facet_grid(r ~ c)`  
+- **Guides:** `guides(colour = guide_legend(), ...)`  
+- **Themes:** `theme_*`, plus `theme()` overrides  
+- **Labels:** `labs(title, subtitle, caption, x, y, colour, fill, size)`
+
+---
+
+## 12. References & further reading
+
+- Bertin, J. (1967) *Semiology of Graphics*.  
+- Cleveland, W. S., & McGill, R. (1984). *Graphical Perception*.  
+- Wilkinson, L. (2005) *The Grammar of Graphics*.  
+- Wickham, H. (2016) *ggplot2: Elegant Graphics for Data Analysis*.  
+- Tufte, E. (1990) *Envisioning Information*.  
+- R packages: `ggplot2`, `viridis`, `ggrepel`, `ggpattern`, `scales`.
+
+---
+
+## 13. Key takeaways
+
+- Aesthetics = *what* to map; Scales/Guides = *how* readers decode; Facets = *where* comparisons happen.  
+- Prefer **position** and **length** over area/angle.  
+- Design for accessibility; annotate with intent; keep legends purposeful.  
+- Fewer, sharper comparisons beat crowded plots.
+
+
+---
+
+## Appendix: Quick reference (non‑duplicative)
+
+This appendix consolidates essentials for quick lookup. It does not introduce new concepts beyond the slides above.
+
+### A. Common aesthetics
+- Position: `x`, `y`
+- Colour/fill: `colour`, `fill`
+- Sizes: `size` (points/areas), `linewidth` (lines)
+- Discrete encodings: `shape`, `linetype`
+- Other: `

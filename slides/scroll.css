@@ -1,0 +1,20 @@
+/* Allow vertical scrolling within slides when content overflows */
+.reveal .slides section {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Make long code lines wrap to reduce horizontal overflow */
+.reveal pre code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.reveal section img,
+.reveal section figure {
+  display: block !important;
+  max-width: 100%;
+  height: auto !important;
+}
+
+

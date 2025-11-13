@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="aes_files/libs/clipboard/clipboard.min.js"></script>
+<script src="aes_files/libs/quarto-html/tabby.min.js"></script>
+<script src="aes_files/libs/quarto-html/popper.min.js"></script>
+<script src="aes_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="aes_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="aes_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="aes_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="aes_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.5.57">
+
+  <meta name="author" content="Joseph Mhango">
+  <title>Aesthetics, Facets &amp; Guides</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="aes_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="aes_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="aes_files/libs/revealjs/dist/theme/quarto.css">
+  <link rel="stylesheet" href="scroll.css">
+  <link href="aes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="aes_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="aes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="aes_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="aes_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="aes_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Aesthetics, Facets &amp; Guides</h1>
+  <p class="subtitle">Data Visualisation (SQ4012)</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Joseph Mhango 
+</div>
+</div>
+</div>
+
+</section><section id="TOC">
+<nav role="doc-toc"> 
+<h2 id="toc-title">Table of contents</h2>
+<ul>
+<li><a href="#/welcome-goals" id="/toc-welcome-goals">0. Welcome &amp; Goals</a></li>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-foundations-aes-taxonomy-value-types">1. Foundations: <code>aes()</code> taxonomy &amp; value types</a>
+<ul>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-what-is-aes">1.1 What is <code>aes()</code>?</a></li>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-value-types-accepted-in-aes">1.2 Value types accepted in <code>aes()</code></a></li>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-core-aesthetics-generic">1.3 Core aesthetics (generic)</a></li>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-positional-extent-aesthetics-used-by-specific-geoms">1.4 Positional &amp; extent aesthetics used by specific geoms</a></li>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-choosing-scales-per-aesthetic-cheatsheet">1.5 Choosing scales per aesthetic (cheat‑sheet)</a></li>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-facets-and-guides-where-they-fit">1.6 Facets and guides (where they fit)</a></li>
+<li><a href="#/foundations-aes-taxonomy-value-types" id="/toc-minimal-working-examples-mapping-vs-setting">1.7 Minimal working examples (mapping vs setting)</a></li>
+</ul></li>
+<li><a href="#/aesthetics-the-language-of-perception" id="/toc-aesthetics-the-language-of-perception">2. Aesthetics: the language of perception</a>
+<ul>
+<li><a href="#/aesthetics-the-language-of-perception" id="/toc-what-is-an-aesthetic">1.1 What is an aesthetic?</a></li>
+<li><a href="#/aesthetics-the-language-of-perception" id="/toc-global-vs-local-mappings">1.2 Global vs local mappings</a></li>
+<li><a href="#/aesthetics-the-language-of-perception" id="/toc-continuous-vs-categorical-aesthetics">1.3 Continuous vs categorical aesthetics</a></li>
+</ul></li>
+<li><a href="#/scales-how-mappings-are-performed" id="/toc-scales-how-mappings-are-performed">2. Scales: how mappings are performed</a>
+<ul>
+<li><a href="#/scales-how-mappings-are-performed" id="/toc-position-scales">2.1 Position scales</a></li>
+<li><a href="#/scales-how-mappings-are-performed" id="/toc-size-scales-perception">2.2 Size scales &amp; perception</a></li>
+<li><a href="#/scales-how-mappings-are-performed" id="/toc-colour-scales-categorical-vs-continuous">2.3 Colour scales: categorical vs continuous</a></li>
+<li><a href="#/scales-how-mappings-are-performed" id="/toc-alpha-transparency-for-overplotting">2.4 Alpha (transparency) for overplotting</a></li>
+</ul></li>
+<li><a href="#/facets-the-algebra-of-small-multiples" id="/toc-facets-the-algebra-of-small-multiples">3. Facets: the algebra of small multiples</a>
+<ul>
+<li><a href="#/facets-the-algebra-of-small-multiples" id="/toc-facet_wrap-for-one-variable">3.1 <code>facet_wrap()</code> for one variable</a></li>
+<li><a href="#/facets-the-algebra-of-small-multiples" id="/toc-facet_grid-for-two-variables">3.2 <code>facet_grid()</code> for two variables</a></li>
+<li><a href="#/facets-the-algebra-of-small-multiples" id="/toc-scales-and-space-in-facets">3.3 Scales and space in facets</a></li>
+<li><a href="#/facets-the-algebra-of-small-multiples" id="/toc-when-to-facet-vs-colour-vs-smallmultiple-glyphs">3.4 When to facet vs colour vs small‑multiple glyphs</a></li>
+</ul></li>
+<li><a href="#/guides-helping-readers-decode" id="/toc-guides-helping-readers-decode">4. Guides: helping readers decode</a>
+<ul>
+<li><a href="#/guides-helping-readers-decode" id="/toc-legends-colourbars">4.1 Legends &amp; colourbars</a></li>
+<li><a href="#/guides-helping-readers-decode" id="/toc-axes-as-guides">4.2 Axes as guides</a></li>
+<li><a href="#/guides-helping-readers-decode" id="/toc-legend-placement-and-themes">4.3 Legend placement and themes</a></li>
+</ul></li>
+<li><a href="#/design-principles-accessibility" id="/toc-design-principles-accessibility">5. Design principles &amp; accessibility</a>
+<ul>
+<li><a href="#/design-principles-accessibility" id="/toc-perceptual-ranking-cleveland-mcgill">5.1 Perceptual ranking (Cleveland &amp; McGill)</a></li>
+<li><a href="#/design-principles-accessibility" id="/toc-colourvision-safety-redundancy">5.2 Colour‑vision safety &amp; redundancy</a></li>
+<li><a href="#/design-principles-accessibility" id="/toc-direct-labels-annotations">5.3 Direct labels &amp; annotations</a></li>
+</ul></li>
+<li><a href="#/patterns-textures-and-density" id="/toc-patterns-textures-and-density">6. Patterns, textures, and density</a></li>
+<li><a href="#/faceting-advanced-practice" id="/toc-faceting-advanced-practice">7. Faceting: advanced practice</a>
+<ul>
+<li><a href="#/faceting-advanced-practice" id="/toc-free-scales-facet-labellers">7.1 Free scales &amp; facet labellers</a></li>
+<li><a href="#/faceting-advanced-practice" id="/toc-balancing-panels-space-free">7.2 Balancing panels &amp; <code>space = "free"</code></a></li>
+</ul></li>
+<li><a href="#/guides-cookbook" id="/toc-guides-cookbook">8. Guides: cookbook</a></li>
+<li><a href="#/themes-layout-and-typography" id="/toc-themes-layout-and-typography">9. Themes, layout, and typography</a></li>
+<li><a href="#/common-pitfalls-fixes" id="/toc-common-pitfalls-fixes">10. Common pitfalls &amp; fixes</a></li>
+<li><a href="#/cheatsheet" id="/toc-cheatsheet">11. Cheatsheet</a></li>
+<li><a href="#/references-further-reading" id="/toc-references-further-reading">12. References &amp; further reading</a></li>
+<li><a href="#/key-takeaways" id="/toc-key-takeaways">13. Key takeaways</a></li>
+<li><a href="#/appendix-quick-reference-nonduplicative" id="/toc-appendix-quick-reference-nonduplicative">Appendix: Quick reference (non‑duplicative)</a>
+<ul>
+<li><a href="#/appendix-quick-reference-nonduplicative" id="/toc-a.-common-aesthetics">A. Common aesthetics</a></li>
+</ul></li>
+</ul>
+</nav>
+</section>
+<section id="welcome-goals" class="slide level2">
+<h2>0. Welcome &amp; Goals</h2>
+<p><strong>What you’ll learn</strong></p>
+<ul>
+<li>Aesthetics: mapping data → perception with <code>aes()</code><br>
+</li>
+<li>Scales: how mappings are transformed (<code>scale_*()</code>)<br>
+</li>
+<li>Facets: small multiples with <code>facet_wrap()</code> / <code>facet_grid()</code><br>
+</li>
+<li>Guides: legends, colourbars, axes; how to tune with <code>guides()</code><br>
+</li>
+<li>Accessibility: colour‑vision safety, redundancy, annotations<br>
+</li>
+<li>Critique &amp; best practices with reproducible R examples</li>
+</ul>
+<blockquote>
+<p>Tip: Run every code cell; most use built‑in datasets like <code>mpg</code>, <code>iris</code>, <code>diamonds</code>.</p>
+</blockquote>
+</section>
+<section id="foundations-aes-taxonomy-value-types" class="slide level2">
+<h2>1. Foundations: <code>aes()</code> taxonomy &amp; value types</h2>
+<h3 id="what-is-aes">1.1 What is <code>aes()</code>?</h3>
+<p><code>aes()</code> declares <strong>mappings</strong> from variables in your data to <strong>aesthetics</strong> (visual channels). Mappings are <em>instructions</em>; they don’t draw anything by themselves—geoms use them to render.</p>
+<ul>
+<li><strong>Mapping</strong> (inside <code>aes()</code>): <em>data‑driven</em>. Example: <code>aes(colour = species)</code> → legend appears; scale chosen by data type.</li>
+<li><strong>Setting</strong> (outside <code>aes()</code>): <em>constant</em>. Example: <code>colour = "steelblue"</code> → no legend; same colour for all points.</li>
+</ul>
+<blockquote>
+<p>Rule of thumb: if it should vary with the data, put it <strong>in</strong> <code>aes()</code>. If it’s the same for all marks, set it <strong>outside</strong> <code>aes()</code>.</p>
+</blockquote>
+<h3 id="value-types-accepted-in-aes">1.2 Value types accepted in <code>aes()</code></h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Value type</th>
+<th>Example</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Column name</strong></td>
+<td><code>aes(y = hwy)</code></td>
+<td>Map each row’s value in <code>hwy</code> to the y position.</td>
+</tr>
+<tr class="even">
+<td><strong>Expression</strong></td>
+<td><code>aes(x = log10(carat))</code></td>
+<td>Compute on the fly; mapped as continuous.</td>
+</tr>
+<tr class="odd">
+<td><strong>Factor/character column</strong></td>
+<td><code>aes(colour = class)</code></td>
+<td>Creates <strong>discrete</strong> scale with one legend key per level.</td>
+</tr>
+<tr class="even">
+<td><strong>Numeric column</strong></td>
+<td><code>aes(colour = cty)</code></td>
+<td>Creates <strong>continuous</strong> scale (or binned if using steps).</td>
+</tr>
+<tr class="odd">
+<td><strong>String literal</strong> (discouraged)</td>
+<td><code>aes(colour = "red")</code></td>
+<td>Treated as a 1‑level <strong>discrete</strong> mapping → odd legend. Prefer <code>colour = "red"</code> outside <code>aes</code>.</td>
+</tr>
+<tr class="even">
+<td><strong>After‑stat</strong> result</td>
+<td><code>aes(y = after_stat(density))</code></td>
+<td>Use outputs from a stat (e.g., hist density).</td>
+</tr>
+<tr class="odd">
+<td><strong>After‑scale</strong> (advanced)</td>
+<td><code>aes(colour = after_scale(scales::desaturate(colour, .5)))</code></td>
+<td>Modify values post‑scale (ggplot2 ≥ 3.5).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>ggplot decides <strong>discrete vs continuous</strong> from the mapped vector’s type: logical/character/factor → discrete; numeric/date/datetime → continuous.</p>
+</blockquote>
+<h3 id="core-aesthetics-generic">1.3 Core aesthetics (generic)</h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aesthetic</th>
+<th>Purpose</th>
+<th>Typical values</th>
+<th>Notes &amp; gotchas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code>, <code>y</code></td>
+<td>Position on axes</td>
+<td>numeric, date, datetime</td>
+<td>Use <code>scale_x/y_continuous</code>, <code>scale_x/y_date</code>, <code>scale_x/y_datetime</code> for breaks/labels/transforms.</td>
+</tr>
+<tr class="even">
+<td><code>colour</code></td>
+<td>Stroke/outline colour</td>
+<td>discrete <strong>or</strong> continuous</td>
+<td>For points/lines; use <code>scale_colour_*</code>. Discrete for categories; continuous for gradients.</td>
+</tr>
+<tr class="odd">
+<td><code>fill</code></td>
+<td>Interior fill colour</td>
+<td>discrete <strong>or</strong> continuous</td>
+<td>For areas (bars, boxplots, violins) and shapes 21–25. Use <code>scale_fill_*</code>.</td>
+</tr>
+<tr class="even">
+<td><code>size</code></td>
+<td>Point/area size</td>
+<td>numeric (continuous/binned)</td>
+<td>Legend shows circles. Use <code>scale_size_continuous()</code> or <code>scale_size_binned()</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>linewidth</code></td>
+<td>Line thickness</td>
+<td>numeric (continuous/binned)</td>
+<td>Prefer over <code>size</code> for lines (ggplot2 ≥ 3.4). <code>scale_linewidth_*</code>.</td>
+</tr>
+<tr class="even">
+<td><code>shape</code></td>
+<td>Point glyph</td>
+<td>integer (0–25) or names</td>
+<td><strong>Discrete</strong> only. Shapes 21–25 support both <code>fill</code> &amp; <code>colour</code> + <code>stroke</code> width.</td>
+</tr>
+<tr class="odd">
+<td><code>linetype</code></td>
+<td>Dash pattern</td>
+<td>names or codes</td>
+<td>Discrete mapping: <code>"solid"</code>, <code>"dashed"</code>, <code>"dotted"</code>, etc. <code>scale_linetype_*</code>.</td>
+</tr>
+<tr class="even">
+<td><code>alpha</code></td>
+<td>Transparency</td>
+<td>0–1 numeric</td>
+<td>Map or set. Too low (&lt;0.05) becomes unreadable in print. <code>scale_alpha_*</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>group</code></td>
+<td>Grouping for stats/paths</td>
+<td>factor/id</td>
+<td>Ensures separate lines/smoothers per group; no legend by itself.</td>
+</tr>
+<tr class="even">
+<td><code>label</code></td>
+<td>Text content</td>
+<td>character</td>
+<td>For <code>geom_text/label</code>; pair with <code>ggrepel</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>weight</code></td>
+<td>Observation weight</td>
+<td>numeric</td>
+<td>Used by <code>stat_bin</code>, <code>stat_count</code>, etc.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="positional-extent-aesthetics-used-by-specific-geoms">1.4 Positional &amp; extent aesthetics used by specific geoms</h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Geom family</th>
+<th>Extra aesthetics</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>geom_segment</code>, <code>geom_curve</code></td>
+<td><code>xend</code>, <code>yend</code></td>
+<td>Endpoints of segments/curves.</td>
+</tr>
+<tr class="even">
+<td><code>geom_rect</code>, <code>geom_ribbon</code>, <code>geom_linerange</code>, <code>geom_pointrange</code></td>
+<td><code>xmin</code>, <code>xmax</code>, <code>ymin</code>, <code>ymax</code>, <code>ymin/ymax</code></td>
+<td>Extents for intervals/bands.</td>
+</tr>
+<tr class="odd">
+<td><code>geom_bar</code> (stat = “identity”)</td>
+<td><code>y</code> (height) or <code>x</code></td>
+<td>Use when providing pre‑summarised values.</td>
+</tr>
+<tr class="even">
+<td><code>geom_tile</code>, <code>geom_raster</code></td>
+<td><code>width</code>, <code>height</code> (params)</td>
+<td>Often controlled via arguments, not aesthetics.</td>
+</tr>
+<tr class="odd">
+<td><code>geom_text/label</code></td>
+<td><code>hjust</code>, <code>vjust</code>, <code>angle</code>, <code>family</code>, <code>fontface</code></td>
+<td>Some are parameters, some are aesthetics (e.g., <code>angle</code> can be mapped).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Check <code>?geom_&lt;name&gt;</code> for the exact list of aesthetics that geom understands.</p>
+</blockquote>
+<h3 id="choosing-scales-per-aesthetic-cheatsheet">1.5 Choosing scales per aesthetic (cheat‑sheet)</h3>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aesthetic</th>
+<th>Discrete scale(s)</th>
+<th>Continuous/binned scale(s)</th>
+<th>Common args</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code>, <code>y</code></td>
+<td><code>scale_x/y_discrete()</code></td>
+<td><code>scale_x/y_continuous()</code>, <code>scale_x/y_log10()</code>, <code>scale_x/y_date()</code>, <code>scale_x/y_datetime()</code></td>
+<td><code>limits</code>, <code>breaks</code>, <code>labels</code>, <code>expand</code>, <code>trans</code></td>
+</tr>
+<tr class="even">
+<td><code>colour</code></td>
+<td><code>scale_colour_brewer()</code>, <code>*_viridis_d()</code>, <code>*_manual()</code></td>
+<td><code>scale_colour_viridis_c()</code>, <code>scale_colour_gradient()</code>, <code>scale_colour_gradient2()</code>, <code>scale_colour_gradientn()</code>, <code>scale_colour_steps()</code></td>
+<td><code>name</code>, <code>limits</code>, <code>oob</code>, <code>na.value</code>, <code>guide</code></td>
+</tr>
+<tr class="odd">
+<td><code>fill</code></td>
+<td><code>scale_fill_brewer()</code>, <code>*_viridis_d()</code>, <code>*_manual()</code></td>
+<td><code>scale_fill_viridis_c()</code>, <code>scale_fill_gradient*()</code>, <code>scale_fill_steps()</code></td>
+<td>same as colour</td>
+</tr>
+<tr class="even">
+<td><code>size</code></td>
+<td><code>scale_size_discrete()</code></td>
+<td><code>scale_size_continuous()</code>, <code>scale_size_binned()</code></td>
+<td><code>range</code>, <code>breaks</code>, <code>labels</code></td>
+</tr>
+<tr class="odd">
+<td><code>linewidth</code></td>
+<td><code>scale_linewidth_discrete()</code></td>
+<td><code>scale_linewidth_continuous()</code>, <code>scale_linewidth_binned()</code></td>
+<td><code>range</code></td>
+</tr>
+<tr class="even">
+<td><code>shape</code></td>
+<td><code>scale_shape()</code> / <code>scale_shape_manual()</code></td>
+<td>—</td>
+<td>Shapes are discrete only; keep ≤6–7</td>
+</tr>
+<tr class="odd">
+<td><code>linetype</code></td>
+<td><code>scale_linetype()</code>, <code>*_manual()</code></td>
+<td>—</td>
+<td>Discrete only</td>
+</tr>
+<tr class="even">
+<td><code>alpha</code></td>
+<td><code>scale_alpha_discrete()</code></td>
+<td><code>scale_alpha_continuous()</code>, <code>scale_alpha_binned()</code></td>
+<td><code>range</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="facets-and-guides-where-they-fit">1.6 Facets and guides (where they fit)</h3>
+<ul>
+<li><strong>Facets</strong> are not aesthetics; they subset the data into small multiples (<code>facet_wrap</code>, <code>facet_grid</code>).</li>
+<li><strong>Guides</strong> (legends/colourbars/axes) are derived from <strong>scales</strong>. Control with <code>guides()</code>/<code>guide_*()</code> and with <code>labs(name = ...)</code>.</li>
+</ul>
+<h3 id="minimal-working-examples-mapping-vs-setting">1.7 Minimal working examples (mapping vs setting)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Mapping colour to a column (legend appears)</span></span>
+<span id="cb1-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">colour =</span> class)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-1-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting constant colour (no legend)</span></span>
+<span id="cb2-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">"steelblue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-1-2.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Expression inside aes</span></span>
+<span id="cb3-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log10</span>(carat), <span class="at">y =</span> <span class="fu">log10</span>(price))) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-1-3.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># After-stat for histogram density</span></span>
+<span id="cb4-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(<span class="at">x =</span> carat, <span class="at">y =</span> <span class="fu">after_stat</span>(density))) <span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-1-4.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="aesthetics-the-language-of-perception" class="slide level2">
+<h2>2. Aesthetics: the language of perception</h2>
+<h3 id="what-is-an-aesthetic">1.1 What is an aesthetic?</h3>
+<ul>
+<li>A <strong>channel</strong> that makes data perceptible (position, colour, size, shape, etc.).<br>
+</li>
+<li>Declare mappings with <code>aes()</code>; geoms give <strong>form</strong> (points, lines, bars).<br>
+</li>
+<li>Think: <em>what to map</em> (in <code>aes</code>) vs <em>how to map</em> (in <code>scale_*</code>).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(<span class="at">x =</span> displ, <span class="at">y =</span> hwy, <span class="at">colour =</span> class)) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-2-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="global-vs-local-mappings">1.2 Global vs local mappings</h3>
+<ul>
+<li>Global mapping in <code>ggplot()</code> is inherited by layers; local mapping overrides.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="" aria-hidden="true" tabindex="-1"></a>base <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy))</span>
+<span id="cb6-2"><a href="" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-3-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Local override: colour only in points</span></span>
+<span id="cb7-2"><a href="" aria-hidden="true" tabindex="-1"></a>base <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> class)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-3-2.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="continuous-vs-categorical-aesthetics">1.3 Continuous vs categorical aesthetics</h3>
+<ul>
+<li>Continuous → size, colour gradients; Categorical → hue/shape.<br>
+</li>
+<li>Use redundancy (colour + shape) judiciously.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorical colour + shape</span></span>
+<span id="cb8-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(iris, <span class="fu">aes</span>(Sepal.Length, Sepal.Width, <span class="at">colour =</span> Species, <span class="at">shape =</span> Species)) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="scales-how-mappings-are-performed" class="slide level2">
+<h2>2. Scales: how mappings are performed</h2>
+<h3 id="position-scales">2.1 Position scales</h3>
+<ul>
+<li><p>Position scales control how variables become axis positions.</p></li>
+<li><p>They handle transforms (e.g., log), limits, tick breaks, and labels.</p></li>
+<li><p>Clear axes make patterns readable: choose human‑friendly breaks, label units, and set limits so outliers don’t crush the main cloud.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Custom axis limits, breaks, labels</span></span>
+<span id="cb9-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy)) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb9-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">"Engine displacement (L)"</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">7</span>), <span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>) <span class="sc">+</span></span>
+<span id="cb9-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">"Highway MPG"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-5-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="size-scales-perception">2.2 Size scales &amp; perception</h3>
+<ul>
+<li>People judge <strong>length</strong> better than <strong>area</strong> or <strong>angle</strong>.<br>
+</li>
+<li>Control dot sizes with <code>scale_size_continuous(range=...)</code>; use sqrt/log transforms when needed.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Map cylinders to size; bound on-screen span</span></span>
+<span id="cb10-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">size =</span> cyl)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_continuous</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">12</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="colour-scales-categorical-vs-continuous">2.3 Colour scales: categorical vs continuous</h3>
+<ul>
+<li><p>Colour communicates category or magnitude.</p></li>
+<li><p>Discrete scales assign one colour per level (legend keys); continuous scales map numbers to gradients (colourbars).</p></li>
+<li><p>Use perceptually uniform palettes for continuous data; use qualitative palettes with good separation for categories. Prefer diverging palettes when zero/midpoint carries meaning.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Continuous, perceptually uniform</span></span>
+<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">colour =</span> cty)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb11-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_c</span>(<span class="at">option =</span> <span class="st">"C"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorical palette</span></span>
+<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(class, <span class="at">fill =</span> drv)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-7-2.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="alpha-transparency-for-overplotting">2.4 Alpha (transparency) for overplotting</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Dense scatter with transparency</span></span>
+<span id="cb13-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb13-3"><a href="" aria-hidden="true" tabindex="-1"></a>small <span class="ot">&lt;-</span> diamonds[<span class="fu">sample</span>(<span class="fu">nrow</span>(diamonds), <span class="dv">3000</span>), ]</span>
+<span id="cb13-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(small, <span class="fu">aes</span>(carat, price)) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="facets-the-algebra-of-small-multiples" class="slide level2">
+<h2>3. Facets: the algebra of small multiples</h2>
+<h3 id="facet_wrap-for-one-variable">3.1 <code>facet_wrap()</code> for one variable</h3>
+<ul>
+<li><p>Faceting splits your data into separate panels for each level of a variable while keeping shared axes.</p></li>
+<li><p>This reduces clutter and makes comparisons across categories easy.</p></li>
+</ul>
+<p>When to use:</p>
+<ul>
+<li><p>One categorical variable with several levels.</p></li>
+<li><p>You want to preserve common axes across panels for fair comparisons.</p></li>
+</ul>
+<p>How to read:</p>
+<ul>
+<li><p>Scan across panels for changes in pattern, spread, and outliers.</p></li>
+<li><p>Because axes are shared by default, differences reflect the data, not rescaling.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Wrap by car class</span></span>
+<span id="cb14-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy)) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> class, <span class="at">ncol =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="facet_grid-for-two-variables">3.2 <code>facet_grid()</code> for two variables</h3>
+<ul>
+<li><p><code>facet_grid()</code> builds a matrix of panels using one variable for rows and another for columns.</p></li>
+<li><p>It is ideal for spotting interactions: look for patterns that change across rows differently than across columns.</p></li>
+<li><p>Empty panels indicate combinations with no data.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid by drive type and cylinders</span></span>
+<span id="cb15-2"><a href="" aria-hidden="true" tabindex="-1"></a>mpg<span class="sc">$</span>cyl_f <span class="ot">&lt;-</span> <span class="fu">factor</span>(mpg<span class="sc">$</span>cyl)</span>
+<span id="cb15-3"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy)) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(drv <span class="sc">~</span> cyl_f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="scales-and-space-in-facets">3.3 Scales and space in facets</h3>
+<ul>
+<li><p><code>scales = "free" | "free_x" | "free_y"</code></p></li>
+<li><p><code>space = "free"</code> lets panels grow with data density.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Free y-scale per panel</span></span>
+<span id="cb16-2"><a href="" aria-hidden="true" tabindex="-1"></a>by_drv <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
+<span id="cb16-3"><a href="" aria-hidden="true" tabindex="-1"></a>by_drv <span class="sc">+</span> <span class="fu">facet_wrap</span>(<span class="sc">~</span> drv, <span class="at">scales =</span> <span class="st">"free_y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-11-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Guidance: - Use fixed scales when you need absolute comparisons across panels.</p>
+<ul>
+<li><p>Use free scales to reveal within‑panel detail when ranges differ widely.</p></li>
+<li><p>If panels are imbalanced, <code>space = "free"</code> lets wider panels hold denser data.</p></li>
+</ul>
+<h3 id="when-to-facet-vs-colour-vs-smallmultiple-glyphs">3.4 When to facet vs colour vs small‑multiple glyphs</h3>
+<ul>
+<li><p>Facet when comparisons across <strong>distributions</strong> or <strong>subgroups</strong> matter.</p></li>
+<li><p>Use colour/shape when comparing <strong>within the same axes</strong>.</p></li>
+<li><p>Don’t overcrowd: &gt;12 panels often harms scanability.</p></li>
+</ul>
+</section>
+<section id="guides-helping-readers-decode" class="slide level2">
+<h2>4. Guides: helping readers decode</h2>
+<h3 id="legends-colourbars">4.1 Legends &amp; colourbars</h3>
+<ul>
+<li><p>Guides explain your mappings.</p></li>
+<li><p>Legends (discrete) and colourbars (continuous) are created automatically when you map aesthetics inside <code>aes()</code>.</p></li>
+<li><p>Improve readability by renaming titles, ordering keys, and sizing the colourbar. Remove redundant guides and consolidate when multiple aesthetics describe the same grouping.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Continuous colourbar</span></span>
+<span id="cb17-2"><a href="" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">colour =</span> cty)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb17-3"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_colourbar</span>(<span class="at">barheight =</span> grid<span class="sc">::</span><span class="fu">unit</span>(<span class="dv">80</span>, <span class="st">"pt"</span>),</span>
+<span id="cb17-5"><a href="" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">barwidth  =</span> grid<span class="sc">::</span><span class="fu">unit</span>(<span class="dv">8</span>, <span class="st">"pt"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Discrete legend with custom title and order</span></span>
+<span id="cb18-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">colour =</span> class)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb18-3"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">scale_colour_brewer</span>(<span class="at">name =</span> <span class="st">"Vehicle class"</span>, <span class="at">palette =</span> <span class="st">"Dark2"</span>) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">reverse =</span> <span class="cn">TRUE</span>, <span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size =</span> <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="axes-as-guides">4.2 Axes as guides</h3>
+<ul>
+<li>Use meaningful breaks, labels, and units; rotate long labels sparingly.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Label formatting</span></span>
+<span id="cb19-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb19-3"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(economics, <span class="fu">aes</span>(date, unemploy)) <span class="sc">+</span></span>
+<span id="cb19-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb19-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"2 years"</span>, <span class="at">date_labels =</span> <span class="st">"%Y"</span>) <span class="sc">+</span></span>
+<span id="cb19-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_number</span>(<span class="at">scale_cut =</span> scales<span class="sc">::</span><span class="fu">cut_short_scale</span>())) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Unemployed (persons)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="legend-placement-and-themes">4.3 Legend placement and themes</h3>
+<ul>
+<li><p>Place guides where they don’t compete with data.</p></li>
+<li><p>Below or to the right works well for most plots.</p></li>
+<li><p>Start with a minimal theme to reduce ink, then selectively adjust gridlines, fonts, and spacing for clarity.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Place legend below; compact theme</span></span>
+<span id="cb20-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb20-4"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.box =</span> <span class="st">"vertical"</span>,</span>
+<span id="cb20-5"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="design-principles-accessibility" class="slide level2">
+<h2>5. Design principles &amp; accessibility</h2>
+<h3 id="perceptual-ranking-cleveland-mcgill">5.1 Perceptual ranking (Cleveland &amp; McGill)</h3>
+<ul>
+<li><p>Most accurate → <strong>position</strong> on common axis<br>
+</p></li>
+<li><p>Then <strong>length</strong>, <strong>angle/slope</strong>, <strong>area</strong>, <strong>colour</strong></p></li>
+<li><p>Why this matters: your choice of chart encodes how precisely readers can compare values. If the goal is accurate comparison, prefer position (e.g., aligned bars/points) over angles (pie) or areas (bubbles).</p></li>
+<li><p>Practical tips:</p>
+<ul>
+<li><p>Align bars on a common baseline and sort to support fast scanning.</p></li>
+<li><p>Use length along a common scale to compare magnitudes; reserve area/colour for rough patterns.</p></li>
+<li><p>When ranges span orders of magnitude, consider log scales but label clearly.</p></li>
+<li><p>Avoid 3D and perspective effects that distort perceived length/area.</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Avoid pie when bar does better</span></span>
+<span id="cb21-2"><a href="" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(mpg<span class="sc">$</span>class))</span>
+<span id="cb21-3"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Bar (better)</span></span>
+<span id="cb21-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(counts, <span class="fu">aes</span>(Var1, Freq)) <span class="sc">+</span> <span class="fu">geom_col</span>() <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb21-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Class"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="colourvision-safety-redundancy">5.2 Colour‑vision safety &amp; redundancy</h3>
+<ul>
+<li><p>About 8% of men have red–green colour‑vision deficiency. Plots should remain interpretable under such conditions, in grayscale, and when printed.</p></li>
+<li><p>Safer choices:</p>
+<ul>
+<li><p>Use perceptually uniform, colour‑blind‑friendly palettes (e.g., viridis, Okabe–Ito, Brewer Set2/Dark2).</p></li>
+<li><p>Ensure sufficient luminance contrast between categories and against the background.</p></li>
+<li><p>Test your plot in grayscale and with CVD simulators when possible.</p></li>
+</ul></li>
+<li><p>Redundancy improves robustness:</p>
+<ul>
+<li><p>Pair colour with shape or linetype for lines/points.</p></li>
+<li><p>Add labels or annotations for key items so meaning isn’t colour‑only.</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorical palette with good separability</span></span>
+<span id="cb22-2"><a href="" aria-hidden="true" tabindex="-1"></a>p_bar <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(class, <span class="at">fill =</span> drv)) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.8</span>)) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>, <span class="at">name =</span> <span class="st">"Drive"</span>) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb22-6"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="" aria-hidden="true" tabindex="-1"></a>p_bar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-17-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="direct-labels-annotations">5.3 Direct labels &amp; annotations</h3>
+<ul>
+<li><p>Legends force eye movement between keys and marks. Direct labels reduce this indirection by placing text near the data they describe.</p></li>
+<li><p>Good practice:</p>
+<ul>
+<li><p>Place labels adjacent to marks (line ends, cluster centroids) with consistent alignment.</p></li>
+<li><p>Keep labels short; use abbreviations or symbols explained in a caption if needed.</p></li>
+<li><p>Avoid overlap; use nudging or repelling tools to maintain legibility.</p></li>
+<li><p>Use subtle guides (thin lines, light arrows) sparingly to connect labels to distant marks.</p></li>
+<li><p>Reserve heavier emphasis (bold, colour) for the few items you want the reader to remember.</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb23-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(wt, mpg, <span class="at">label =</span> <span class="fu">rownames</span>(mtcars))) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb23-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb23-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Weight (1000 lbs)"</span>, <span class="at">y =</span> <span class="st">"MPG"</span>)</span>
+<span id="cb23-7"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="" aria-hidden="true" tabindex="-1"></a>g</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-18-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="patterns-textures-and-density" class="slide level2">
+<h2>6. Patterns, textures, and density</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Textures (requires ggpattern if installed)</span></span>
+<span id="cb24-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("ggpattern")</span></span>
+<span id="cb24-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># library(ggpattern)</span></span>
+<span id="cb24-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(mpg, aes(class, fill = drv)) +</span></span>
+<span id="cb24-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_bar_pattern(pattern = "stripe")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Density &amp; binning alternatives for overplotting</span></span>
+<span id="cb25-2"><a href="" aria-hidden="true" tabindex="-1"></a>p_hex <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(carat, price)) <span class="sc">+</span></span>
+<span id="cb25-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hex</span>(<span class="at">bins =</span> <span class="dv">40</span>) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>()</span>
+<span id="cb25-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="" aria-hidden="true" tabindex="-1"></a>p_bin2d <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(diamonds, <span class="fu">aes</span>(carat, price)) <span class="sc">+</span></span>
+<span id="cb25-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bin2d</span>(<span class="at">bins =</span> <span class="dv">40</span>)</span>
+<span id="cb25-8"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="" aria-hidden="true" tabindex="-1"></a>p_hex</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="aes_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+<section id="faceting-advanced-practice" class="slide level2">
+<h2>7. Faceting: advanced practice</h2>
+<h3 id="free-scales-facet-labellers">7.1 Free scales &amp; facet labellers</h3>
+<ul>
+<li><p>Free scales let each panel choose its own axis range, which can reveal structure hidden by a single global scale.</p></li>
+<li><p>The trade‑off is that absolute comparisons across panels become harder.</p></li>
+<li><p>Use free scales when ranges differ greatly, and fixed scales when magnitude comparisons are important.</p></li>
+<li><p>Facet labellers control how panel headers appear.</p></li>
+<li><p>Good labels carry useful context (variable names and values) without being verbose.</p></li>
+<li><p>Use <code>label_both</code> to display both the variable and its value; write custom labellers for human‑friendly text or units.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="" aria-hidden="true" tabindex="-1"></a>lab_fun <span class="ot">&lt;-</span> <span class="fu">labeller</span>(<span class="at">.rows =</span> label_both, <span class="at">.cols =</span> label_both)</span>
+<span id="cb26-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy)) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb26-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(drv <span class="sc">~</span> cyl_f, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">labeller =</span> lab_fun)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<h3 id="balancing-panels-space-free">7.2 Balancing panels &amp; <code>space = "free"</code></h3>
+<ul>
+<li><p>When some panels have many observations and others have few, fixed panel widths waste space or cause overplotting.</p></li>
+<li><p>With <code>space = "free"</code>, panels expand or contract to fit their content, improving readability.</p></li>
+<li><p>Combine with appropriate bin widths and alpha to keep distributions legible.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Panels resized to content</span></span>
+<span id="cb27-2"><a href="" aria-hidden="true" tabindex="-1"></a>by_cyl <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(hwy, <span class="at">fill =</span> drv)) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">2</span>, <span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> cyl_f, <span class="at">scales =</span> <span class="st">"free_y"</span>)</span>
+<span id="cb27-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="" aria-hidden="true" tabindex="-1"></a>by_cyl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-22-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="guides-cookbook" class="slide level2">
+<h2>8. Guides: cookbook</h2>
+<ul>
+<li><p>This section gives concrete patterns for common guide tasks.</p></li>
+<li><p>Use these snippets to control visibility, naming, ordering, and legend merging so readers can decode your plot quickly.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove a guide</span></span>
+<span id="cb28-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">guides</span>(<span class="at">colour =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-23-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename titles in a single place (flows to guides and axes)</span></span>
+<span id="cb29-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">"Class"</span>, <span class="at">x =</span> <span class="st">"Displacement (L)"</span>, <span class="at">y =</span> <span class="st">"Hwy MPG"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-24-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Multi-aesthetic legends: order guides and override aesthetics for clarity</span></span>
+<span id="cb30-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">colour =</span> class, <span class="at">shape =</span> drv)) <span class="sc">+</span></span>
+<span id="cb30-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(</span>
+<span id="cb30-5"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">order =</span> <span class="dv">1</span>),</span>
+<span id="cb30-6"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape  =</span> <span class="fu">guide_legend</span>(<span class="at">order =</span> <span class="dv">2</span>)</span>
+<span id="cb30-7"><a href="" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-25-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="themes-layout-and-typography" class="slide level2">
+<h2>9. Themes, layout, and typography</h2>
+<ul>
+<li><p>Themes control non‑data ink: gridlines, fonts, spacing, and backgrounds.</p></li>
+<li><p>Start with a simple base theme to reduce clutter, then adjust only what supports your message.</p></li>
+<li><p>Keep typography readable (base size 11–12 for slides), use bold/italics sparingly, and place legends where they don’t compete with data.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Theme families</span></span>
+<span id="cb31-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-26-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-26-2.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-26-3.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Establish a clear baseline, then emphasise what's important</span></span>
+<span id="cb34-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb34-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb34-4"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)) <span class="sc">+</span></span>
+<span id="cb34-5"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Fuel economy by class"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-27-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="common-pitfalls-fixes" class="slide level2">
+<h2>10. Common pitfalls &amp; fixes</h2>
+<ul>
+<li>Mapping vs setting: <code>aes(colour = "red")</code> (WRONG) vs <code>colour = "red"</code> (RIGHT)<br>
+</li>
+<li>Overloaded legends: remove unused aesthetics; combine guides.<br>
+</li>
+<li>Overplotting: use alpha, binning, <code>geom_smooth()</code>, sampling.<br>
+</li>
+<li>Too many categories: group, reorder, facet; avoid rainbow palettes.<br>
+</li>
+<li>Facet overload (&gt;12 panels): prioritise or filter.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Mapping vs setting example</span></span>
+<span id="cb35-2"><a href="" aria-hidden="true" tabindex="-1"></a>bad <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">colour =</span> <span class="st">"red"</span>)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb35-3"><a href="" aria-hidden="true" tabindex="-1"></a>good <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">"red"</span>)</span>
+<span id="cb35-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">bad =</span> bad, <span class="at">good =</span> good)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$bad</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-28-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$good</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="aes_files/figure-revealjs/unnamed-chunk-28-2.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="cheatsheet" class="slide level2">
+<h2>11. Cheatsheet</h2>
+<ul>
+<li><strong>Map:</strong> <code>ggplot(df, aes(x, y, colour = g, size = z)) + geom_point()</code><br>
+</li>
+<li><strong>Scales:</strong> <code>scale_x/y_*</code>, <code>scale_colour_*</code>, <code>scale_size_*</code>, <code>scale_shape_*</code>, <code>scale_alpha_*</code><br>
+</li>
+<li><strong>Facets:</strong> <code>facet_wrap(~ g)</code>, <code>facet_grid(r ~ c)</code><br>
+</li>
+<li><strong>Guides:</strong> <code>guides(colour = guide_legend(), ...)</code><br>
+</li>
+<li><strong>Themes:</strong> <code>theme_*</code>, plus <code>theme()</code> overrides<br>
+</li>
+<li><strong>Labels:</strong> <code>labs(title, subtitle, caption, x, y, colour, fill, size)</code></li>
+</ul>
+</section>
+<section id="references-further-reading" class="slide level2">
+<h2>12. References &amp; further reading</h2>
+<ul>
+<li>Bertin, J. (1967) <em>Semiology of Graphics</em>.<br>
+</li>
+<li>Cleveland, W. S., &amp; McGill, R. (1984). <em>Graphical Perception</em>.<br>
+</li>
+<li>Wilkinson, L. (2005) <em>The Grammar of Graphics</em>.<br>
+</li>
+<li>Wickham, H. (2016) <em>ggplot2: Elegant Graphics for Data Analysis</em>.<br>
+</li>
+<li>Tufte, E. (1990) <em>Envisioning Information</em>.<br>
+</li>
+<li>R packages: <code>ggplot2</code>, <code>viridis</code>, <code>ggrepel</code>, <code>ggpattern</code>, <code>scales</code>.</li>
+</ul>
+</section>
+<section id="key-takeaways" class="slide level2">
+<h2>13. Key takeaways</h2>
+<ul>
+<li>Aesthetics = <em>what</em> to map; Scales/Guides = <em>how</em> readers decode; Facets = <em>where</em> comparisons happen.<br>
+</li>
+<li>Prefer <strong>position</strong> and <strong>length</strong> over area/angle.<br>
+</li>
+<li>Design for accessibility; annotate with intent; keep legends purposeful.<br>
+</li>
+<li>Fewer, sharper comparisons beat crowded plots.</li>
+</ul>
+</section>
+<section id="appendix-quick-reference-nonduplicative" class="slide level2">
+<h2>Appendix: Quick reference (non‑duplicative)</h2>
+<p>This appendix consolidates essentials for quick lookup. It does not introduce new concepts beyond the slides above.</p>
+<h3 id="a.-common-aesthetics">A. Common aesthetics</h3>
+<ul>
+<li>Position: <code>x</code>, <code>y</code></li>
+<li>Colour/fill: <code>colour</code>, <code>fill</code></li>
+<li>Sizes: <code>size</code> (points/areas), <code>linewidth</code> (lines)</li>
+<li>Discrete encodings: <code>shape</code>, <code>linetype</code></li>
+<li>Other: `</li>
+</ul>
+<div class="quarto-auto-generated-content">
+<div class="footer footer-default">
+
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="aes_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="aes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="aes_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="aes_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+
+    <script>
+
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+
+      // slide changes (different for each slide format).
+
+      (function () {
+
+        // dispatch for htmlwidgets
+
+        function fireSlideEnter() {
+
+          const event = window.document.createEvent("Event");
+
+          event.initEvent("slideenter", true, true);
+
+          window.document.dispatchEvent(event);
+
+        }
+
+    
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+
+          fireSlideEnter();
+
+    
+
+          // dispatch for shiny
+
+          if (window.jQuery) {
+
+            if (previousSlide) {
+
+              window.jQuery(previousSlide).trigger("hidden");
+
+            }
+
+            if (currentSlide) {
+
+              window.jQuery(currentSlide).trigger("shown");
+
+            }
+
+          }
+
+        }
+
+    
+
+        // hookup for slidy
+
+        if (window.w3c_slidy) {
+
+          window.w3c_slidy.add_observer(function (slide_num) {
+
+            // slide_num starts at position 1
+
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+
+          });
+
+        }
+
+    
+
+      })();
+
+    </script>
+
+    
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        // For code content inside modals, clipBoardJS needs to be initialized with a container option
+        // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

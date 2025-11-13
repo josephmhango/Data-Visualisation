@@ -485,6 +485,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>Warning: package 'tidyverse' was built under R version 4.4.3</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyr' was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
@@ -495,44 +498,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download PNG</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://cdn.harper-adams.ac.uk/image/news/large/170313-606462.png"</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>tempfile <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".png"</span>)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(url, tempfile, <span class="at">mode =</span> <span class="st">"wb"</span>)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Read image</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">readPNG</span>(tempfile)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Get dimensions</span></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">dim</span>(img)[<span class="dv">1</span>]  <span class="co"># number of rows (height)</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">dim</span>(img)[<span class="dv">2</span>]  <span class="co"># number of cols (width)</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>channels <span class="ot">&lt;-</span> <span class="fu">dim</span>(img)[<span class="dv">3</span>]</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Flatten image arrays exactly as stored (column-major)</span></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(img[ , , <span class="dv">1</span>])</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(img[ , , <span class="dv">2</span>])</span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(img[ , , <span class="dv">3</span>])</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="cf">if</span> (channels <span class="sc">==</span> <span class="dv">4</span>) <span class="fu">as.vector</span>(img[ , , <span class="dv">4</span>]) <span class="cf">else</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(R))</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate pixel positions: y varies fastest (row index), then x (col index)</span></span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">y =</span> <span class="dv">1</span><span class="sc">:</span>h, <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span>w)</span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Flip y so top of image is at top in ggplot</span></span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>xy<span class="sc">$</span>y <span class="ot">&lt;-</span> h <span class="sc">-</span> xy<span class="sc">$</span>y <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Final data frame</span></span>
-<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>img_df <span class="ot">&lt;-</span> <span class="fu">cbind</span>(xy, R, G, B)</span>
-<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>img_df<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">rgb</span>(img_df<span class="sc">$</span>R, img_df<span class="sc">$</span>G, img_df<span class="sc">$</span>B)</span>
-<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
-<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>p<span class="ot">&lt;-</span><span class="fu">ggplot</span>(img_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">fill =</span> col)) <span class="sc">+</span></span>
-<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>() <span class="sc">+</span></span>
-<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_identity</span>() <span class="sc">+</span></span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
-<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Harper Adams logo"</span>)</span>
-<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download PNG</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://cdn.harper-adams.ac.uk/image/news/large/170313-606462.png"</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>tempfile <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".png"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(url, tempfile, <span class="at">mode =</span> <span class="st">"wb"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Read image</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">readPNG</span>(tempfile)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Get dimensions</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">dim</span>(img)[<span class="dv">1</span>]  <span class="co"># number of rows (height)</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">dim</span>(img)[<span class="dv">2</span>]  <span class="co"># number of cols (width)</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>channels <span class="ot">&lt;-</span> <span class="fu">dim</span>(img)[<span class="dv">3</span>]</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Flatten image arrays exactly as stored (column-major)</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(img[ , , <span class="dv">1</span>])</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(img[ , , <span class="dv">2</span>])</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(img[ , , <span class="dv">3</span>])</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="cf">if</span> (channels <span class="sc">==</span> <span class="dv">4</span>) <span class="fu">as.vector</span>(img[ , , <span class="dv">4</span>]) <span class="cf">else</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(R))</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate pixel positions: y varies fastest (row index), then x (col index)</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">y =</span> <span class="dv">1</span><span class="sc">:</span>h, <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span>w)</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Flip y so top of image is at top in ggplot</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>xy<span class="sc">$</span>y <span class="ot">&lt;-</span> h <span class="sc">-</span> xy<span class="sc">$</span>y <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Final data frame</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>img_df <span class="ot">&lt;-</span> <span class="fu">cbind</span>(xy, R, G, B)</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>img_df<span class="sc">$</span>col <span class="ot">&lt;-</span> <span class="fu">rgb</span>(img_df<span class="sc">$</span>R, img_df<span class="sc">$</span>G, img_df<span class="sc">$</span>B)</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>p<span class="ot">&lt;-</span><span class="fu">ggplot</span>(img_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">fill =</span> col)) <span class="sc">+</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_raster</span>() <span class="sc">+</span></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_identity</span>() <span class="sc">+</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Harper Adams logo"</span>)</span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
