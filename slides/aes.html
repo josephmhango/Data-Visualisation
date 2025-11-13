@@ -1280,8 +1280,17 @@ Joseph Mhango
 <h2>8. Guides: cookbook</h2>
 <ul>
 <li><p>This section gives concrete patterns for common guide tasks.</p></li>
-<li><p>Use these snippets to control visibility, naming, ordering, and legend merging so readers can decode your plot quickly.</p></li>
+<li><p>A guide is the visual device that helps the reader interpret an aesthetic mapping.</p></li>
+<li><p>Guides include:</p>
+<ul>
+<li>legends (for colour, shape, size, linetype…)</li>
+<li>colourbars (for continuous colour gradients)</li>
+<li>axis guides (ticks and labels)</li>
+</ul></li>
+<li><p>Good guide design makes a plot instantly readable. Poor guide design makes a correct plot confusing.</p></li>
 </ul>
+<p>Common practices include:</p>
+<p><strong>Removing a guide</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove a guide</span></span>
 <span id="cb28-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">guides</span>(<span class="at">colour =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1293,6 +1302,7 @@ Joseph Mhango
 </div>
 </div>
 </div>
+<p><strong>Renaming titles in a single place (flows to guides and axes)</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename titles in a single place (flows to guides and axes)</span></span>
 <span id="cb29-2"><a href="" aria-hidden="true" tabindex="-1"></a>p2 <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">"Class"</span>, <span class="at">x =</span> <span class="st">"Displacement (L)"</span>, <span class="at">y =</span> <span class="st">"Hwy MPG"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1304,6 +1314,15 @@ Joseph Mhango
 </div>
 </div>
 </div>
+<p>The labs() function provides a central place to rename aesthetic labels.</p>
+<p>Changing titles here updates:</p>
+<ul>
+<li><p>the legend title for colour,</p></li>
+<li><p>the x-axis title,</p></li>
+<li><p>and the y-axis title.</p></li>
+</ul>
+<p>This keeps labeling consistent across a plot. Instead of modifying each guide or scale separately, you define your wording once.</p>
+<p><strong>Multi-aesthetic legends: order guides and override appearance for clarity</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Multi-aesthetic legends: order guides and override aesthetics for clarity</span></span>
 <span id="cb30-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mpg, <span class="fu">aes</span>(displ, hwy, <span class="at">colour =</span> class, <span class="at">shape =</span> drv)) <span class="sc">+</span></span>
@@ -1320,6 +1339,17 @@ Joseph Mhango
 </div>
 </div>
 </div>
+<ul>
+<li><p>When your plot maps multiple aesthetics (e.g., colour and shape), ggplot creates multiple legends.</p></li>
+<li><p>By default, their order may be arbitrary or visually awkward.</p></li>
+<li><p>Using <code>guide_legend(order = ...)</code>, you can control the vertical ordering of legends:</p>
+<ul>
+<li><p>colour legend first,</p></li>
+<li><p>shape legend second.</p></li>
+</ul></li>
+<li><p>This is especially important in teaching materials and reports: ordering guides reinforces the hierarchy of information, and helps the reader decode the figure in a logical sequence.</p></li>
+<li><p>For more complex cases, you can also use override.aes inside guide_legend() to adjust how the symbols appear in the legend only (e.g., larger points, thicker lines), improving readability without touching the plotted data.</p></li>
+</ul>
 </section>
 <section id="themes-layout-and-typography" class="slide level2">
 <h2>9. Themes, layout, and typography</h2>
