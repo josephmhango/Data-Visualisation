@@ -1,0 +1,661 @@
+---
+title: "ggplot2 Challenges"
+subtitle: "Data visualisation"
+css: scroll.css
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    code-fold: true
+    incremental: false
+    
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## How to use this deck
+
+- Each example comes in **three slides**:
+  - **Challenge** – you see the finished plot only.
+  - **Data & hints** – you see the dataset and hints.
+  - **Solution** – full ggplot code.
+- All plotting uses **base ggplot2** (no helper plotting packages).
+- All datasets are **built-in** to R (e.g. `mpg`, `mtcars`, `iris`, `USArrests`, `faithful`).
+
+```{r setup, include=FALSE}
+library(tidyverse)
+
+theme_set(
+  theme_bw() +
+    theme(legend.position = "top")
+)
+```
+
+---
+
+# Grouped bar chart
+
+## Grouped bar chart – challenge
+
+```{r bar-group-challenge, echo=FALSE}
+mpg %>%
+  ggplot(aes(class, fill = drv)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Drive type by car class",
+    x = "Class",
+    y = "Count",
+    fill = "Drive"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+> **Challenge:** Using the `mpg` dataset, recreate the grouped (dodged) bar chart.
+
+---
+
+## Grouped bar chart – data & hints
+
+```{r bar-group-data}
+mpg %>%
+  count(class, drv)
+```
+
+Hints:
+
+- Map `class` to x, `fill = drv`.
+- Use `geom_bar()` with `position = "dodge"`.
+
+---
+
+## Grouped bar chart – solution
+
+```{r bar-group-solution}
+mpg %>%
+  ggplot(aes(class, fill = drv)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Drive type by car class",
+    x = "Class",
+    y = "Count",
+    fill = "Drive"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+---
+
+# Density
+
+## Density – challenge
+
+```{r density-challenge, echo=FALSE}
+iris %>%
+  ggplot(aes(Sepal.Length, fill = Species)) +
+  geom_density(alpha = 0.4) +
+  labs(
+    title = "Sepal length distribution by species",
+    x = "Sepal length (cm)",
+    y = "Density",
+    fill = "Species"
+  )
+```
+
+> **Challenge:** Using the `iris` dataset, reproduce this overlaid density plot.
+
+---
+
+## Density – data & hints
+
+```{r density-data}
+head(iris)
+```
+
+Hints:
+
+- `geom_density()` draws a smooth density curve.
+- Map `Sepal.Length` to x and `Species` to fill.
+- Use `alpha` to make overlapping fills semi‑transparent.
+
+---
+
+## Density – solution
+
+```{r density-solution}
+iris %>%
+  ggplot(aes(Sepal.Length, fill = Species)) +
+  geom_density(alpha = 0.4) +
+  labs(
+    title = "Sepal length distribution by species",
+    x = "Sepal length (cm)",
+    y = "Density",
+    fill = "Species"
+  )
+```
+
+---
+
+# Smoothed time series
+
+## Smoothed time series – challenge
+
+```{r line-smooth-challenge, echo=FALSE}
+economics %>%
+  ggplot(aes(date, unemploy)) +
+  geom_line(alpha = 0.5) +
+  geom_smooth(se = FALSE, span = 0.2) +
+  labs(
+    title = "Unemployment with smooth trend",
+    x = "Year",
+    y = "Number unemployed"
+  )
+```
+
+> **Challenge:** Using the `economics` dataset, add a smooth trend on top of the raw series.
+
+---
+
+## Smoothed time series – data & hints
+
+```{r line-smooth-data}
+head(economics)
+```
+
+Hints:
+
+- Use `geom_smooth()` with default method (LOESS).
+- Reduce `span` to make the trend more flexible.
+
+---
+
+## Smoothed time series – solution
+
+```{r line-smooth-solution}
+economics %>%
+  ggplot(aes(date, unemploy)) +
+  geom_line(alpha = 0.5) +
+  geom_smooth(se = FALSE, span = 0.2) +
+  labs(
+    title = "Unemployment with smooth trend",
+    x = "Year",
+    y = "Number unemployed"
+  )
+```
+
+---
+
+# Error bars
+
+## Error bars – challenge
+
+```{r error-challenge, echo=FALSE}
+ToothGrowth %>%
+  group_by(supp, dose) %>%
+  summarise(
+    mean_len = mean(len),
+    se_len   = sd(len) / sqrt(n()),
+    .groups = "drop"
+  ) %>%
+  ggplot(aes(factor(dose), mean_len, fill = supp)) +
+  geom_col(position = position_dodge(width = 0.6), width = 0.6) +
+  geom_errorbar(
+    aes(ymin = mean_len - se_len, ymax = mean_len + se_len),
+    position = position_dodge(width = 0.6),
+    width = 0.2
+  ) +
+  labs(
+    title = "Tooth growth by supplement and dose",
+    x = "Dose (mg)",
+    y = "Mean tooth length",
+    fill = "Supplement"
+  )
+```
+
+> **Challenge:** Using the `ToothGrowth` dataset, summarise the data and add error bars.
+
+---
+
+## Error bars – data & hints
+
+```{r error-data}
+head(ToothGrowth)
+```
+
+Hints:
+
+- Group by `supp` and `dose`.
+- Compute mean and standard error.
+- Use `geom_col()` for the means, `geom_errorbar()` for the intervals.
+
+---
+
+## Error bars – solution
+
+```{r error-solution}
+ToothGrowth %>%
+  group_by(supp, dose) %>%
+  summarise(
+    mean_len = mean(len),
+    se_len   = sd(len) / sqrt(n()),
+    .groups = "drop"
+  ) %>%
+  ggplot(aes(factor(dose), mean_len, fill = supp)) +
+  geom_col(position = position_dodge(width = 0.6), width = 0.6) +
+  geom_errorbar(
+    aes(ymin = mean_len - se_len, ymax = mean_len + se_len),
+    position = position_dodge(width = 0.6),
+    width = 0.2
+  ) +
+  labs(
+    title = "Tooth growth by supplement and dose",
+    x = "Dose (mg)",
+    y = "Mean tooth length",
+    fill = "Supplement"
+  )
+```
+
+---
+
+# Violin + Box
+
+## Violin + box – challenge
+
+```{r violin-box-challenge, echo=FALSE}
+iris %>%
+  ggplot(aes(Species, Sepal.Length, fill = Species)) +
+  geom_violin(alpha = 0.5, trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white", alpha = 0.5) +
+  theme(legend.position = "none") +
+  labs(
+    title = "Violin + Boxplot combination",
+    x = "Species",
+    y = "Sepal Length"
+  )
+```
+
+> **Challenge:** Using the `iris` dataset, combine a violin plot with a nested boxplot.
+
+---
+
+## Violin + box – data & hints
+
+```{r violin-box-data}
+head(iris)
+```
+
+Hints:
+
+- Layer `geom_violin()` and `geom_boxplot()`.
+- Adjust the boxplot `width` to fit inside the violin.
+- Use `trim = FALSE` on the violin to show the full density tail.
+
+---
+
+## Violin + box – solution
+
+```{r violin-box-solution}
+iris %>%
+  ggplot(aes(Species, Sepal.Length, fill = Species)) +
+  geom_violin(alpha = 0.5, trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white", alpha = 0.5) +
+  theme(legend.position = "none") +
+  labs(
+    title = "Violin + Boxplot combination",
+    x = "Species",
+    y = "Sepal Length"
+  )
+```
+
+---
+
+# Facets (Small Multiples)
+
+## Facets – challenge
+
+```{r facets-challenge, echo=FALSE}
+# Create a small time-series-like dataset from economics
+econ_small <- economics %>%
+  mutate(year = format(date, "%Y")) %>%
+  group_by(year) %>%
+  summarise(
+    unemploy = mean(unemploy),
+    psavert  = mean(psavert),
+    .groups = "drop"
+  ) %>%
+  mutate(year = as.integer(year)) %>%
+  pivot_longer(
+    cols = c(unemploy, psavert),
+    names_to = "indicator",
+    values_to = "value"
+  )
+
+econ_small %>%
+  ggplot(aes(year, value)) +
+  geom_line() +
+  facet_wrap(~ indicator, scales = "free_y", ncol = 1) +
+  labs(
+    title = "Small-multiple time series",
+    x = "Year",
+    y = NULL
+  )
+```
+
+> **Challenge:** Using the `economics` dataset, create faceted time series for different indicators.
+
+---
+
+## Facets – data & hints
+
+```{r facets-data}
+# Create a small time-series-like dataset from economics
+econ_small <- economics %>%
+  mutate(year = format(date, "%Y")) %>%
+  group_by(year) %>%
+  summarise(
+    unemploy = mean(unemploy),
+    psavert  = mean(psavert),
+    .groups = "drop"
+  ) %>%
+  mutate(year = as.integer(year)) %>%
+  pivot_longer(
+    cols = c(unemploy, psavert),
+    names_to = "indicator",
+    values_to = "value"
+  )
+
+head(econ_small)
+```
+
+Hints:
+
+- Data should be in long format (`indicator` column).
+- Use `facet_wrap(~ indicator, scales = "free_y")` to allow different y-axis ranges.
+
+---
+
+## Facets – solution
+
+```{r facets-solution}
+econ_small %>%
+  ggplot(aes(year, value)) +
+  geom_line() +
+  facet_wrap(~ indicator, scales = "free_y", ncol = 1) +
+  labs(
+    title = "Small-multiple time series",
+    x = "Year",
+    y = NULL
+  )
+```
+
+---
+
+# Diverging bar chart
+
+## Diverging bar chart – challenge
+
+```{r diverging-challenge, echo=FALSE}
+# Create a small example: difference from overall mean hwy
+mpg_div <- mpg %>%
+  group_by(class) %>%
+  summarise(mean_hwy = mean(hwy), .groups = "drop") %>%
+  mutate(
+    overall_mean = mean(mean_hwy),
+    diff = mean_hwy - overall_mean
+  )
+
+mpg_div %>%
+  ggplot(aes(x = reorder(class, diff), y = diff, fill = diff > 0)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Diverging bar: deviation from overall mean highway MPG",
+    x = "Class",
+    y = "Difference from overall mean"
+  ) +
+  guides(fill = "none")
+```
+
+> **Challenge:** Using the `mpg` dataset, recreate this diverging bar chart where color indicates sign.
+
+---
+
+## Diverging bar chart – data & hints
+
+```{r diverging-data}
+mpg %>%
+  group_by(class) %>%
+  summarise(mean_hwy = mean(hwy), .groups = "drop")
+```
+
+Hints:
+
+- Calculate the difference from the mean (`diff`).
+- Use `fill = diff > 0` to color positive/negative values differently.
+- `coord_flip()` helps with readability of labels.
+
+---
+
+## Diverging bar chart – solution
+
+```{r diverging-solution}
+mpg_div <- mpg %>%
+  group_by(class) %>%
+  summarise(mean_hwy = mean(hwy), .groups = "drop") %>%
+  mutate(
+    overall_mean = mean(mean_hwy),
+    diff = mean_hwy - overall_mean
+  )
+
+mpg_div %>%
+  ggplot(aes(x = reorder(class, diff), y = diff, fill = diff > 0)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "Diverging bar: deviation from overall mean highway MPG",
+    x = "Class",
+    y = "Difference from overall mean"
+  ) +
+  guides(fill = "none")
+```
+
+---
+
+# Circular Barplot
+
+## Circular Barplot – challenge
+
+```{r circular-challenge, echo=FALSE}
+# Use USArrests dataset
+data_arrests <- USArrests %>%
+  mutate(State = rownames(.)) %>%
+  arrange(desc(Murder)) %>%
+  head(30) # Top 30 states by murder rate for readability
+
+ggplot(data_arrests, aes(x=State, y=Murder)) +
+  geom_bar(stat="identity", fill=alpha("blue", 0.3)) +
+  ylim(-5, max(data_arrests$Murder) + 5) + # Adjust limits for inner circle
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    plot.margin = unit(rep(-1,4), "cm")
+  ) +
+  coord_polar(start = 0)
+```
+
+> **Challenge:** Using the `USArrests` dataset (top 30 states by Murder), create a circular barplot.
+
+---
+
+## Circular Barplot – data & hints
+
+```{r circular-data}
+data_arrests <- USArrests %>%
+  mutate(State = rownames(.)) %>%
+  arrange(desc(Murder)) %>%
+  head(30)
+
+head(data_arrests)
+```
+
+Hints:
+
+- Use `coord_polar(start = 0)`.
+- `ylim(negative_value, positive_value)` controls the inner circle size.
+- Use `geom_bar(stat="identity")`.
+
+---
+
+## Circular Barplot – solution
+
+```{r circular-solution}
+ggplot(data_arrests, aes(x=State, y=Murder)) +
+  geom_bar(stat="identity", fill=alpha("blue", 0.3)) +
+  
+  # Limits: negative minimum creates the inner circle "hole"
+  ylim(-5, 20) +
+  
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    plot.margin = unit(rep(-1,4), "cm")
+  ) +
+  
+  coord_polar(start = 0)
+```
+
+---
+
+# Custom Lollipop
+
+## Custom Lollipop – challenge
+
+```{r lollipop-custom-challenge, echo=FALSE}
+# Use mtcars dataset
+data_lolli <- mtcars %>%
+  mutate(model = rownames(.)) %>%
+  arrange(mpg) %>%
+  tail(20) # Top 20 highest MPG cars
+
+ggplot(data_lolli, aes(x=model, y=mpg)) +
+  geom_segment(aes(x=model, xend=model, y=0, yend=mpg)) +
+  geom_point(size=5, color="red", fill=alpha("orange", 0.3), alpha=0.7, shape=21, stroke=2) +
+  coord_flip() +
+  theme(axis.text.y = element_text(size = 8))
+```
+
+> **Challenge:** Using the `mtcars` dataset (top 20 MPG models), create a lollipop chart with custom markers.
+
+---
+
+## Custom Lollipop – data & hints
+
+```{r lollipop-custom-data}
+data_lolli <- mtcars %>%
+  mutate(model = rownames(.)) %>%
+  arrange(mpg) %>%
+  tail(20)
+
+head(data_lolli)
+```
+
+Hints:
+
+- A lollipop is a `geom_point()` plus a `geom_segment()`.
+- Use `shape = 21` to allow separate `color` (stroke) and `fill`.
+- Use `coord_flip()` to make car names readable.
+
+---
+
+## Custom Lollipop – solution
+
+```{r lollipop-custom-solution}
+ggplot(data_lolli, aes(x=model, y=mpg)) +
+  geom_segment(aes(x=model, xend=model, y=0, yend=mpg)) +
+  geom_point(size=5, color="red", fill=alpha("orange", 0.3), alpha=0.7, shape=21, stroke=2) +
+  coord_flip() +
+  theme(axis.text.y = element_text(size = 8))
+```
+
+---
+
+# Styled Boxplots
+
+## Styled Boxplots – challenge
+
+```{r boxplot-styled-challenge, echo=FALSE}
+ggplot(mpg, aes(x=class, y=hwy, fill=class)) + 
+    geom_boxplot(alpha=0.3) +
+    theme(legend.position="none") +
+    scale_fill_brewer(palette="Dark2")
+```
+
+> **Challenge:** Using the `mpg` dataset, create a boxplot with the "Dark2" palette and transparency.
+
+---
+
+## Styled Boxplots – data & hints
+
+```{r boxplot-styled-data}
+head(mpg)
+```
+
+Hints:
+
+- Use `geom_boxplot(alpha=0.3)`.
+- Use `scale_fill_brewer(palette="Dark2")`.
+- Remove the legend with `theme(legend.position="none")`.
+
+---
+
+## Styled Boxplots – solution
+
+```{r boxplot-styled-solution}
+ggplot(mpg, aes(x=class, y=hwy, fill=class)) + 
+    geom_boxplot(alpha=0.3) +
+    theme(legend.position="none") +
+    scale_fill_brewer(palette="Dark2")
+```
+
+---
+
+# 2D Distribution
+
+## 2D Distribution – challenge
+
+```{r density2d-contour-challenge, echo=FALSE}
+ggplot(faithful, aes(x=eruptions, y=waiting)) +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", colour="white") +
+  labs(title = "Old Faithful Eruptions vs Waiting Time")
+```
+
+> **Challenge:** Using the `faithful` dataset, create a 2D density plot showing area and contour.
+
+---
+
+## 2D Distribution – data & hints
+
+```{r density2d-contour-data}
+head(faithful)
+```
+
+Hints:
+
+- Use `stat_density_2d()`.
+- Set `geom = "polygon"` to fill the areas.
+- Map `fill = ..level..` to color by density level.
+
+---
+
+## 2D Distribution – solution
+
+```{r density2d-contour-solution}
+ggplot(faithful, aes(x=eruptions, y=waiting)) +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", colour="white") +
+  labs(title = "Old Faithful Eruptions vs Waiting Time")
+```
