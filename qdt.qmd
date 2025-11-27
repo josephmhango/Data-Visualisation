@@ -1,0 +1,698 @@
+---
+title: "Quarto Dashboards"
+subtitle: "Data visualisation"
+author: "Dr K.J. Mhango"
+css: scroll.css
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 1
+    incremental: false
+    code-line-numbers: false
+    chalkboard: true
+    code-fold: false
+    code-tools: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# Quarto Basics
+
+## What is Quarto?
+
+Quarto is a **reproducible document system** for combining code, its results, and your prose in a single file. A Quarto document (`.qmd`) is just a text file that contains:
+
+1.  A **YAML header** at the top between `---` lines.
+2.  **Markdown text** for headings, paragraphs, lists, etc.
+3.  **Code chunks** that are executed when you render the document.
+
+Quarto can create many formats from the same source: HTML reports, PDFs, Word documents, slides, dashboards, books, and more ([R for Data Science – Quarto](https://r4ds.hadley.nz/quarto.html), [Quarto formats](https://r4ds.hadley.nz/quarto-formats.html)).
+
+---
+
+## Anatomy of a `.qmd` file
+
+Here is a minimal Quarto report:
+
+```yaml
+---
+title: "My first Quarto report"
+author: "Your Name"
+format: html
+---
+```
+
+Some narrative text goes here.
+
+```{r}
+#| label: example-chunk
+1 + 1
+```
+
+- The **YAML header** sets the title, author, and output format.
+- The **text** explains what you are doing.
+- The **code chunk** runs R code and shows the result in the output document.
+
+---
+
+## From document to dashboard
+
+To turn a regular Quarto document into a **dashboard**, you only need to change the `format` in the YAML header:
+
+```yaml
+format:
+  dashboard:
+    orientation: columns
+```
+
+Now, Quarto treats your headings as layout containers:
+
+- `#` – **Pages** (top-level sections or tabs).
+- `##` – **Rows or Columns**, depending on `orientation`.
+- `###` – **Cards** inside those containers.
+
+The rest of this file shows concrete, working examples of how this layout works in practice.
+
+---
+
+## Chunk options: global vs local
+
+You can control how code is run and displayed **globally** in the YAML and **locally** inside chunks.
+
+Global options in YAML:
+
+```yaml
+execute:
+  echo: true      # show code by default
+  warning: false  # hide warnings by default
+  message: false  # hide messages by default
+```
+
+Local options inside a chunk use special comments starting with `#|`:
+
+```{r}
+#| label: quiet-setup
+#| echo: false      # hide this setup code, even if echo: true globally
+#| include: false   # run it, but don't show code or output
+
+library(ggplot2)
+```
+
+```{r}
+#| label: noisy-chunk
+#| echo: true       # override global defaults if needed
+
+summary(mtcars$mpg)
+```
+
+This **global + local** pattern is the same whether you are building a simple report or a rich dashboard.
+
+---
+
+# Introduction to Dashboards
+
+## What is a Quarto Dashboard?
+
+In data science, we often need to communicate results quickly and effectively. 
+
+A **traditional report** (like a PDF or Word doc) is linear: you read it from start to finish. 
+
+A **dashboard**, on the other hand, is an **"at-a-glance"** interface. It allows users to:
+
+- Monitor key metrics (KPIs).
+- Explore data interactively (zooming, filtering).
+- Compare different visualizations side-by-side.
+
+Quarto allows you to build these complex layouts using the simple Markdown you already know, without needing to know HTML or CSS.
+
+---
+
+## How It Works
+
+To turn a regular Quarto document into a dashboard, you only need to change one thing: the **format**.
+
+In your YAML header (the block at the top of your file), simply set:
+
+```yaml
+format: 
+  dashboard:
+    orientation: columns
+```
+
+This tells Quarto to treat your headings (`#`, `##`) not as document sections, but as structural containers like Pages, Rows, and Columns.
+
+---
+
+# Layout Basics
+
+## The Grid System
+
+Dashboards are built on a grid. You divide the screen into **Rows** and **Columns**.
+
+- **Rows**: Stack content vertically (top to bottom).
+- **Columns**: Place content side-by-side (left to right).
+
+You define these areas using Markdown headings.
+
+- Level 1 Heading (`#`): Creates a **Page** (if you have multiple) or a top-level section.
+- Level 2 Heading (`##`): Creates a **Row** or a **Column**, depending on your `orientation` setting. You can also add width or height settings here, e.g. `## Col 3 {.column width="80%"}`.
+
+---
+
+## Visualizing Layouts: Columns
+
+Let's imagine we want two charts side-by-side. In a dashboard, we would use a column structure.
+
+**The Code Concept:**
+
+```markdown
+## Column 1
+(Content for left)
+
+## Column 2
+(Content for right)
+```
+
+**The Visual Result:**
+
+Below is a live simulation of how this looks. We have two distinct areas sharing the horizontal space.
+
+::: columns
+::: {.column width="50%"}
+### Left Panel (Distribution)
+```{r}
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "white") +
+  theme_minimal() +
+  labs(title = "MPG Distribution")
+```
+:::
+
+::: {.column width="50%"}
+### Right Panel (Correlation)
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(color = "salmon") +
+  theme_minimal() +
+  labs(title = "Weight vs MPG")
+```
+:::
+:::
+
+---
+
+## Visualizing Layouts: Rows
+
+Sometimes you want to stack items. For example, a large trend line on top, and detailed metrics below.
+
+**The Visual Result:**
+
+Here we stack two "cards" vertically.
+
+::: {.panel-callout}
+**Top Row: Time Series**
+```{r}
+#| fig-height: 3
+ggplot(economics, aes(date, unemploy)) +
+  geom_line(color = "steelblue") +
+  theme_minimal() +
+  labs(title = "Unemployment Over Time")
+```
+:::
+
+::: {.panel-callout}
+**Bottom Row: Summary Stats**
+The average unemployment rate in this dataset is **`r round(mean(economics$unemploy), 0)`** thousands. We achieved this by typing `` `r round(mean(economics$unemploy), 0)` ``, but indicated "r" to let quarto know to run the code inline, not just print it out. This helps provide context to the chart above.
+:::
+
+---
+
+## Nested Layouts
+
+So far we’ve seen simple layouts: one row with columns, or one column with stacked cards. Real dashboards often need **nested layouts**, such as a big plot on the left and, inside the right-hand column, two smaller cards stacked or side-by-side.
+
+The basic pattern is:
+
+- Use a `##` heading to define a **row container**.
+- Inside that row, use a `columns` block plus `.column` divs to split it into **columns**.
+- Inside any column, you can:
+  - Stack multiple cards vertically by adding multiple `###` card headings, or
+  - Add another `columns` block to create **nested columns**.
+
+**Example: A row with a wide left column and a nested layout on the right**
+
+```markdown
+## Row 1
+
+::: columns
+::: {.column width="70%"}
+### Main Plot
+
+# large plot here
+
+:::
+
+::: {.column width="30%"}
+### Right Side
+
+::: columns
+::: {.column}
+#### Top Right Card
+Some text or a small plot.
+:::
+
+::: {.column}
+#### Bottom Right Card
+Another small card.
+:::
+:::
+:::
+
+```
+
+Visually:
+
+- `Row 1` is a horizontal band.
+- Inside it, the left 70% shows a single big **card** (“Main Plot”).
+- The right 30% is further divided into **two smaller cards** stacked within that column.
+
+Notice that we only use `##` for the top-level **row**, and then rely on `columns` / `.column` and `###`/`####` inside to structure the cards. This keeps the heading levels simple while still allowing you to create quite complex dashboard grids.
+
+---
+
+# Components
+
+## Cards and Panels
+
+The fundamental visual building block of a dashboard is the **card**. A card is a panel with a bit of padding, background, and (optionally) a title bar. Each card should contain one small, focused idea: a single plot, a table, a short explanation, or a key number.
+
+It’s important to distinguish between **layout containers** and **cards**:
+
+- Level 1 and 2 headings (`#`, `##`) define the **layout grid**:
+  - `#` headings define **pages** (or top-level sections / tabs).
+  - `##` headings define **rows or columns** within a page (depending on the `orientation` setting in your YAML).
+- The *content inside* those rows/columns – paragraphs, code chunks, tabsets, value boxes – is what Quarto turns into **cards**.
+
+So if you write:
+
+```markdown
+## Row 1
+
+Some narrative text.
+
+```
+
+Quarto interprets this as:
+
+- `## Row 1` → a **row container**, not a card by itself.
+- `Some narrative text.` → one **text card** inside that row.
+
+
+## Mental Model: Orientation
+
+A nice mental model for teaching dashboards is that **Orientation** acts *between* columns, not inside them.
+
+With:
+
+```yaml
+format:
+  dashboard:
+    orientation: columns
+```
+
+Quarto does this:
+
+1. Look at siblings at one level down (on Page 2, that’s your `##` headings).
+2. Lay those side-by-side as columns.
+3. Use `{width=70%}`, `{width=30%}`, etc. to allocate space.
+4. Inside each column, content still flows in normal HTML block order: top → bottom.
+
+If instead you want a **single card with its own title**, you typically use a level 3 heading (`###`) *inside* the row/column:
+
+```markdown
+## Row 1
+
+### Sales Over Time
+
+```
+
+Here:
+
+- `## Row 1` is still the row (layout).
+- `### Sales Over Time` becomes the **card title**
+
+You can also create cards explicitly using a `.card` div when you need more control over options like title, padding, or appearance:
+
+```markdown
+::: {.card title="Sales Over Time" .bordered}
+some stuff
+:::
+```
+
+In practice, you’ll mix both approaches: use `##` headings to carve up the page into rows/columns, then use `###` headings or `.card` blocks to define the individual cards people actually read.
+
+**Example Card:**
+
+::: {.callout-note appearance="simple"}
+### This is a Card Title
+Here is some narrative text inside the card. You might explain a metric or provide instructions to the user.
+:::
+
+---
+
+## Value Boxes
+
+Sometimes you want to highlight **single key numbers** (KPIs) like total sales, number of users, or error rates. Value boxes are compact cards designed for this purpose.
+
+**The Code Concept:**
+
+```markdown
+## Key Metrics
+
+::: {.valuebox}
+### Revenue
+$54k
+:::
+
+::: {.valuebox}
+### New Users
+1,200
+:::
+```
+
+**The Visual Result:**
+
+You will see two small cards side-by-side (depending on your layout) that emphasize the values `$54k` and `1,200`. In a real dashboard, these values would typically be computed from your data.
+
+---
+
+## Tabsets
+
+When you have too many charts for one screen, **Tabsets** are your best friend. They allow you to stack multiple visualizations in the same space, letting the user toggle between them.
+
+**The Code Concept:**
+
+```markdown
+::: {.panel-tabset}
+### Chart
+(Code for chart)
+
+### Data
+(Code for table)
+:::
+```
+
+**The Visual Result:**
+
+Try clicking the tabs below!
+
+::: panel-tabset
+### Visualisation
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
+  geom_point(size = 3) +
+  theme_minimal()
+```
+
+### Raw Data
+```{r}
+head(iris, 10)
+```
+:::
+
+---
+
+# Interactivity
+
+## Interactive Plots
+
+A dashboard shouldn't just be a static picture. We want users to hover, zoom, and click.
+
+We can achieve this easily using the `plotly` package.
+
+**Try hovering over the points below:**
+
+```{r}
+library(plotly)
+plot_ly(mtcars, x = ~hp, y = ~mpg, color = ~factor(cyl), 
+        type = 'scatter', mode = 'markers') %>%
+  layout(title = "Horsepower vs MPG (Interactive)")
+```
+
+---
+
+## Light Interactivity (No Server)
+
+Quarto dashboards render to **Static HTML**. This means you don't need a specialized server (like Shiny Server) to host them. You can email the HTML file to a colleague or upload it to GitHub Pages.
+
+However, you can still have simple interactivity using standard HTML inputs and JavaScript.
+
+**Example: A Dynamic Text Update**
+
+Here is a dropdown menu. When you change it, the text below updates instantly using a tiny bit of JavaScript embedded in the document.
+
+<div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; border: 1px solid #ddd;">
+  <label for="demo-select"><strong>Choose a Metric:</strong></label>
+  <select id="demo-select" style="padding: 5px;">
+    <option value="Revenue">Revenue</option>
+    <option value="Profit">Profit</option>
+    <option value="Customers">Customers</option>
+  </select>
+
+  <p id="demo-output" style="margin-top: 10px; font-size: 1.2em; color: #007bff;">Current View: Revenue</p>
+</div>
+
+<script>
+document.getElementById('demo-select').addEventListener('change', function() {
+  var val = this.value;
+  document.getElementById('demo-output').textContent = "Current View: " + val;
+});
+</script>
+
+---
+
+## Input Sidebars & Interactivity
+
+A common dashboard pattern is a **control panel** on the left (inputs) that updates charts on the right (outputs).
+
+Quarto makes this easy with the `{.sidebar}` class. You can apply this to a specific layout container to turn it into a sidebar.
+
+**The Code Concept:**
+
+```markdown
+# Page 1
+
+## {.sidebar}
+(Your inputs go here, e.g., dropdowns, sliders)
+
+## Column
+(Your charts go here)
+```
+
+By default, standard R plots are static. To make the sidebar *actually* control the charts without a server, we can use **Observable JS (OJS)**.
+
+---
+
+## Observable JS (OJS)
+
+OJS is a reactive JavaScript language built into Quarto. It allows you to build **interactive charts** where data flows from inputs to outputs instantly in the browser—no Shiny server required!
+
+**Example: Sidebar controlling a plot**
+
+```markdown
+## {.sidebar}
+
+```ojs
+viewof bill_length_min = Inputs.range(
+  [32, 50], 
+  {value: 35, step: 1, label: "Bill Length (min):"}
+)
+```
+
+## Column
+
+```ojs
+// Filter the data based on the slider input
+filtered = penguins.filter(function(penguin) {
+  return bill_length_min < penguin.bill_length_mm;
+})
+
+// Plot the filtered data
+Plot.rectY(filtered, 
+  Plot.binX({y: "count"}, {x: "body_mass_g", fill: "species", thresholds: 20})
+).plot({
+  facet: {
+    data: filtered,
+    x: "species",
+    y: "island",
+    marginRight: 80
+  },
+  marks: [
+    Plot.frame(),
+  ]
+}
+)
+```
+
+In this example:
+1. The **sidebar** holds a slider input.
+2. The **main column** has a plot that "listens" to that slider.
+3. When you move the slider, the plot updates **instantly**.
+
+---
+
+# Putting It All Together
+
+## A "Mini-Dashboard" Example
+
+Let's simulate a full dashboard page right here on this slide. Imagine this is your screen. We have a sidebar for context and a main area for charts.
+
+::: columns
+::: {.column width="30%"}
+<div style="background-color: #f0f0f0; padding: 15px; height: 100%; border-radius: 5px;">
+### Project Alpha
+
+**Status:** On Track
+
+This dashboard tracks the performance of Project Alpha. 
+
+Use the tabs on the right to explore the data.
+
+**Key Metrics:**
+- **N:** 150
+- **Mean:** 5.8
+</div>
+:::
+
+::: {.column width="70%"}
+::: panel-tabset
+### Trend
+```{r}
+#| fig-height: 4
+ggplot(airquality, aes(Day, Temp)) +
+  geom_line(color = "darkgreen") + 
+  geom_smooth(se=FALSE, color="lightgreen") +
+  theme_minimal()
+```
+
+### Distribution
+```{r}
+#| fig-height: 4
+ggplot(airquality, aes(Temp)) +
+  geom_histogram(fill = "darkgreen", alpha=0.7) +
+  theme_minimal()
+```
+:::
+:::
+:::
+
+---
+
+## Deployment
+
+Once you are happy with your dashboard:
+
+1.  **Render**: Run `quarto render my_dashboard.qmd`.
+2.  **Output**: This creates an `.html` file.
+3.  **Share**:
+    - Email the HTML file.
+    - Upload to **GitHub Pages**.
+    - Publish to **Quarto Pub**.
+
+No complex infrastructure required!
+
+---
+
+# Themes, CSS, and Projects
+
+## Themes
+
+Quarto dashboards are built on **Bootstrap themes**. You can switch the overall look and feel by changing the `theme` field in the YAML:
+
+```yaml
+format:
+  dashboard:
+    theme: cosmo   # or darkly, flatly, journal, etc.
+```
+
+The [Quarto formats documentation](https://r4ds.hadley.nz/quarto-formats.html) discusses how different formats (including dashboards) share the same theming system.
+
+---
+
+## Custom CSS
+
+For finer control, you can attach a custom CSS file. This very slide deck already uses `scroll.css`:
+
+```yaml
+css: scroll.css
+```
+
+Inside `scroll.css` you might see rules like:
+
+```css
+.reveal .slides section {
+  height: 100%;
+  overflow-y: auto;
+}
+```
+
+This makes long slides **scrollable**, so the same file works well as both a presentation and independent reading notes.
+
+---
+
+## Using `_quarto.yml` to orchestrate dashboards
+
+When you have **multiple dashboards or pages** that belong together, you can define a project-level configuration in `_quarto.yml`:
+
+```yaml
+project:
+  type: website
+
+website:
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: qdt.qmd
+        text: Dashboards
+      - href: dataWrangling.qmd
+        text: Data Wrangling
+```
+
+Now, rendering the project (`quarto render`) creates a small website where your `qdt.qmd` dashboard appears as one page in the navigation bar.
+
+---
+
+## Shiny and server-backed dashboards (advanced)
+
+Everything in this file so far produces **static HTML** that you can host anywhere. For **live, server-backed dashboards** (with widgets that talk to a database, update in real time, etc.), you can integrate **Shiny**.
+
+At a high level:
+
+1.  Add `server: shiny` in your YAML.
+2.  Use Shiny inputs (`sliderInput()`, `selectInput()`, etc.) and outputs (`plotOutput()`, `tableOutput()`).
+3.  Write a small `server` function to connect inputs to outputs.
+
+Illustrative (non-running) example:
+
+```yaml
+---
+title: "Live Dashboard"
+format: dashboard
+server: shiny
+---
+```
+
+```r
+sliderInput("bins", "Number of bins:", min = 1, max = 50, value = 30)
+plotOutput("distPlot")
+```
+
+The Shiny server logic would then define how `input$bins` changes `output$distPlot`. This is beyond the scope of this introductory dashboard, but it's important to know that Quarto dashboards can grow all the way to **fully interactive web apps** when needed.

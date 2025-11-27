@@ -1,0 +1,66 @@
+---
+title: "My first Quarto report"
+author: "Your Name"
+format:
+  dashboard:
+    orientation: columns
+execute:
+  echo: true      # show code by default
+  warning: false  # hide warnings by default
+  message: false  # hide messages by default
+---
+
+# Page 1 {orientation="rows"}
+
+## Key Metrics {height=150px}
+
+::: {.valuebox .bg-warning}
+Revenue
+
+$54k
+:::
+
+::: {.valuebox .bg-warning}
+New Users
+
+1,200
+:::
+
+# Page 2
+
+## Sales Over Time {width=70%}
+::: {.card title="Sales Over Time" .bordered}
+```{r}
+#| echo: false
+library(leaflet)
+
+leaflet() |>
+  addTiles() |>
+  addMarkers(
+    lng = -2.4233, lat = 52.7868,
+    popup = "Harper Adams University"
+  )
+```
+:::
+## Side Panel {width=30%}
+::: {.panel-tabset}
+### Histogram
+```{r}
+#| echo: false
+library(ggplot2)
+hist(mtcars$mpg)
+```
+
+**Some notes**  
+Bottom Row: Summary Stats The average unemployment rate in this dataset is `r mean(economics$unemploy)` thousands. This helps provide context to the chart above.
+
+### Another one
+
+```{r}
+#| echo: false
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "white") +
+  theme_minimal()
+```
+:::
