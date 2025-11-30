@@ -1,0 +1,937 @@
+---
+title: "Quarto Markdown & Document Formats"
+subtitle: "Markdown, Blocks, YAML & Mental Models"
+author: "Dr K.J. Mhango"
+css: scroll.css
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 2
+    incremental: false
+    code-line-numbers: false
+    chalkboard: true
+    code-fold: false
+    code-tools: true
+    scrollable: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+# Welcome & Learning Goals
+
+## How to use this tutorial
+
+This is a **self-guided, Quarto tutorial**. It assumes you:
+
+- Already know basic markdown (headings, lists, code blocks)
+- Have Quarto installed
+- Can render a simple `.qmd` file to HTML
+
+You are **not** expected to memorise every syntax rule or YAML key.
+The goal is to build a **mental model** and a habit of knowing **where to look things up**.
+
+You should work **with an editor open** (VS Code / RStudio / Positron) and:
+
+1. Create a new file: `quarto-markdown-formats.qmd`  
+2. Copy-paste relevant snippets from these slides.  
+3. Edit and experiment as you go.
+
+Where you see **"Try it"** boxes, pause and do the task.
+
+::: {.callout-tip}
+## Suggested pacing
+
+- **Part 1–2 (45 min)** — mental model + markdown recap  
+- **Part 3 (45 min)** — blocks, divs, spans, attributes  
+- **Part 4–5 (45 min)** — formats + YAML + projects  
+- **Part 6–7 (30 min)** — computation + worked examples  
+
+You do **not** need to remember every detail. Focus on:
+
+- Recognising patterns in the examples.  
+- Learning what *kind* of thing goes in YAML vs markdown vs blocks.  
+- Noticing how to navigate the Quarto docs when you forget a key.
+:::
+
+## Big picture
+
+By the end, you should:
+
+- Think of Quarto as: **Markdown + YAML + Engine**  
+- Understand that **format** (html, revealjs, dashboard, etc.) changes how the same markdown is interpreted.
+- Be comfortable with **divs (`:::`)** and **attributes** (`{.class #id key=value}`).
+- Know when you *can* "just change the format" and when you **must change the structure**.
+- Understand how **project-level `_quarto.yml`** interacts with document-level YAML.
+
+You do **not** need to memorise:
+
+- Every possible `format:` and sub-option.  
+- All classes and keys for dashboards, slides, and books.
+
+Instead you should be able to say:
+
+> "I know roughly what goes in YAML, what goes in markdown, and what goes in blocks — and I know where to look up the exact option names."
+
+## Patterns, not memorisation
+
+A helpful way to think about Quarto:
+
+- **YAML** is like a function call: keys are **arguments** (`title`, `author`, `format`).  
+- **Markdown** is your **content**: headings, lists, paragraphs, code.  
+- **Blocks/divs** (`:::`) add **layout or semantics**: columns, callouts, pages, cards.
+
+When you forget a key, your workflow should be:
+
+1. Identify the layer: "Is this a YAML thing, a markdown thing, or a layout/block thing?"  
+2. Search the relevant section of the Quarto docs (e.g. *HTML format options*, *Reveal.js options*, *Dashboards*).  
+3. Copy a **small, working pattern** and adapt it.
+
+You are learning **how to think about Quarto**, not collecting trivia about syntax.
+
+---
+
+# Part 1: Mental Model of Quarto
+
+## Quarto as a translation system
+
+Quarto is **not** just "markdown → pretty HTML".
+
+A more accurate mental model:
+
+1. You write **markdown + YAML + special blocks** in `.qmd`.
+2. Quarto uses **Pandoc** and format-specific engines to translate this into:
+   - HTML documents
+   - Reveal.js slides
+   - Dashboards
+   - PDF, Word, etc.
+3. The **same source** can produce **multiple outputs**, but only if the **structure** makes sense for each.
+
+Key idea: **Markdown is the language; format is the dialect.**
+
+## Three layers to keep in your head
+
+When you write a `.qmd`, you are working in **three layers**:
+
+1. **Content layer** — text, headings, lists, images, code.  
+2. **Structure / layout layer** — sections, pages, columns, cards, callouts, etc.  
+3. **Metadata layer (YAML)** — title, author, format, theme, options.
+
+Many frustrations with Quarto come from only thinking about Layer 1.
+
+::: {.callout-note}
+Markdown alone is often **not enough** to express the structure required for slides, dashboards, or books. You need blocks (`:::`) and YAML.
+:::
+
+## Why "just change the format" is misleading
+
+You will often see advice like:
+
+> "To convert HTML → slides, just change `format: html` to `format: revealjs`."
+
+This is **only partly true**:
+
+- If your document's **structure** already matches what slides expect (short sections, clear headings), it can work surprisingly well.
+- If it is long-form prose meant to be read as an article, you will get a **chaotic slide deck**.
+
+Similarly for dashboards:
+
+- If your document is already using **dashboard layout blocks** (`.page`, `.column`, `.card`), switching formats can work.  
+- Otherwise, you get a normal HTML page with dashboard styling, not a meaningful dashboard.
+
+---
+
+# Part 2: Markdown Basics
+
+## Headings: more than just big text
+
+In Quarto, headings do more than make text big:
+
+- In **HTML documents**, headings define document structure for TOC, navigation, and accessibility.
+- In **Reveal.js slides**, headings define **slides and subslides**.
+- In **books/sites**, headings define the section hierarchy within each chapter/page.
+
+```markdown
+# Level 1 heading
+
+Some text.
+
+## Level 2 heading
+
+More text.
+
+### Level 3 heading
+
+Even more text.
+```
+
+::: {.callout-tip}
+### Try it
+
+1. Create a `.qmd` with 3–4 levels of headings.  
+2. Render with `format: html`. Look at the TOC.  
+3. Change `format: revealjs` and render again. See how headings become slides.
+:::
+
+## Lists and nesting
+
+Lists are mostly format-agnostic, but pay attention to **blank lines** and **indentation**:
+
+```markdown
+- Item 1
+- Item 2
+  - Nested item 2a
+  - Nested item 2b
+
+1. Step one
+2. Step two
+```
+
+In slides, long nested lists become hard to read. In dashboards, lists inside `.card` blocks are totally fine.
+
+**Guideline:** In slides, prefer **short lists per slide**.
+
+## Links and images
+
+Basic syntax:
+
+```markdown
+[Quarto website](https://quarto.org)
+
+![Alt text for image](images/plot.png)
+```
+
+Across formats:
+
+- HTML + revealjs: links are clickable, images appear as expected.
+- PDF: links still work (clickable in most readers), images embedded.
+- Dashboards: same as HTML; images can be placed inside cards/columns.
+
+Think of images as **content**; where you place them using blocks determines **layout**.
+
+## Code blocks: fenced & language tags
+R 
+
+````markdown
+```{{r}}
+#| eval: false
+summary(cars)
+```
+````
+Python 
+
+````markdown
+```{{python}}
+#| eval: false
+import math
+math.sqrt(2)
+```
+````
+
+Two separate ideas here:
+
+1. **Fenced code blocks:** the back ticks fence the code for syntax highlighting (even if not executed).  
+2. **Executable code chunks:** the curly brackets around the language tell Quarto to run the code.
+
+---
+
+# Part 3: Divs, Spans, and Attributes
+
+## Why we need blocks (`:::`)
+
+Markdown by itself has limited layout control:
+
+- You cannot easily say "these two things should be side by side".
+- You cannot easily say "this box is a card with a border and title".
+
+Quarto extends markdown with **div blocks** using `:::` fences. These map to HTML `<div>` elements and are used to:
+
+- Create **columns and pages** (dashboards)
+- Create **cards, value boxes, sidebars**
+- Create **callouts** (notes, tips, warnings)
+- Apply **classes and IDs** to groups of content
+
+## Basic div syntax
+
+````markdown
+::: {.my-div}
+This is some content inside a div.
+
+- It can contain lists
+- And code
+
+```r
+1 + 1
+```
+:::
+````
+
+This translates into HTML roughly as:
+
+```html
+<div class="my-div">
+  <p>This is some content inside a div.</p>
+  ...
+</div>
+```
+
+The `{.my-div}` part is called an **attribute list**.
+
+You can control how your attribute list looks with regular css:
+
+```markdown
+
+::: {.my-div style="background-color:#f0f8ff; border:2px solid #4682b4; padding:1em; border-radius:10px;"}
+
+```
+
+You can even include it in a css file to support your quarto
+
+## Attribute list anatomy
+
+Attribute lists have the form:
+
+```markdown
+{#id .class1 .class2 key=value}
+```
+
+- `#id` — optional **ID** (unique identifier)  
+- `.class1` `.class2` — one or more **CSS classes**  
+- `key=value` — arbitrary key/value pairs (e.g. `width=50%`, `data-toggle=modal`)
+- If two inline styles specify the same property (e.g. both background-color), the last one defined wins.
+
+You can attach attribute lists to:
+
+- Divs: `::: {.important}`  
+- Headings: `## Results {.highlight}`  
+- Images: `![caption](plot.png){width=50%}`  
+ 
+
+## Spans: inline attributes
+
+**Spans** are like divs, but inline:
+
+```markdown
+This is an [inline span]{.highlight} inside a sentence.
+``` 
+Prints: This is an [inline span]{.highlight} inside a sentence.
+
+Use spans to:
+
+- Highlight a word/phrase with a CSS class
+- Attach metadata (e.g. language to tell the browser that this is a french word)
+
+They are powerful when combined with custom CSS.
+
+## Callouts: special divs with meaning
+
+Callouts are pre-defined **semantic blocks**:
+
+```markdown
+::: {.callout-tip}
+## Tip
+
+You can use callouts to highlight important information.
+:::
+```
+
+Variants you can use:
+
+- `.callout-note`
+- `.callout-important`
+- `.callout-warning`
+- `.callout-caution`
+
+These render differently but share the same underlying div mechanism.
+
+::: {.callout-tip}
+### Try it (10 min)
+
+1. Make a `.qmd` with 3–4 callouts summarising your current project.  
+2. Use different callout types.  
+3. Render as HTML and as Reveal.js slides.  
+4. Notice that callouts keep their structure across formats.
+:::
+
+## Columns with attributes (e.g. `{.column}`)
+
+Columns are **just divs with special classes** which formats (like dashboards) interpret as layout instructions.
+
+A typical pattern:
+
+```markdown
+::: {.columns}
+
+::: {.column width="40%"}
+Left column content
+:::
+
+::: {.column width="60%"}
+Right column content
+:::
+
+:::
+```
+
+In HTML, this becomes a responsive two-column layout. In dashboards, those columns are placed within the context where they are created.
+
+Key idea: **`columns` is a container**; each `.column` child is a block.
+
+## Why this matters for format changes
+
+- In a plain HTML document, you can get away without ever using `:::`.  
+- In a **dashboard**, blocks like `.page`, `.column`, `.card`, `.valuebox` are the grammar of the layout.
+- In **slides**, you might use columns/divs to place content side by side.
+
+So if you:
+
+- Start from a document that uses these blocks sensibly, then changing `format:` often works well.  
+- Start from free-flowing markdown, changing format gives you a structurally confused output.
+
+---
+
+# Part 4: How Formats Interpret the Same Markdown
+
+## HTML documents: the relaxed format
+
+HTML is the most forgiving:
+
+- Headings define structure but do not strictly constrain layout.
+- Long sections are fine; scrolling is expected.
+- Divs (`:::`) add layout or styling but are optional.
+
+Typical YAML:
+
+```yaml
+---
+title: "My Report"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    df-print: paged
+---
+```
+
+For many uses, HTML is the simplest target and a good default for exploratory work.
+
+## Reveal.js slides: headings become slides
+
+Slides have stricter expectations:
+
+- `#` typically starts a new section (top-level slide).  
+- `##` often starts a sub-slide (depending on configuration).  
+- Too much content per section → unreadable slides.
+
+Typical YAML:
+
+```yaml
+---
+title: "My Slide Deck"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 2
+    scrollable: true
+---
+```
+
+Best practice:
+
+- Think of each heading as a slide boundary.  
+- Keep content on each slide focused and short.  
+- Use `columns` or `divs` for side-by-side layout when needed.
+
+::: {.callout-warning}
+### Common mistake
+
+Taking a long HTML report and just changing `format: html` to `format: revealjs`. You get:
+
+- 50+ slides with dense text.
+- No narrative pacing.  
+- Poor readability.
+
+The *format* changed, but the *structure* did not.
+:::
+
+## Dashboards: layout grammar matters
+
+Dashboards interpret specific classes as semantic layout instructions, e.g.:
+
+- `.page` — a dashboard page
+- `.column` — a column within a page
+- `.card` — a card containing content
+- `.valuebox` — a KPI/summary metric box
+
+A typical dashboard structure (conceptually):
+
+````markdown
+```markdown
+# My Dashboard
+
+::: {.page}
+
+## KPIs
+
+::: {.valuebox}
+Average Cylinder Number
+
+```{r}
+#| echo: false
+#| eval: false
+# mean(mpg$cyl)
+```
+:::
+
+::: {.column}
+### Left panel
+
+Some text or plots.
+:::
+
+::: {.column}
+### Right panel
+
+More content.
+:::
+
+:::
+```
+````
+
+Key ideas in this example:
+
+- `# My Dashboard` — a normal markdown heading.  
+- `::: {.page}` — a **page container**.  
+- `.valuebox` — a KPI-style card with an R chunk that computes a value.  
+- `.column` blocks — layout containers for left/right panels.
+
+
+## Books and websites: multi-document formats
+
+Books and sites use multiple `.qmd` files plus a project-level `_quarto.yml`:
+
+```yaml
+# _quarto.yml
+project:
+  type: book
+
+book:
+  title: "My Book"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - methods.qmd
+    - results.qmd
+    - discussion.qmd
+
+format:
+  html:
+    theme: simplex
+```
+
+Each `.qmd` becomes a **chapter/page**. Headings **inside** each file define its internal structure.
+
+Key distinction: format changes now affect **the whole project**, not just one file.
+
+---
+
+# Part 5: YAML Front Matter & `_quarto.yml`
+
+## Document-level YAML
+
+Every `.qmd` starts with YAML front matter:
+
+```yaml
+---
+title: "Experiment Report"
+author: "Your Name"
+date: "2025-11-29"
+format:
+  html:
+    toc: true
+    number-sections: true
+---
+```
+
+Document-level YAML controls:
+
+- Basic metadata (title, author, date)
+- Output format(s) and format-specific options
+- Execution defaults (echo, warning, message, etc.)
+- Possibly CSS/JS includes, theme, etc.
+
+You do **not** need to memorise all possible keys. Instead, remember:
+
+- YAML = **configuration and defaults**, not content.  
+- Keys are **names for knobs** you can turn.  
+- For a new feature, first ask: "Is this a YAML knob, or something I express in markdown/blocks?"
+
+## Where are the rules written?
+
+When you wonder:
+
+- *"What keys are allowed under `format: html`?"*  
+- *"What options exist for `revealjs`?"*  
+- *"What can I put under `project:` or `book:` in `_quarto.yml`?"*
+
+The answer is always: **in the Quarto documentation for that format or project type**.
+
+Your long-term skill is:
+
+- Knowing which **section** of the docs to consult.  
+- Recognising example patterns you can copy.
+
+A practical approach:
+
+- Keep one or two small **template projects** (a report, a slide deck, a dashboard) that you know work.  
+- When you forget how to do something, open those templates and inspect their YAML.  
+- Use the docs to refine or add new keys.
+
+## Multi-format YAML
+
+
+You can target multiple formats at once:
+
+```yaml
+---
+title: "Multi-format Example"
+format:
+  html:
+    toc: true
+  pdf:
+    documentclass: scrreprt
+---
+```
+
+Then:
+
+```bash
+quarto render report.qmd --to html
+quarto render report.qmd --to pdf
+```
+
+**Important:** `format` does **not merge** between project YAML (`_quarto.yml`) and document YAML — if you specify `format` in a document, you must include all formats you care about.
+
+## Project-level `_quarto.yml`
+
+Projects allow you to share settings across multiple files.
+
+Example:
+
+```yaml
+project:
+  type: website
+
+format:
+  html:
+    theme: pulse
+    toc: true
+
+execute:
+  echo: true
+  warning: false
+
+website:
+  title: "My Quarto Site"
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Analysis
+        href: analysis.qmd
+```
+
+Here:
+
+- Every `.qmd` in the project inherits `format: html` settings.  
+- The document always wins when there’s a conflict: If both the project and a .qmd file specify something, the .qmd file’s value is used.
+- Where the conflict happens matters.
+    - Some YAML keys allow fine-grained overrides: only change the specific part that conflicts
+    - Other keys (notably format:) treat any override as a request to replace the whole section.
+
+## How document YAML and project YAML interact
+
+- Project-level `_quarto.yml` provides **defaults**.  
+- Document YAML can **override or extend** these defaults.  
+- For some keys (like `format`), override is **all-or-nothing** (no merging).
+
+Example:
+
+```yaml
+# _quarto.yml
+format:
+  html:
+    theme: cosmo
+    toc: true
+```
+
+```yaml
+# report.qmd
+---
+title: "Report"
+format:
+  html:
+    number-sections: true
+---
+```
+
+In this case, for `report.qmd`, you lose the project `theme: cosmo` unless you repeat it in the document YAML:
+
+```yaml
+---
+title: "Report"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+```
+
+::: {.callout-tip}
+### Try it (15–20 min)
+
+1. Create a folder with `_quarto.yml` and two `.qmd` files (`index.qmd`, `analysis.qmd`).  
+2. Put global settings in `_quarto.yml`.  
+3. Override some settings in `analysis.qmd` (e.g. disable TOC, change theme).  
+4. Render the project and observe the differences.
+:::
+
+---
+
+# Part 6: Computation & Execution Options
+
+## Executable code chunks vs plain code blocks
+
+So far we treated all code as "static". Quarto supports **executable** chunks:
+
+````markdown
+```{{r}}
+#| echo: true
+#| warning: false
+
+summary(cars)
+```
+````
+```{r}
+#| echo: true
+#| warning: false
+
+summary(cars)
+```
+
+
+Key points:
+
+- The `{r}` indicates this is an **R chunk** to be executed.  
+- Lines starting with `#|` are **chunk options**, not R code.  
+- Quarto runs the code and inserts results into the document.
+
+
+## Execution defaults in YAML
+
+You can set execution defaults in YAML:
+
+```yaml
+---
+title: "Executable Report"
+format: html
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+```
+
+These apply to **all chunks** unless overridden.
+
+Per-chunk override example to set echo to false:
+
+````markdown
+```{{r}}
+#| echo: false
+
+plot(cars)
+```
+````
+
+## Execution and formats
+
+Execution itself is format-agnostic, but **how results are shown** can vary:
+
+- HTML: interactive widgets, collapsible content, syntax-highlighted code.
+- Reveal.js: plots and tables on slides; careful with large outputs.
+- PDF: static figures and tables; no interactivity.
+- Dashboards: code often used to generate chart widgets in cards.
+
+Guidelines:
+
+- Think about **how much output** is appropriate for each format.  
+- In slides, hide most code (`echo: false`) and show only key results.  
+- In dashboards, keep chunks tight and focused on one visualisation per card.
+
+---
+
+# Part 7: Common Pitfalls & Debugging
+
+## Pitfall 1: Mismatched `:::` fences
+
+Symptom:
+
+- You see errors like `unexpected ':::'` or your layout breaks.
+
+Checklist:
+
+- Every `:::` must be closed with a matching `:::` on its own line.  
+- Nested divs must be properly nested (no overlapping).  
+- No extra backticks or colons near code fences.
+
+Tip: Temporarily remove nested blocks until the file renders; then reintroduce them.
+
+## Pitfall 2: Conflicting format definitions
+
+Symptom:
+
+- Project renders with unexpected theme or options.  
+- Some documents ignore project-level settings.
+
+Checklist:
+
+- Check `_quarto.yml` and document YAML for `format:` definitions.  
+- Remember: document-level `format` overrides project-level `format` (no merge).  
+- If you override `format`, copy in the parts you still want from the project.
+
+## Pitfall 3: Overloaded slides
+
+Symptom:
+
+- Slides are visually dense; audience gets lost.
+
+Checklist:
+
+- Use one main idea per slide.  
+- Use headings to break content into slides.  
+- Hide code unless needed (`echo: false`).  
+- Move long explanations to speaker notes or separate documents.
+
+## Pitfall 4: Treating dashboards as "just HTML"
+
+Symptom:
+
+- Your "dashboard" looks like a normal page with no clear layout.
+
+Checklist:
+
+- Did you use `.page`, `.columns`, `.column`, `.card`, `.valuebox`?  
+- Are your cards and columns nested correctly?  
+- Are you thinking in terms of **panels** and **widgets**, not just paragraphs?
+
+---
+
+# Part 8: Summary, Cheat Sheet & Next Steps
+
+## Key messages
+
+- Quarto = **Markdown + Blocks + YAML + Engine**.  
+- **Formats** (html, revealjs, dashboard, pdf, etc.) interpret the same markdown differently.  
+- **Structure** must match the expectations of the format:
+  - Slides: short sections, clear headings, slide-sized content.  
+  - Dashboards: pages, columns, cards, value boxes.  
+  - Books: multiple `.qmd` files + `_quarto.yml` chapters.
+- **Divs and attributes** (`:::` + `{.class #id key=value}`) are the backbone of rich layout.
+- Project-level `_quarto.yml` lets you share settings, but be aware of how `format` overrides.
+
+## Mini cheat sheet
+
+**Headings**
+
+```markdown
+# Section (slide / chapter section)
+## Subsection (sub-slide / sub-section)
+```
+
+**Divs and columns**
+
+```markdown
+::: {.columns}
+
+::: {.column width="50%"}
+Left content
+:::
+
+::: {.column width="50%"}
+Right content
+:::
+
+:::
+```
+
+**Callout**
+
+```markdown
+::: {.callout-tip}
+## Tip
+Some helpful information.
+:::
+```
+
+**Executable chunk**
+
+```markdown
+```{r}
+#| echo: false
+plot(cars)
+```
+```
+
+**Project-level `_quarto.yml`**
+
+```yaml
+project:
+  type: website
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+```
+
+## Final exercise
+
+Design a mini workflow using everything you've learned:
+
+1. Create a **project folder** with `_quarto.yml`.  
+2. Make 3 `.qmd` files:
+   - `index.qmd` — an HTML landing page.  
+   - `slides.qmd` — a Reveal.js slide deck.  
+   - `dashboard.qmd` — a dashboard-style page.
+3. Share execution and theme settings via `_quarto.yml`.  
+4. Use **callouts**, **columns**, **cards**, and **executable chunks** where appropriate.  
+5. Render the project and navigate between outputs.
+
+If you can do this comfortably, your **Quarto mental model is solid**.
+
+---
+
+# Next Steps
+
+You now have a deeper understanding of:
+
+- How markdown behaves in different Quarto formats.
+- How divs, spans, and attributes shape layout and semantics.
+- How YAML at document and project levels controls rendering.
+
+From here:
+
+- Make a portfolio of your newly aquired data visualisation skills with quarto 
+- Render is as an `index.html` in a github repo 
+- Pblish it as a github webpage
+
+Happy authoring!
