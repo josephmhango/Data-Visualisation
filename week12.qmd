@@ -1,0 +1,178 @@
+---
+title: "Effective Communication with Graphics"
+subtitle: "Interactive Esquisse studio"
+author: ""
+format:
+  revealjs:
+    theme: default
+    css: scroll.css
+    slide-number: true
+    incremental: false
+    preview-links: true
+    code-line-numbers: true
+    self-contained: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(ggplot2)
+library(scales)
+
+has_esquisse <- requireNamespace("esquisse", quietly = TRUE)
+if (has_esquisse) {
+  library(esquisse)
+}
+
+theme_set(
+  theme_minimal(base_size = 14) +
+    theme(
+      plot.title.position = "plot",
+      plot.caption.position = "plot",
+      panel.grid.minor = element_blank()
+    )
+)
+
+iris_tbl <- as_tibble(iris)
+```
+
+## Agenda
+
+- **Demo cue**: install Esquisse + basic plot in Esquisse
+- **Definition**: what makes a good graphic
+- **Build time**: create one graphic (60 min)
+- **Projection + deconstruction loop**: 10-second viewing → explanation → build deconstruction → code reveal (rest of session)
+
+---
+
+## Demo cue: installation + first Esquisse plot
+
+### Install Esquisse
+
+```{r}
+#| eval: false
+install.packages("esquisse")
+```
+
+### Launch Esquisse
+
+- **RStudio** → **Addins** → **ggplot2 builder**
+
+Optional (same tool, launched from code):
+
+```{r}
+#| eval: false
+esquisser(data = iris)
+```
+
+### Example: iris
+
+- X: `Petal.Length`
+- Y: `Petal.Width`
+- Color: `Species`
+- Geom: points
+
+### Export and run the code
+
+- Export the ggplot code from Esquisse
+- Paste it into a script (or a chunk) and run it
+
+---
+
+## What is a good graphic?
+
+A good graphic is one where a viewer can quickly answer:
+
+- **What is this about?** (topic + population)
+- **What should I notice?** (main claim/pattern)
+- **How do I read it?** (axes, legend, encodings)
+- **How big is it?** (scale/units; what counts as “large”)
+- **What’s missing/uncertain?** (noise, limits, caveats)
+
+---
+
+## Studio hour (60 minutes): build ONE graphic
+
+Pick a dataset from ggplot2:
+
+```{r}
+#| eval: false
+data(package = "ggplot2")
+```
+
+Use it directly (ggplot2 is loaded), e.g.:
+
+```{r}
+#| eval: false
+df <- diamonds  # or: ggplot2::diamonds
+```
+
+Choose a question (or define your own):
+
+- What relationship matters?
+- What comparison matters?
+- What distribution matters?
+
+Rules (required):
+
+- **At least 2 geoms** (e.g., points + smooth, violin + jitter, boxplot + points)
+- **Must not use the default theme** (`theme_gray()` is not allowed)
+- **Must scale x or y appropriately** to refine aesthetics (choose at least one):
+  - adjust limits (zoom) responsibly,
+  - change breaks/labels,
+  - apply a transformation if justified.
+
+Deliverables:
+
+- Exported **ggplot code**
+- A one-sentence **claim title** (not “X vs Y”)
+
+---
+
+## Projection + deconstruction loop (repeat for each presenter)
+
+### Step 1: 10-second projection (no talking)
+
+- Project the plot for **10 seconds only**
+- Stay silent for those 10 seconds
+
+### Step 2: Group explains the graphic (still no code)
+
+Take turns answering:
+
+- What is this about?
+- What is the main message?
+- What encodings are used (x/y/color/shape/facet)?
+
+### Step 3: Group deconstructs how it was built (still no code)
+
+Take turns guessing:
+
+- Which **two geoms** were used, and why?
+- What **scale** change was applied, and why?
+- What **theme** change was applied, and why?
+
+### Step 4: Reveal
+
+Show:
+
+- The exported ggplot code
+- Their logic: why those encodings, geoms, and scale choices
+
+---
+
+## Time permitting: revise after feedback
+
+- Apply the feedback and make a v2
+- Export the updated code
+- Write 2–3 sentences: what changed and why
+
+## Question:
+
+- How would you apply the grammar of graphics skills in python?
+- Which packages?
+- Research and produce a colab notebook that demonstrates the grammar of graphics skills in python.
