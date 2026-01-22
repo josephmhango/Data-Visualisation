@@ -1,0 +1,657 @@
+---
+title: "From ggplot2 to Python: Transferable Grammar-of-Graphics & Dashboard Skills"
+subtitle: "Data Visualisation — Cross-platform thinking"
+author: "Harper Adams University"
+css: scroll.css
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    preview-links: true
+    incremental: false
+    transition: fade
+    code-fold: true
+    code-line-numbers: true
+    highlight-style: github
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+params:
+  python: 'C:/ProgramData/anaconda3/python.exe'
+---
+
+## Where you are
+
+You already know how to:
+
+- Think in the **Grammar of Graphics**
+- Build clear, honest plots with **ggplot2**
+- Assemble dashboards with **Quarto**
+
+Today: **prove to yourself those skills transfer**.
+
+**Goal:** leave with a mental model that survives tool changes.
+
+---
+
+## The take-home message
+
+Tools change. Principles don’t.
+
+- ggplot2 is one *implementation* of a deeper idea.
+- Python has **multiple plotting cultures**:
+  - some align with the grammar-of-graphics
+  - others deviate
+
+If you understand the *conceptual layers*, you can work anywhere.
+
+---
+
+## Roadmap
+
+1. Transfer the **grammar-of-graphics** mindset to Python
+2. Where Python practice **deviates**
+3. “Translation enablers”
+4. Dashboards: transferring **Quarto dashboard thinking** to:
+   - Streamlit
+   - Plotly Dash
+   - Bokeh
+
+---
+
+## Grammar of Graphics: the mental model
+
+A plot is built from:
+
+- **Data**
+- **Aesthetics:** mappings from variables → visual channels
+- **Geoms:** marks
+- **Stats:** transformations
+- **Scales:** map data units → visual units
+- **Coordinates**
+- **Facets**
+- **Theme / guides / annotations**
+
+ggplot2 makes these layers explicit.
+
+---
+
+## Why the model is transferable
+
+Because most plotting systems must answer the same questions:
+
+- What is the dataset?
+- Which columns control x / y / color / size?
+- What geometry is being drawn?
+- How are data transformed?
+- What scales and guides are shown?
+- How do we handle multiple panels?
+
+Different libraries expose these answers differently.
+
+---
+
+## Transfer skills checklist
+
+When you open a *new plotting tool*, ask:
+
+1. How do I specify **data + mappings**?
+2. How do I add **marks/geoms**?
+3. What is “stat” called here?
+4. How do I control **scales, legends, themes**?
+5. What’s the idiom for **faceting**?
+6. What’s the default *philosophy*?
+
+---
+
+## The Python landscape
+
+- **Matplotlib**: imperative, “draw on axes”
+- **Seaborn**: statistical defaults; high-level wrappers
+- **Plotly**: declarative + interactive; “figure as a spec”
+- **Grammar-aligned tools**
+  - **plotnine**
+  - **seaborn objects**
+  - **plotly express**
+
+Python isn’t “one way” — it’s multiple ecosystems.
+
+---
+
+## A single dataset for comparisons
+
+When practising, use the same data in R and Python.
+
+```{r}
+#| label: setup-r
+#| include: false
+if (nzchar(params$python)) {
+  Sys.setenv(RETICULATE_PYTHON = params$python)
+}
+
+library(reticulate)
+if (nzchar(params$python)) {
+  reticulate::use_python(params$python, required = TRUE)
+}
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(palmerpenguins)
+
+peng <- penguins %>%
+  tidyr::drop_na()
+```
+
+```{r}
+#| label: setup-py-data
+#| include: false
+# Make the R tibble available as a Python variable `peng` (pandas DataFrame if pandas is available).
+py$peng <- reticulate::r_to_py(peng)
+```
+
+```{python}
+#| label: py-verify-python
+#| include: false
+import sys
+import pandas as pd
+
+expected = r"C:/ProgramData/anaconda3/python.exe".lower()
+actual = sys.executable.replace("\\", "/").lower()
+# On Windows, Python can sometimes report an 8.3 "short path" form (e.g. progra~3/anacon~1).
+ok = (
+    actual == expected
+    or actual.endswith("/anaconda3/python.exe")
+    or actual.endswith("/anacon~1/python.exe")
+)
+assert ok, f"Expected Anaconda python (e.g. {expected}), got {actual}"
+```
+
+---
+
+## ggplot2 baseline
+
+```{r}
+#| label: ggplot-baseline
+#| echo: true
+#| fig-width: 14
+#| fig-height: 6.5
+#| out-width: "100%"
+#| out-height: "85vh"
+#| fig-align: center
+
+ggplot(peng, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point() +
+  facet_wrap(~ sex) +
+  labs(
+    title = "Penguins: bill length vs bill depth",
+    x = "Bill length",
+    y = "Bill depth",
+    color = "Species"
+  ) +
+  theme_minimal()
+```
+
+---
+
+## What exactly did you just do?
+
+You declared:
+
+- data: `peng`
+- aes: x, y, color
+- geom: point
+- facet: by sex
+- labels + theme
+
+Now we’ll reproduce the *same conceptual plot* in Python, multiple ways.
+
+---
+
+## Option A: plotnine
+
+**plotnine** is intentionally ggplot-like.
+
+> Strength: minimal mental translation  
+> Weakness: not the default Python culture; ecosystem integration varies
+
+```{python}
+#| label: py-plotnine
+#| eval: false
+import pandas as pd
+from plotnine import ggplot, aes, geom_point, facet_wrap, labs, theme_minimal
+
+# peng should be a pandas DataFrame in Python.
+# If you want this to run inside Quarto, you can export peng from R to CSV
+# and read it in Python.
+
+(
+  ggplot(peng, aes("bill_length_mm", "bill_depth_mm", color="species"))
+  + geom_point()
+  + facet_wrap("~sex")
+  + labs(
+      title="Penguins: bill length vs bill depth",
+      x="Bill length",
+      y="Bill depth",
+      color="Species",
+    )
+  + theme_minimal()
+)
+```
+
+---
+
+## Option B: seaborn objects
+
+Seaborn has a newer “objects” interface that is **more declarative**.
+
+> Strength: grammar-like + modern seaborn  
+> Weakness: still evolving; not everyone uses it yet
+
+```{python}
+#| label: py-seaborn-objects
+#| eval: false
+import seaborn.objects as so
+
+(
+  so.Plot(peng, x="bill_length_mm", y="bill_depth_mm", color="species")
+    .add(so.Dots())
+    .facet(col="sex")
+    .label(
+      title="Penguins: bill length vs bill depth",
+      x="Bill length",
+      y="Bill depth",
+      color="Species",
+    )
+)
+```
+
+---
+
+## Option C: Plotly Express
+
+Plotly Express is “one function → one figure spec”.
+
+> Strength: interactivity, quick faceting, easy share  
+> Weakness: theming + fine control can shift you into lower-level Plotly
+
+```{python}
+#| label: py-plotly-express
+#| eval: false
+import plotly.express as px
+
+fig = px.scatter(
+  peng,
+  x="bill_length_mm",
+  y="bill_depth_mm",
+  color="species",
+  facet_col="sex",
+  title="Penguins: bill length vs bill depth",
+  labels={
+    "bill_length_mm": "Bill length",
+    "bill_depth_mm": "Bill depth",
+    "species": "Species",
+    "sex": "Sex",
+  },
+)
+fig.show()
+```
+
+---
+
+## What’s “grammar-like” about these?
+
+They let you specify:
+
+- data + mappings
+- mark type
+- facets
+- guides
+
+You’re still thinking in layers, even if the syntax differs.
+
+---
+
+## Matplotlib: the imperative tradition
+
+Matplotlib often feels like:
+
+- create figure/axes
+- draw each thing
+- manually manage legend, labels, scales, faceting
+
+This is not “bad” — it’s powerful and explicit — but it’s a different *cognitive style*.
+
+---
+
+## Matplotlib version of the same idea
+
+Notice how the “grammar pieces” are now scattered across steps.
+
+```{python}
+#| label: py-matplotlib
+#| fig-width: 10
+#| fig-height: 4
+#| out-width: "100%"
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharex=True, sharey=True)
+
+for sex, ax in zip(["female", "male"], axes):
+    df_sex = peng[peng["sex"] == sex]
+    for sp, df_sp in df_sex.groupby("species"):
+        ax.scatter(df_sp["bill_length_mm"], df_sp["bill_depth_mm"], label=sp, alpha=0.8)
+    ax.set_title(sex.title())
+
+fig.suptitle("Penguins: bill length vs bill depth", y=1.02)
+fig.supxlabel("Bill length")
+fig.supylabel("Bill depth")
+axes[1].legend(title="Species", bbox_to_anchor=(1.02, 1), loc="upper left")
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## What changed?
+
+In ggplot2, the “specification” *is* the plot.
+
+In matplotlib, the plot is the **result of a procedure**.
+
+Consequences:
+
+- Faceting becomes “make subplots and loop”
+- Legends and scales often require manual attention
+- Reusable styles/themes are possible, but not the default mental model
+
+---
+
+## Seaborn classic interface: convenient, but layered differently
+
+Classic seaborn often bundles:
+
+- a mark + statistical transformation + defaults  
+into one function call
+
+Good for speed, but it can hide the “stat layer”.
+
+---
+
+## Example: smoothing/regression defaults
+
+In ggplot2 you’d choose:
+
+- `geom_smooth` + explicit choices
+
+In seaborn you might get “trend” implicitly:
+
+```{python}
+#| label: py-seaborn-regplot
+#| eval: false
+import seaborn as sns
+
+sns.regplot
+```
+
+**Key skill:** identify where the “stat” happened, and how to control it.
+
+---
+
+## Practical rule
+
+When switching tools:
+
+- **Always ask:** “what is being computed, vs what is just being drawn?”
+- Defaults are not neutral. They encode assumptions.
+
+This is true in *every* language.
+
+---
+
+
+## Strategy 
+
+1. Rebuild your plot as a **spec**:
+   - data + mappings + marks + facets + labels
+2. Identify which library lets you keep that structure:
+   - plotnine / seaborn objects / plotly express
+3. Only drop to matplotlib / low-level plotly when you need:
+   - precise control
+   - custom annotations
+   - publication layout constraints
+
+---
+
+## What *is* a dashboard?
+
+A dashboard is:
+
+- a **layout system**
+- a **narrative**
+- a **set of components**
+- **interaction & state**
+- performance + reproducibility considerations
+
+Quarto is one way to package that.
+
+---
+
+## The transferable dashboard principles
+
+Independent of tool:
+
+- **Hierarchy:** KPIs → key charts → detail tables
+- **Scanability:** strong titles, short annotations, whitespace
+- **Consistency:** shared scales, color semantics, typography
+- **Truthfulness:** avoid misleading encodings; show uncertainty when relevant
+- **Responsiveness:** works on laptop/projector/phone where possible
+- **User story:** “What question is this dashboard answering?”
+
+---
+
+## Quarto dashboards: what’s really happening?
+
+Quarto gives you:
+
+- Markdown narrative + code execution
+- Layout primitives
+- HTML output
+- Optional JavaScript enhancements
+
+So: even in Quarto, you’re already building on web foundations.
+
+---
+
+## A key transfer idea: HTML + CSS + JS are the “substrate”
+
+- Quarto → renders to HTML, styled by CSS, enhanced by JS
+- Streamlit → server app that emits UI to a browser
+- Dash → React components driven by Python callbacks
+- Bokeh/Panel → interactive JS-backed plots + layouts
+
+Different packaging. Same substrate: **web UI**.
+
+---
+
+## Streamlit
+
+**Mental model:** write a script top-to-bottom; widgets create state; rerun on changes.
+
+- Fast to build
+- Opinionated layouts
+- Great for prototypes and internal tools
+
+Transfer from Quarto:
+
+- narrative blocks + charts + “cards”
+- parameterised reports
+
+---
+
+## Plotly Dash
+
+**Mental model:** web app with components + callbacks.
+
+- Strong for “real apps” feel
+- Scales to complex interactions
+- More engineering overhead than Streamlit
+
+Transfer from Quarto:
+
+- component layout thinking
+- explicit separation of *figure spec* and *app state*
+- concept of reactive inputs → outputs
+
+---
+
+## Bokeh
+
+**Mental model:** interactive plotting + layouts, with Python controlling JS-backed visuals.
+
+- Great for custom interactions and linked brushing
+- Panel makes dashboards simpler
+
+Transfer from Quarto:
+
+- layouts + components
+- a “document” that becomes an interactive web artifact
+
+---
+
+## When practice deviates from Quarto
+
+Quarto dashboards are often:
+
+- reproducible, report-like
+- “analysis first, UI second”
+
+Python dashboards often become:
+
+- “UI first, analysis behind”
+- live state, callbacks, caching, deployment details
+
+Skill shift:
+
+- from document author → app builder
+
+Your design principles still hold.
+
+---
+
+## Pattern 1: Cards / value boxes
+
+Quarto: “valuebox/card” expresses a KPI summary.
+
+Python equivalents:
+
+- Streamlit: `st.metric`, containers
+- Dash: HTML components + CSS
+- Panel: `pn.indicators.Number`
+
+Transfer skill:
+
+- choose the KPI
+- choose the comparison frame
+- label clearly
+
+---
+
+## Pattern 2: Tabs / pages
+
+Quarto: tabsets, multi-page sites.
+
+Python equivalents:
+
+- Streamlit pages / tabs
+- Dash multi-page routing
+- Panel tabs
+
+Transfer skill:
+
+- group by *task*, not by plot type
+- avoid “tab sprawl”
+
+---
+
+## Pattern 3: Filtering and parameters
+
+Quarto: params + code execution at render time.
+
+Python dashboards: live widgets + reactive state.
+
+Transfer skill:
+
+- decide which parameters matter
+- default to sensible values
+- show what filters are active
+- keep the interaction loop tight
+
+---
+
+## Pattern 4: JavaScript in the background
+
+Even if you never write JS:
+
+- Plotly interactivity is JS-based
+- Dash is React-based
+- Bokeh renders JS
+- Quarto widgets embed JS
+
+Transfer skill:
+
+- think in “events”
+- think in “state”
+- think in “latency”
+
+---
+
+## A robust workflow that transfers
+
+1. Start in the tidy data mindset:
+   - one row per observational unit
+   - clear variable names, types, and units
+2. Write the plot spec in words:
+   - “Scatter of X vs Y, colored by group, faceted by sex…”
+3. Implement in your target tool:
+   - choose grammar-aligned libraries first
+4. Audit:
+   - scales, legends, missing values, overplotting, uncertainty
+5. Only then polish:
+   - theme/template, annotation, typography, layout
+
+---
+
+## What to learn next
+
+If you want the *closest* transfer from ggplot2:
+
+- **plotnine** for the syntax transfer
+- **plotly express** for rapid interactive specs
+- **seaborn objects** to keep a grammar-ish style
+
+Then add:
+
+- **matplotlib** for deeper control and “understanding the engine”
+
+---
+
+
+# Wrap-up
+
+## What you should walk away believing
+
+- Your ggplot2 skills are **not tied to R**
+- The grammar of graphics is a **portable way of thinking**
+- Python differs mostly in **how explicitly** it exposes the layers
+- Dashboards transfer via:
+  - layout thinking
+  - narrative hierarchy
+  - state/interaction design
+  - web substrate awareness
+
+Next time you meet a new tool: rebuild your plot as layers, then map.
+
+
